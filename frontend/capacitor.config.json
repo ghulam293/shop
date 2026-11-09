@@ -1,0 +1,11 @@
+{
+  "appId": "com.ipsoman.schoolshop",
+  "appName": "IPS Oman School Shop",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#800020"
+  }
+}
+

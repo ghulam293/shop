@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">IPS Oman School Shop</string>
+    <string name="title_activity_main">IPS Oman School Shop</string>
+    <string name="package_name">com.ipsoman.schoolshop</string>
+    <string name="custom_url_scheme">com.ipsoman.schoolshop</string>
+</resources>
