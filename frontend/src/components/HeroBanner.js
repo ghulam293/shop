@@ -68,7 +68,7 @@ export default function HeroBanner() {
         >
           {/* Deep Maroon Wave curve matching reference design */}
           <path
-            d="M0,45 C320,58 750,55 1440,8 L1440,60 L0,60 Z"
+            d="M0,18 C380,56 720,58 1100,48 C1260,42 1380,24 1440,20 L1440,60 L0,60 Z"
             fill="#800020"
           />
         </svg>
