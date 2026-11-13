@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
       if (email.toLowerCase() === 'admin@ipsoman.com' && password === 'Admin@IPS2026!') {
         const adminUser = {
           id: 1,
-          fullName: 'IPS School Administrator',
+          fullName: 'Shop Administrator',
           email: 'admin@ipsoman.com',
           phoneNumber: '+968 23 234567',
           roles: ['ADMIN']

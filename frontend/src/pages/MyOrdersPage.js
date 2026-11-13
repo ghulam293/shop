@@ -16,7 +16,7 @@ export default function MyOrdersPage() {
           Parent Authentication Required
         </h2>
         <p style={{ fontSize: '0.88rem', color: '#6b7280', marginBottom: '1.5rem' }}>
-          Please sign in to your parent account to track your school uniform orders.
+          Please sign in to track your orders.
         </p>
         <Link to="/login" className="btn-primary" style={{ padding: '0.75rem 1.75rem' }}>
           Sign In to View Orders
@@ -33,7 +33,7 @@ export default function MyOrdersPage() {
       status: 'PENDING',
       total: '16.500',
       items: [
-        { name: 'IPS Maroon Polo Shirt', size: 'M', qty: 1, price: '6.500' },
+        { name: 'Maroon Polo Shirt', size: 'M', qty: 1, price: '6.500' },
         { name: "Boys' Gray Trousers", size: '30', qty: 1, price: '7.500' },
         { name: 'School Belt (Black)', size: 'Standard', qty: 1, price: '2.500' }
       ]
@@ -47,7 +47,7 @@ export default function MyOrdersPage() {
         <span>{t('myOrders')}</span>
       </h1>
       <p style={{ fontSize: '0.86rem', color: '#6b7280', marginBottom: '2rem' }}>
-        Track your official school uniform orders for International Pioneers School, Salalah.
+        Track your official orders and delivery status.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

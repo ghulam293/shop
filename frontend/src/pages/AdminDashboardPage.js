@@ -65,10 +65,10 @@ export default function AdminDashboardPage() {
   ]);
 
   const [inventory, setInventory] = useState([
-    { id: 1, name: 'IPS Maroon Polo Shirt', size: 'XS', stock: 45, threshold: 5, sku: 'IPS-POLO-XS' },
-    { id: 2, name: 'IPS Maroon Polo Shirt', size: 'S',  stock: 60, threshold: 10, sku: 'IPS-POLO-S' },
-    { id: 3, name: 'IPS Maroon Polo Shirt', size: 'M',  stock: 85, threshold: 10, sku: 'IPS-POLO-M' },
-    { id: 4, name: 'IPS Maroon Polo Shirt', size: 'L',  stock: 70, threshold: 10, sku: 'IPS-POLO-L' },
+    { id: 1, name: 'Maroon Polo Shirt', size: 'XS', stock: 45, threshold: 5, sku: 'POLO-XS' },
+    { id: 2, name: 'Maroon Polo Shirt', size: 'S',  stock: 60, threshold: 10, sku: 'POLO-S' },
+    { id: 3, name: 'Maroon Polo Shirt', size: 'M',  stock: 85, threshold: 10, sku: 'POLO-M' },
+    { id: 4, name: 'Maroon Polo Shirt', size: 'L',  stock: 70, threshold: 10, sku: 'POLO-L' },
     { id: 5, name: 'Boys\' Gray Trousers', size: '28', stock: 40, threshold: 5, sku: 'IPS-TRSR-28' },
     { id: 6, name: 'Boys\' Gray Trousers', size: '30', stock: 55, threshold: 8, sku: 'IPS-TRSR-30' },
     { id: 7, name: 'Girls\' Gray Skirt', size: '28',  stock: 45, threshold: 5, sku: 'IPS-SKRT-28' },
@@ -111,7 +111,7 @@ export default function AdminDashboardPage() {
             </div>
             <div>
               <h1 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#800020', margin: 0 }}>
-                IPS Oman School Shop — Administration
+                Shop — Administration
               </h1>
               <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: '2px 0 0' }}>
                 International Pioneers School, Salalah • Admin: {user?.email || 'admin@ipsoman.com'}

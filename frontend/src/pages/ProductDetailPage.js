@@ -20,9 +20,9 @@ import { useAuth } from '../context/AuthContext.js';
 export const officialProductsList = [
   {
     id: 1,
-    sku: 'IPS-UNIF-POLO-MRN',
-    nameEn: 'IPS School Polo Shirt',
-    nameAr: 'قميص بولو مدرسة الرواد (عنابي)',
+    sku: 'UNIF-POLO-MRN',
+    nameEn: 'School Polo Shirt (Maroon)',
+    nameAr: 'قميص بولو مدرسي (عنابي)',
     subtitleEn: 'Official School Uniform — Maroon Polo Shirt',
     subtitleAr: 'الزي المدرسي الرسمي — قميص بولو عنابي',
     category: 'Uniforms',
@@ -81,8 +81,8 @@ export const officialProductsList = [
     images: [
       '/products/girls-gray-skirt.jpg'
     ],
-    descEn: 'Official gray knife-pleated school skirt for girls featuring discrete embroidered IPS monogram, elasticated comfort waist, and durable school-grade twill.',
-    descAr: 'تنورة مدرسية رمادية أنيقة بكسرات وتطريز شعار IPS مع خصر مرن مريح وقماش عالي الجودة يدوم طويلاً.'
+    descEn: 'Official gray knife-pleated school skirt for girls featuring elegant pleats, elasticated comfort waist, and durable school-grade twill.',
+    descAr: 'تنورة مدرسية رمادية أنيقة بكسرات وتصميم مريح مع خصر مرن وقماش عالي الجودة يدوم طويلاً.'
   },
   {
     id: 4,
@@ -170,11 +170,11 @@ export const officialProductsList = [
   },
   {
     id: 8,
-    sku: 'IPS-BOOK-ENG-P1',
+    sku: 'BOOK-ENG-P1',
     nameEn: "Cambridge Primary English Learner's Book",
     nameAr: 'كتاب كامبريدج للغة الإنجليزية للمرحلة الابتدائية',
-    subtitleEn: 'Official IPS Curriculum — Cambridge Primary English',
-    subtitleAr: 'المنهاج الرسمي لمدرسة الرواد — كامبريدج الابتدائية',
+    subtitleEn: 'Cambridge Primary English Curriculum',
+    subtitleAr: 'المنهاج المعتمد — كامبريدج الابتدائية للغة الإنجليزية',
     category: 'School Books',
     categorySlug: 'books',
     price: 7.500,
@@ -185,15 +185,15 @@ export const officialProductsList = [
     defaultSize: 'Stage 3',
     images: ['/images/category-books.jpg'],
     descEn: 'Official Cambridge Primary English Learner Book approved for student curriculum.',
-    descAr: 'كتاب الطالب المعتمد لمنهاج كامبريدج للغة الإنجليزية لمدرسة الرواد الدولية.'
+    descAr: 'كتاب الطالب المعتمد لمنهاج كامبريدج للغة الإنجليزية.'
   },
   {
     id: 9,
-    sku: 'IPS-BOOK-MTH-P1',
+    sku: 'BOOK-MTH-P1',
     nameEn: "Cambridge Primary Mathematics Learner's Book",
     nameAr: 'كتاب كامبريدج للرياضيات للمرحلة الابتدائية',
-    subtitleEn: 'Official IPS Curriculum — Cambridge Primary Mathematics',
-    subtitleAr: 'المنهاج الرسمي لمدرسة الرواد — كامبريدج للرياضيات',
+    subtitleEn: 'Cambridge Primary Mathematics Curriculum',
+    subtitleAr: 'المنهاج المعتمد — كامبريدج للرياضيات',
     category: 'School Books',
     categorySlug: 'books',
     price: 7.500,
@@ -203,16 +203,16 @@ export const officialProductsList = [
     sizeLabel: 'Curriculum Stage',
     defaultSize: 'Stage 3',
     images: ['/images/category-books.jpg'],
-    descEn: 'Official Cambridge Primary Mathematics Learner Book for IPS students.',
-    descAr: 'كتاب كامبريدج المعتمد للرياضيات لمدرسة الرواد الدولية بصلالة.'
+    descEn: 'Official Cambridge Primary Mathematics Learner Book for students.',
+    descAr: 'كتاب كامبريدج المعتمد للرياضيات للمرحلة الابتدائية.'
   },
   {
     id: 10,
-    sku: 'IPS-STAT-NOTE-5PK',
-    nameEn: 'IPS Premium Spiral Notebooks (5-Pack)',
-    nameAr: 'دفاتر سلك مدرسية بشعار المدرسة (حزمة 5 دفاتر)',
-    subtitleEn: 'Official IPS Stationery — 80gsm Premium Lined Paper',
-    subtitleAr: 'القرطاسية المدرسية الرسمية — ورق عالي الجودة 80 جرام',
+    sku: 'STAT-NOTE-5PK',
+    nameEn: 'Premium Spiral Notebooks (5-Pack)',
+    nameAr: 'دفاتر سلك مدرسية فاخرة (حزمة 5 دفاتر)',
+    subtitleEn: 'Quality School Stationery — 80gsm Premium Lined Paper',
+    subtitleAr: 'القرطاسية المدرسية — ورق عالي الجودة 80 جرام',
     category: 'Stationery',
     categorySlug: 'stationery',
     price: 3.200,
@@ -222,14 +222,14 @@ export const officialProductsList = [
     sizeLabel: 'Ruling Type',
     defaultSize: 'Single Line (English)',
     images: ['/images/category-accessories.jpg'],
-    descEn: 'Pack of 5 high-grade school notebooks branded with IPS crest. Features 80gsm smooth paper.',
-    descAr: 'حزمة 5 دفاتر سلكية رسمية بشعار مدرسة الرواد الدولية، ورق ناعم عالي الجودة مناسب لجميع المواد.'
+    descEn: 'Pack of 5 high-grade school notebooks. Features 80gsm smooth paper.',
+    descAr: 'حزمة 5 دفاتر سلكية، ورق ناعم عالي الجودة مناسب لجميع المواد الدراسية.'
   },
   {
     id: 11,
-    sku: 'IPS-STAT-GEOM-SET',
-    nameEn: 'IPS Complete Geometry & Stationery Set',
-    nameAr: 'طقم هندسة وقرطاسية كامل بشعار المدرسة',
+    sku: 'STAT-GEOM-SET',
+    nameEn: 'Complete Geometry & Stationery Set',
+    nameAr: 'طقم هندسة وقرطاسية متكامل',
     subtitleEn: 'Complete 10-Piece Mathematical & Geometry Kit',
     subtitleAr: 'طقم أدوات هندسية متكامل 10 قطع في علبة معدنية متينة',
     category: 'Stationery',
@@ -246,11 +246,11 @@ export const officialProductsList = [
   },
   {
     id: 12,
-    sku: 'IPS-BAG-MRN-01',
-    nameEn: 'IPS Ergonomic School Backpack (Maroon)',
-    nameAr: 'حقيبة مدرسية طبية مريحة بشعار المدرسة (عنابي)',
-    subtitleEn: 'Ergonomic Spine-Support School Backpack with IPS Crest',
-    subtitleAr: 'حقيبة مدرسية طبية مع دعم للعمود الفقري وتطريز شعار المدرسة',
+    sku: 'BAG-MRN-01',
+    nameEn: 'Ergonomic School Backpack (Maroon)',
+    nameAr: 'حقيبة مدرسية طبية مريحة (عنابي)',
+    subtitleEn: 'Ergonomic Spine-Support School Backpack',
+    subtitleAr: 'حقيبة مدرسية طبية مع دعم للعمود الفقري',
     category: 'Stationery',
     categorySlug: 'stationery',
     price: 14.500,
@@ -260,8 +260,8 @@ export const officialProductsList = [
     sizeLabel: 'Backpack Size',
     defaultSize: 'Senior (Grades 5-12)',
     images: ['/images/category-books.jpg'],
-    descEn: 'Official IPS maroon backpack with ergonomic orthopedic back padding, reflective safety strips, water-repellent fabric, and heavy-duty zippers.',
-    descAr: 'حقيبة مدرسة الرواد الرسمية باللون العنابي، تصميم مريح للظهر مزودة بشرائط عاكسة وأقمشة مقاومة للماء.'
+    descEn: 'Official maroon backpack with ergonomic orthopedic back padding, reflective safety strips, water-repellent fabric, and heavy-duty zippers.',
+    descAr: 'حقيبة مدرسية متينة باللون العنابي، تصميم مريح للظهر مزودة بشرائط عاكسة وأقمشة مقاومة للماء.'
   }
 ];
 

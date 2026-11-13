@@ -55,16 +55,24 @@ export default function LoginPage() {
         
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <img
-            src="/images/ips-logo.png"
-            alt="IPS Logo"
-            style={{ height: '64px', margin: '0 auto 0.75rem' }}
-          />
-          <h2 style={{ fontSize: '1.45rem', fontWeight: '800', color: '#800020', margin: 0 }}>
-            {isRTL ? 'تسجيل الدخول' : 'Login'}
+          <div style={{
+            width: '48px',
+            height: '48px',
+            backgroundColor: '#800020',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 0.75rem',
+            color: '#fff'
+          }}>
+            <ShoppingCart size={24} />
+          </div>
+          <h2 style={{ fontSize: '1.65rem', fontWeight: '900', color: '#800020', margin: 0 }}>
+            {isRTL ? 'المتجر' : 'Shop'}
           </h2>
-          <p style={{ fontSize: '0.82rem', color: '#6b7280', marginTop: '0.35rem' }}>
-            International Pioneers School (Salalah)
+          <p style={{ fontSize: '0.85rem', color: '#6b7280', marginTop: '0.35rem' }}>
+            {isRTL ? 'تسجيل الدخول إلى حسابك' : 'Sign in to your account'}
           </p>
         </div>
 

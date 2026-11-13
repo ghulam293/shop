@@ -54,16 +54,24 @@ export default function RegisterPage() {
         
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <img
-            src="/images/ips-logo.png"
-            alt="IPS Logo"
-            style={{ height: '58px', margin: '0 auto 0.75rem' }}
-          />
-          <h2 style={{ fontSize: '1.45rem', fontWeight: '800', color: '#800020', margin: 0 }}>
-            {isRTL ? 'تسجيل حساب ولي أمر جديد' : 'Parent Registration'}
+          <div style={{
+            width: '48px',
+            height: '48px',
+            backgroundColor: '#800020',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 0.75rem',
+            color: '#fff'
+          }}>
+            <ShoppingCart size={24} />
+          </div>
+          <h2 style={{ fontSize: '1.65rem', fontWeight: '900', color: '#800020', margin: 0 }}>
+            {isRTL ? 'المتجر' : 'Shop'}
           </h2>
-          <p style={{ fontSize: '0.82rem', color: '#6b7280', marginTop: '0.35rem' }}>
-            IPS Oman School Uniforms & Supplies Portal
+          <p style={{ fontSize: '0.85rem', color: '#6b7280', marginTop: '0.35rem' }}>
+            {isRTL ? 'إنشاء حساب جديد' : 'Create an Account'}
           </p>
         </div>
 

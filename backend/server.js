@@ -70,7 +70,7 @@ app.get('/api/health', async (req, res) => {
     const [dbRes] = await query('SELECT 1 + 1 AS db_check');
     res.json({
       status: 'UP',
-      system: 'IPS Oman School Shopping API',
+      system: 'Shop API',
       timestamp: new Date().toISOString(),
       database: dbRes.db_check === 2 ? 'CONNECTED' : 'UNKNOWN'
     });
@@ -98,7 +98,7 @@ app.use(errorHandler);
 // Start Server
 app.listen(PORT, async () => {
   console.log(`====================================================`);
-  console.log(` IPS Oman School Shop Backend running on port ${PORT}`);
+  console.log(` Shop Backend running on port ${PORT}`);
   console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(` Target DB: ${process.env.DB_NAME} on port ${process.env.DB_PORT || 3307}`);
   console.log(`====================================================`);
