@@ -187,7 +187,11 @@ export default function UniformsPage() {
         const matchesCategory =
           product.category === selectedCategory ||
           product.subCategory === selectedCategory ||
-          (selectedCategory === 'books-stationery' && (product.category === 'books' || product.category === 'stationery'));
+          (selectedCategory === 'school-uniforms' && (product.category === 'uniforms' || product.category === 'school-uniforms')) ||
+          (selectedCategory === 'school-bags' && (product.category === 'bags' || product.category === 'school-bags' || product.category === 'accessories')) ||
+          (selectedCategory === 'stationery-books' && (product.category === 'books' || product.category === 'stationery')) ||
+          (selectedCategory === 'books-stationery' && (product.category === 'books' || product.category === 'stationery')) ||
+          (selectedCategory === 'shoes' && product.category === 'shoes');
         if (!matchesCategory) return false;
       }
 
@@ -225,14 +229,15 @@ export default function UniformsPage() {
   };
 
   const categoriesList = [
-    { id: 'all', label: isRTL ? 'جميع المنتجات' : 'All Products', count: 12 },
-    { id: 'uniforms', label: isRTL ? 'الزي المدرسي' : 'Uniforms', count: 3 },
-    { id: 'boys-trousers', label: isRTL ? 'بناطيل الأولاد' : "Boys' Trousers", count: 1 },
-    { id: 'girls-skirts', label: isRTL ? 'تنانير البنات' : "Girls' Skirts", count: 1 },
-    { id: 'shoes', label: isRTL ? 'الأحذية' : 'Shoes', count: 2 },
-    { id: 'accessories', label: isRTL ? 'الإكسسوارات' : 'Accessories', count: 2 },
-    { id: 'books', label: isRTL ? 'الكتب الدراسية' : 'School Books', count: 2 },
-    { id: 'stationery', label: isRTL ? 'القرطاسية والحقائب' : 'Stationery & Bags', count: 3 }
+    { id: 'all', label: isRTL ? 'جميع الأقسام' : 'All Departments', count: 12 },
+    { id: 'school-uniforms', label: isRTL ? 'الزي المدرسي والملابس' : 'School Uniforms & Clothing', count: 3 },
+    { id: 'school-bags', label: isRTL ? 'الحقائب المدرسية والمستلزمات' : 'School Bags & Accessories', count: 2 },
+    { id: 'stationery-books', label: isRTL ? 'القرطاسية والكتب' : 'Stationery & Books', count: 4 },
+    { id: 'lunch-drinkware', label: isRTL ? 'حافظات الطعام وعلب المشروبات' : 'Lunch Boxes & Drinkware', count: 1 },
+    { id: 'shoes', label: isRTL ? 'الأحذية الرياضية والمدرسية' : 'Shoes & Footwear', count: 2 },
+    { id: 'electronics-mobile', label: isRTL ? 'الإلكترونيات وملحقات الهاتف' : 'Electronics & Mobile', count: 1 },
+    { id: 'fitness-sports', label: isRTL ? 'اللياقة البدنية والرياضة' : 'Fitness & Sports', count: 1 },
+    { id: 'travel-outdoor', label: isRTL ? 'السفر والرحلات الخارجية' : 'Travel & Outdoor', count: 1 }
   ];
 
   return (
@@ -242,18 +247,18 @@ export default function UniformsPage() {
         {/* Left Sidebar matching Reference Screenshot 2 */}
         <aside className="hide-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          {/* School Shop Brand Box */}
+          {/* Company Department Shop Box */}
           <div style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <div style={{ width: '38px', height: '38px', backgroundColor: '#800020', borderRadius: '8px', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ShoppingCart size={20} />
+              <div style={{ width: '42px', height: '42px', backgroundColor: '#800020', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}>
+                <img src="/images/company-emblem.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
               <div>
-                <h3 style={{ fontSize: '0.98rem', fontWeight: '800', color: '#111827', margin: 0 }}>
-                  School Shop
+                <h3 style={{ fontSize: '0.92rem', fontWeight: '800', color: '#111827', margin: 0, lineHeight: 1.25 }}>
+                  {isRTL ? 'تمكين الابتكارات الدولية' : 'Empowering Innovations'}
                 </h3>
-                <p style={{ fontSize: '0.74rem', color: '#6b7280', margin: '2px 0 0' }}>
-                  Shop official IPS Oman school uniforms and supplies
+                <p style={{ fontSize: '0.72rem', color: '#b8860b', fontWeight: '600', margin: '2px 0 0' }}>
+                  {isRTL ? '١١ قسماً متخصصاً' : '11 Department Store'}
                 </p>
               </div>
             </div>
@@ -262,7 +267,7 @@ export default function UniformsPage() {
           {/* Categories Nav */}
           <div style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
             <h4 style={{ fontSize: '0.92rem', fontWeight: '800', color: '#111827', margin: '0 0 1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #f3f4f6' }}>
-              Categories
+              {isRTL ? 'الأقسام المتاحة' : 'Product Departments'}
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               {categoriesList.map((cat) => (
@@ -293,16 +298,18 @@ export default function UniformsPage() {
             </div>
           </div>
 
-          {/* Promo Card with School Building */}
-          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', position: 'relative' }}>
+          {/* Classic Emblem Quality Card */}
+          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #d4af37', background: 'linear-gradient(135deg, #3d000f 0%, #68051e 100%)', padding: '1.25rem', color: '#ffffff', textAlign: 'center' }}>
             <img
-              src="/images/school-building-hero.jpg"
-              alt="IPS School"
-              style={{ width: '100%', height: '120px', objectFit: 'cover' }}
+              src="/images/company-emblem.png"
+              alt="Seal"
+              style={{ width: '56px', height: '56px', objectFit: 'contain', margin: '0 auto 0.75rem' }}
             />
-            <div style={{ backgroundColor: '#800020', padding: '1rem', color: '#ffffff' }}>
-              <div style={{ fontWeight: '800', fontSize: '0.92rem' }}>Official School Uniforms</div>
-              <div style={{ fontSize: '0.75rem', color: '#D4AF37', marginTop: '2px' }}>IPS Oman</div>
+            <div style={{ fontWeight: '800', fontSize: '0.92rem', color: '#f7df8b' }}>
+              {isRTL ? 'جودة معتمدة ١٠٠٪' : '100% Quality Guaranteed'}
+            </div>
+            <div style={{ fontSize: '0.74rem', color: '#e5d1d6', marginTop: '4px', lineHeight: 1.4 }}>
+              {isRTL ? 'تمكين الابتكارات الدولية (ش.م.م)' : 'Empowering International Innovations (L.L.C)'}
             </div>
           </div>
 
@@ -314,12 +321,12 @@ export default function UniformsPage() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.75rem' }}>
             <div>
               <h1 style={{ fontSize: '1.65rem', fontWeight: '800', color: '#111827', margin: 0 }}>
-                {isRTL ? 'مجموعة الزي المدرسي المعتمد' : 'School Uniforms Collection'}
+                {isRTL ? 'كتالوج المنتجات والأقسام' : 'Official Product Catalog'}
               </h1>
               <p style={{ fontSize: '0.86rem', color: '#6b7280', margin: '4px 0 0' }}>
                 {isRTL
-                  ? 'أزياء مدرسية وإكسسوارات عالية الجودة ومعتمدة لطلاب مدرسة الرواد الدولية.'
-                  : 'High-quality, approved uniforms and accessories for IPS Oman students.'}
+                  ? 'تسوق تشكيلة متكاملة من الملابس، الحقائب، القرطاسية والمستلزمات بأعلى معايير الجودة.'
+                  : 'Shop a curated collection across school essentials, clothing, accessories, and supplies.'}
               </p>
             </div>
 

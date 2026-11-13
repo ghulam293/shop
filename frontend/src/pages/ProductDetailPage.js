@@ -39,7 +39,7 @@ export const officialProductsList = [
       '/products/polo-collar-detail.jpg',
       '/products/polo-fabric-detail.jpg'
     ],
-    descEn: 'Official International Pioneers School uniform polo shirt. Breathable, durable cotton-blend pique featuring official school crest and contrast gold-trimmed collar and cuffs.',
+    descEn: 'Official premium uniform polo shirt. Breathable, durable cotton-blend pique featuring golden company crest and contrast gold-trimmed collar and cuffs.',
     descAr: 'قميص البولو الرسمي لمدرسة الرواد الدولية بصلالة. مصنوع من أجود خامات القطن المريحة مع شعار المدرسة الرسمي وياقة أنيقة بأطراف ذهبية.'
   },
   {
@@ -184,7 +184,7 @@ export const officialProductsList = [
     sizeLabel: 'Curriculum Stage',
     defaultSize: 'Stage 3',
     images: ['/images/category-books.jpg'],
-    descEn: 'Official Cambridge Primary English Learner Book approved for International Pioneers School curriculum.',
+    descEn: 'Official Cambridge Primary English Learner Book approved for student curriculum.',
     descAr: 'كتاب الطالب المعتمد لمنهاج كامبريدج للغة الإنجليزية لمدرسة الرواد الدولية.'
   },
   {
