@@ -296,18 +296,18 @@ export default function UniformsPage() {
   };
 
   const categoriesList = [
-    { id: 'all', label: isRTL ? 'جميع الأقسام' : 'All Categories', count: 16 },
-    { id: 'school-uniforms', label: isRTL ? 'الزي المدرسي' : 'School Uniforms', count: 3 },
-    { id: 'boys-trousers', label: isRTL ? 'بناطيل الأولاد' : "Boys' Trousers", count: 1 },
-    { id: 'girls-skirts', label: isRTL ? 'تنانير البنات' : "Girls' Skirts", count: 1 },
-    { id: 'shoes', label: isRTL ? 'الأحذية المدرسية' : 'School Shoes', count: 2 },
-    { id: 'accessories', label: isRTL ? 'الإكسسوارات والجوارب' : 'Accessories & Socks', count: 2 },
-    { id: 'stationery-books', label: isRTL ? 'الكتب والقرطاسية' : 'Books & Stationery', count: 4 },
-    { id: 'school-bags', label: isRTL ? 'الحقائب المدرسية' : 'School Bags', count: 1 },
-    { id: 'lunch-boxes', label: isRTL ? 'حافظات وعلب الطعام' : 'Lunch Boxes & Drinkware', count: 1 },
-    { id: 'electronics', label: isRTL ? 'الإلكترونيات والآلات' : 'Electronics & Tech', count: 1 },
-    { id: 'fitness-sports', label: isRTL ? 'اللياقة والرياضة' : 'Fitness & Sports', count: 1 },
-    { id: 'travel-outdoor', label: isRTL ? 'السفر والرحلات' : 'Travel & Outdoor', count: 1 }
+    { id: 'all', label: isRTL ? 'جميع الأقسام' : 'All Categories', count: 16, image: '/products/polo-shirt-front.jpg' },
+    { id: 'school-uniforms', label: isRTL ? 'الزي المدرسي' : 'School Uniforms', count: 3, image: '/products/polo-shirt-front.jpg' },
+    { id: 'boys-trousers', label: isRTL ? 'بناطيل الأولاد' : "Boys' Trousers", count: 1, image: '/products/boys-gray-trousers.jpg' },
+    { id: 'girls-skirts', label: isRTL ? 'تنانير البنات' : "Girls' Skirts", count: 1, image: '/products/girls-gray-skirt.jpg' },
+    { id: 'shoes', label: isRTL ? 'الأحذية المدرسية' : 'School Shoes', count: 2, image: '/products/boys-black-shoes.jpg' },
+    { id: 'accessories', label: isRTL ? 'الإكسسوارات والجوارب' : 'Accessories & Socks', count: 2, image: '/images/cat-accessories.jpg' },
+    { id: 'stationery-books', label: isRTL ? 'الكتب والقرطاسية' : 'Books & Stationery', count: 4, image: '/images/cat-books.jpg' },
+    { id: 'school-bags', label: isRTL ? 'الحقائب المدرسية' : 'School Bags', count: 1, image: '/images/cat-bags.jpg' },
+    { id: 'lunch-boxes', label: isRTL ? 'حافظات وعلب الطعام' : 'Lunch Boxes & Drinkware', count: 1, image: '/images/cat-lunchbox.jpg' },
+    { id: 'electronics', label: isRTL ? 'الإلكترونيات والآلات' : 'Electronics & Tech', count: 1, image: '/images/cat-electronics.jpg' },
+    { id: 'fitness-sports', label: isRTL ? 'اللياقة والرياضة' : 'Fitness & Sports', count: 1, image: '/images/cat-sports.jpg' },
+    { id: 'travel-outdoor', label: isRTL ? 'السفر والرحلات' : 'Travel & Outdoor', count: 1, image: '/images/cat-travel.jpg' }
   ];
 
   return (
@@ -339,7 +339,7 @@ export default function UniformsPage() {
             <h4 style={{ fontSize: '0.92rem', fontWeight: '800', color: '#111827', margin: '0 0 1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #f3f4f6' }}>
               {isRTL ? 'الفئات والأقسام' : 'Shop Categories'}
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
               {categoriesList.map((cat) => (
                 <button
                   key={cat.id}
@@ -347,21 +347,65 @@ export default function UniformsPage() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
+                    gap: '0.65rem',
+                    padding: '0.45rem 0.65rem',
+                    borderRadius: '10px',
+                    fontSize: '0.84rem',
                     fontWeight: selectedCategory === cat.id ? '700' : '500',
-                    backgroundColor: selectedCategory === cat.id ? '#fdf2f4' : 'transparent',
+                    backgroundColor: selectedCategory === cat.id ? '#fdf2f4' : '#ffffff',
                     color: selectedCategory === cat.id ? '#800020' : '#374151',
-                    border: 'none',
+                    border: selectedCategory === cat.id ? '1.5px solid #800020' : '1px solid #e5e7eb',
                     cursor: 'pointer',
-                    transition: 'all 0.15s'
+                    transition: 'all 0.18s ease',
+                    textAlign: isRTL ? 'right' : 'left',
+                    boxShadow: selectedCategory === cat.id ? '0 2px 8px rgba(128,0,32,0.08)' : 'none'
                   }}
                 >
-                  <span>{cat.label}</span>
-                  <span style={{ fontSize: '0.78rem', color: selectedCategory === cat.id ? '#800020' : '#9ca3af' }}>
-                    ({cat.count})
+                  {/* Landscape Category Thumbnail */}
+                  <div style={{
+                    width: '46px',
+                    height: '32px',
+                    borderRadius: '6px',
+                    overflow: 'hidden',
+                    backgroundColor: '#fbf9fa',
+                    border: '1px solid #ebdada',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <img
+                      src={cat.image}
+                      alt={cat.label}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        padding: '2px'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      lineHeight: '1.25'
+                    }}>
+                      {cat.label}
+                    </div>
+                  </div>
+
+                  <span style={{
+                    fontSize: '0.74rem',
+                    color: selectedCategory === cat.id ? '#800020' : '#9ca3af',
+                    fontWeight: '700',
+                    padding: '0.15rem 0.4rem',
+                    backgroundColor: selectedCategory === cat.id ? 'rgba(128,0,32,0.1)' : '#f3f4f6',
+                    borderRadius: '6px'
+                  }}>
+                    {cat.count}
                   </span>
                 </button>
               ))}

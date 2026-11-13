@@ -60,6 +60,18 @@ export default function CartPage() {
     }
   };
 
+  const fillDemoCard = () => {
+    setCardNumber('4111 2222 3333 4444');
+    setCardHolder('Ahmed Al-Balushi');
+    setCardExpiry('12/28');
+    setCardCvv('123');
+  };
+
+  const fillDemoCOD = () => {
+    setDeliveryPhone('+968 9123 4567');
+    setDeliveryAddress('Salalah, Sultan Qaboos Street');
+  };
+
   const handleCheckout = (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -528,6 +540,28 @@ export default function CartPage() {
                 padding: '1rem',
                 marginBottom: '1.25rem'
               }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
+                  <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#800020' }}>
+                    {isRTL ? 'بيانات البطاقة' : 'Card Details'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={fillDemoCard}
+                    style={{
+                      background: 'none',
+                      border: '1px solid #800020',
+                      color: '#800020',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '4px',
+                      fontSize: '0.72rem',
+                      fontWeight: '700',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isRTL ? 'تعبئة بطاقة تجريبية' : 'Fill Demo Card'}
+                  </button>
+                </div>
+
                 <div style={{ marginBottom: '0.75rem' }}>
                   <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
                     {isRTL ? 'رقم البطاقة البنكية:' : 'Card Number:'}
@@ -619,6 +653,28 @@ export default function CartPage() {
                 padding: '1rem',
                 marginBottom: '1.25rem'
               }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
+                  <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#800020' }}>
+                    {isRTL ? 'بيانات التسليم والدفع نقداً' : 'Delivery Details (Cash)'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={fillDemoCOD}
+                    style={{
+                      background: 'none',
+                      border: '1px solid #800020',
+                      color: '#800020',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '4px',
+                      fontSize: '0.72rem',
+                      fontWeight: '700',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isRTL ? 'تعبئة بيانات تجريبية' : 'Fill Demo Info'}
+                  </button>
+                </div>
+
                 <div style={{ marginBottom: '0.75rem' }}>
                   <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
                     {isRTL ? 'رقم هاتف التواصل للتسليم:' : 'Contact Phone Number:'}

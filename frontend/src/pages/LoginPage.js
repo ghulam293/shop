@@ -37,16 +37,16 @@ export default function LoginPage() {
     }
   };
 
-  const fillAdmin = () => {
-    setEmail('admin@ipsoman.com');
-    setPassword('Admin@IPS2026!');
+  const handleQuickLogin = async (role) => {
     setError('');
-  };
-
-  const fillParent = () => {
-    setEmail('parent@ipsoman.com');
-    setPassword('Parent@2026!');
-    setError('');
+    const demoEmail = role === 'admin' ? 'admin@shop.com' : 'customer@shop.com';
+    const demoPass = role === 'admin' ? 'Admin@IPS2026!' : 'Pass123456';
+    const res = await login(demoEmail, demoPass);
+    if (res.success) {
+      navigate(from, { replace: true });
+    } else {
+      setError(res.message || 'Login failed.');
+    }
   };
 
   return (
@@ -84,26 +84,26 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Quick Demo Credentials Helper */}
+        {/* 1-Click Instant Demo Login Helper */}
         <div style={{ backgroundColor: '#fdf2f4', border: '1px solid #f9dbe1', borderRadius: '10px', padding: '0.85rem', marginBottom: '1.5rem', fontSize: '0.78rem' }}>
-          <div style={{ fontWeight: '700', color: '#800020', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.4rem' }}>
-            <ShieldAlert size={14} />
-            <span>Quick Login Credentials:</span>
+          <div style={{ fontWeight: '700', color: '#800020', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.5rem' }}>
+            <ShieldAlert size={15} />
+            <span>{isRTL ? 'تسجيل دخول تجريبي فوري بنقرة واحدة:' : '1-Click Instant Demo Login:'}</span>
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button
               type="button"
-              onClick={fillAdmin}
-              style={{ backgroundColor: '#800020', color: '#fff', padding: '0.3rem 0.65rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: '600', cursor: 'pointer' }}
+              onClick={() => handleQuickLogin('customer')}
+              style={{ flex: 1, backgroundColor: '#800020', color: '#fff', border: 'none', padding: '0.45rem 0.75rem', borderRadius: '6px', fontSize: '0.78rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 2px 6px rgba(128,0,32,0.2)' }}
             >
-              Fill Admin Credentials
+              {isRTL ? 'دخول كعميل' : 'Login as Customer'}
             </button>
             <button
               type="button"
-              onClick={fillParent}
-              style={{ backgroundColor: '#D4AF37', color: '#111', padding: '0.3rem 0.65rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: '600', cursor: 'pointer' }}
+              onClick={() => handleQuickLogin('admin')}
+              style={{ flex: 1, backgroundColor: '#ffd700', color: '#4a0012', border: 'none', padding: '0.45rem 0.75rem', borderRadius: '6px', fontSize: '0.78rem', fontWeight: '800', cursor: 'pointer' }}
             >
-              Fill Demo Credentials
+              {isRTL ? 'دخول كمسؤول (Admin)' : 'Login as Admin'}
             </button>
           </div>
         </div>

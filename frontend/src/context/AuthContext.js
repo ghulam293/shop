@@ -45,11 +45,11 @@ export function AuthProvider({ children }) {
       console.warn('Backend API connection note, checking local credentials:', apiErr.message);
 
       // Check if Admin credentials
-      if (email.toLowerCase() === 'admin@ipsoman.com' && password === 'Admin@IPS2026!') {
+      if ((email.toLowerCase() === 'admin@shop.com' || email.toLowerCase() === 'admin@ipsoman.com') && password === 'Admin@IPS2026!') {
         const adminUser = {
           id: 1,
           fullName: 'Shop Administrator',
-          email: 'admin@ipsoman.com',
+          email: 'admin@shop.com',
           phoneNumber: '+968 23 234567',
           roles: ['ADMIN']
         };
