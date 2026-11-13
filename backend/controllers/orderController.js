@@ -77,7 +77,7 @@ export async function createOrder(req, res, next) {
         `INSERT INTO orders (
           order_number, user_id, fulfillment_method, shipping_address_id,
           pickup_campus, status, subtotal, discount_amount, shipping_fee, total_amount, notes
-        ) VALUES (?, ?, ?, ?, 'International Pioneers School, Salalah', 'PENDING', ?, 0.000, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, 'Store Main Collection', 'PENDING', ?, 0.000, ?, ?, ?)`,
         [orderNumber, userId, fulfillmentMethod, shippingAddressId, subtotal, shippingFee, totalAmount, notes]
       );
       const orderId = orderRes.insertId;

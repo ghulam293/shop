@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header.js';
 import Footer from './components/Footer.js';
+import BottomNavBar from './components/BottomNavBar.js';
 import HomePage from './pages/HomePage.js';
 import UniformsPage from './pages/UniformsPage.js';
 import ProductDetailPage from './pages/ProductDetailPage.js';
@@ -38,8 +39,11 @@ export default function App() {
             </Routes>
           </main>
 
-          {/* Main School Footer */}
+          {/* Main Footer */}
           <Footer />
+
+          {/* Native Mobile App Bottom Navigation Bar */}
+          <BottomNavBar />
         </div>
       </CartProvider>
     </AuthProvider>

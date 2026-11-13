@@ -1463,3 +1463,92 @@
   }
 }
 
+/* ==============================================================================
+   NATIVE MOBILE APP BOTTOM NAVIGATION BAR
+   Appears only on mobile/tablet screens for a native app feel
+   ============================================================================== */
+.mobile-bottom-app-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    padding-bottom: 64px;
+  }
+
+  .mobile-bottom-app-bar {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -3px 16px rgba(0, 0, 0, 0.08);
+    height: 62px;
+  }
+
+  .bottom-bar-inner {
+    max-width: 540px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 0.5rem;
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #6b7280;
+    font-size: 0.7rem;
+    font-weight: 600;
+    gap: 3px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    min-width: 54px;
+  }
+
+  .bottom-nav-item.active {
+    color: #800020;
+    font-weight: 800;
+  }
+
+  .bottom-nav-item.active .bottom-nav-icon-wrap {
+    transform: scale(1.08);
+  }
+
+  .bottom-nav-icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+  }
+
+  .bottom-nav-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: #800020;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 9999px;
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .bottom-nav-label {
+    line-height: 1;
+  }
+}
+
+
