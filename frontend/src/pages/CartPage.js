@@ -21,7 +21,7 @@ import { useLanguage } from '../context/LanguageContext.js';
 
 export default function CartPage() {
   const { items, itemCount, subtotal, shippingFee, total, updateQuantity, removeFromCart, clearCart } = useCart();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, login } = useAuth();
   const { t, isRTL } = useLanguage();
   const navigate = useNavigate();
 
@@ -448,6 +448,64 @@ export default function CartPage() {
               <span>OMR {total}</span>
             </div>
           </div>
+
+          {/* Login Required Notice if not logged in */}
+          {!isAuthenticated && (
+            <div style={{
+              backgroundColor: '#fffbeb',
+              border: '1.5px solid #fde68a',
+              borderRadius: '12px',
+              padding: '1rem',
+              marginBottom: '1.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.65rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#92400e', fontWeight: '800', fontSize: '0.9rem' }}>
+                <Lock size={18} color="#b45309" />
+                <span>{isRTL ? 'تسجيل الدخول مطلوب لإتمام الشراء' : 'Login Required to Complete Purchase'}</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#78350f', lineHeight: '1.4' }}>
+                {isRTL
+                  ? 'يجب تسجيل الدخول قبل إتمام الطلب والدفع. يمكنك تسجيل الدخول بنقرة واحدة كعميل تجريبي والمتابعة فوراً:'
+                  : 'You must be logged in before placing your order. You can use 1-click instant login below to proceed immediately:'}
+              </p>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+                <button
+                  type="button"
+                  onClick={() => login('demo@shop.com', 'customer123')}
+                  style={{
+                    backgroundColor: '#800020',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '0.5rem 0.85rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: '700',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ⚡ {isRTL ? 'دخول فوري كعميل تجريبي' : '1-Click Customer Demo Login'}
+                </button>
+                <Link
+                  to="/login"
+                  state={{ from: { pathname: '/cart' } }}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    color: '#800020',
+                    border: '1px solid #800020',
+                    padding: '0.5rem 0.85rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: '700',
+                    textDecoration: 'none'
+                  }}
+                >
+                  {isRTL ? 'صفحة تسجيل الدخول' : 'Go to Login Page'}
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* PAYMENT METHOD SELECTION (DEBIT CARD & CASH ON DELIVERY ONLY) */}
           <div style={{ marginBottom: '1.5rem' }}>

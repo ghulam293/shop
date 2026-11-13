@@ -8,20 +8,22 @@ import {
   ChevronDown,
   Menu,
   X,
-  Heart,
   LogOut,
   ShieldAlert,
   Package,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles,
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useCart } from '../context/CartContext.js';
 
 export default function Header() {
-  const { lang, toggleLanguage, t, isRTL } = useLanguage();
+  const { toggleLanguage, t, isRTL } = useLanguage();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
-  const { itemCount, wishlist } = useCart();
+  const { itemCount } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -30,11 +32,11 @@ export default function Header() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadNotifs, setUnreadNotifs] = useState(1);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [uniformsMenuOpen, setUniformsMenuOpen] = useState(false);
+  const [categoriesMenuOpen, setCategoriesMenuOpen] = useState(false);
 
   const notifRef = useRef(null);
   const userMenuRef = useRef(null);
-  const uniformsRef = useRef(null);
+  const categoriesRef = useRef(null);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -45,8 +47,8 @@ export default function Header() {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setUserMenuOpen(false);
       }
-      if (uniformsRef.current && !uniformsRef.current.contains(event.target)) {
-        setUniformsMenuOpen(false);
+      if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
+        setCategoriesMenuOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -65,7 +67,24 @@ export default function Header() {
     }
   };
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname === path || (path.includes('?') && `${location.pathname}${location.search}` === path);
+  };
+
+  const allCategoryPoints = [
+    { id: 'uniforms', nameEn: 'Uniforms', nameAr: 'الزي المدرسي', link: '/uniforms?category=school-uniforms', icon: '👕', badge: 'Official' },
+    { id: 'trousers', nameEn: "Boys' Trousers", nameAr: 'بناطيل الأولاد', link: '/uniforms?category=boys-trousers', icon: '👖', badge: 'Fit' },
+    { id: 'skirts', nameEn: "Girls' Skirts", nameAr: 'تنانير البنات', link: '/uniforms?category=girls-skirts', icon: '👗', badge: 'Pleated' },
+    { id: 'shoes', nameEn: 'Shoes & Footwear', nameAr: 'الأحذية المدرسية', link: '/uniforms?category=shoes', icon: '👞', badge: 'Leather' },
+    { id: 'accessories', nameEn: 'Accessories', nameAr: 'الإكسسوارات', link: '/uniforms?category=accessories', icon: '🎗️', badge: 'Belts & Socks' },
+    { id: 'books', nameEn: 'Books & Stationery', nameAr: 'الكتب والقرطاسية', link: '/uniforms?category=stationery-books', icon: '📚', badge: 'Curriculum' },
+    { id: 'bags', nameEn: 'Bags & Backpacks', nameAr: 'الحقائب المدرسية', link: '/uniforms?category=school-bags', icon: '🎒', badge: 'Ergonomic' },
+    { id: 'lunchware', nameEn: 'Lunchware & Bottles', nameAr: 'علب ومطارات الطعام', link: '/uniforms?category=lunch-boxes', icon: '🍱', badge: 'BPA-Free' },
+    { id: 'electronics', nameEn: 'Electronics & Tech', nameAr: 'الإلكترونيات والتقنية', link: '/uniforms?category=electronics', icon: '⚡', badge: 'Calculators' },
+    { id: 'sports', nameEn: 'Sports & Fitness', nameAr: 'اللياقة والرياضة', link: '/uniforms?category=fitness-sports', icon: '🏃', badge: 'Athletic' },
+    { id: 'travel', nameEn: 'Travel & Outdoor', nameAr: 'السفر والرحلات', link: '/uniforms?category=travel-outdoor', icon: '🧳', badge: 'Gear' }
+  ];
 
   return (
     <header className="header-wrapper">
@@ -99,13 +118,14 @@ export default function Header() {
           <div className="header-divider hide-mobile" />
 
           <Link to="/uniforms" className="btn-school-shop-pill hide-mobile">
-            <ShoppingCart size={15} />
-            <span>{isRTL ? 'تسوق الآن' : 'Shop Now'}</span>
+            <Sparkles size={14} color="#ffd700" />
+            <span>{isRTL ? 'تسوق المنتجات' : 'All Products'}</span>
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation Links */}
+        {/* Center: Desktop Navigation with Specific Points & Markdown Dropdown */}
         <nav className="header-nav">
+          {/* Specific Point 1: Home */}
           <Link
             to="/"
             className={`nav-link ${isActive('/') ? 'active-pill' : ''}`}
@@ -113,103 +133,116 @@ export default function Header() {
             {t('home')}
           </Link>
 
-          {/* Categories Navigation with Interactive Dropdown */}
-          <div style={{ position: 'relative' }} ref={uniformsRef}>
+          {/* Specific Point 2: Categories with Markdown Dropdown */}
+          <div style={{ position: 'relative' }} ref={categoriesRef}>
             <button
-              onClick={() => setUniformsMenuOpen(!uniformsMenuOpen)}
-              onMouseEnter={() => setUniformsMenuOpen(true)}
-              className={`nav-link ${isActive('/uniforms') || location.pathname.startsWith('/product') ? 'active-pill' : ''}`}
+              onClick={() => setCategoriesMenuOpen(!categoriesMenuOpen)}
+              onMouseEnter={() => setCategoriesMenuOpen(true)}
+              className={`nav-link ${location.search.includes('category') ? 'active-pill' : ''}`}
               style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
             >
+              <Layers size={14} />
               <span>{isRTL ? 'الفئات والأقسام' : 'Categories'}</span>
               <ChevronDown
                 size={14}
                 style={{
                   opacity: 0.7,
-                  transform: uniformsMenuOpen ? 'rotate(180deg)' : 'none',
+                  transform: categoriesMenuOpen ? 'rotate(180deg)' : 'none',
                   transition: 'transform 0.2s'
                 }}
               />
             </button>
 
-            {uniformsMenuOpen && (
+            {categoriesMenuOpen && (
               <div
                 className="dropdown-panel nav-dropdown"
-                onMouseLeave={() => setUniformsMenuOpen(false)}
-                style={{ minWidth: '300px', maxHeight: '440px', overflowY: 'auto' }}
+                onMouseLeave={() => setCategoriesMenuOpen(false)}
+                style={{ minWidth: '340px', maxHeight: '460px', overflowY: 'auto', padding: '0.6rem 0' }}
               >
-                <div className="dropdown-header">
-                  <span style={{ fontSize: '0.82rem', fontWeight: '800', color: '#800020' }}>
-                    {isRTL ? 'جميع الأقسام والفئات' : 'All Shop Categories'}
+                <div className="dropdown-header" style={{ padding: '0.6rem 1rem', borderBottom: '1.5px solid #f3e8eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.84rem', fontWeight: '800', color: '#800020' }}>
+                    {isRTL ? 'جميع الأقسام والفئات (11 قسماً)' : 'All 11 Categories & Departments'}
                   </span>
                   <Link
                     to="/uniforms"
-                    onClick={() => setUniformsMenuOpen(false)}
-                    style={{ fontSize: '0.75rem', color: '#800020', fontWeight: '700', textDecoration: 'underline' }}
+                    onClick={() => setCategoriesMenuOpen(false)}
+                    style={{ fontSize: '0.74rem', color: '#800020', fontWeight: '700', textDecoration: 'underline' }}
                   >
                     {isRTL ? 'عرض الكل' : 'View All'}
                   </Link>
                 </div>
-                <div className="dropdown-body">
-                  <Link to="/uniforms?category=school-uniforms" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>👕 {isRTL ? 'الزي المدرسي' : 'Uniforms'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=boys-trousers" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>👖 {isRTL ? 'بناطيل الأولاد' : "Boys' Trousers"}</span>
-                  </Link>
-                  <Link to="/uniforms?category=girls-skirts" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>👗 {isRTL ? 'تنانير البنات' : "Girls' Skirts"}</span>
-                  </Link>
-                  <Link to="/uniforms?category=shoes" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>👞 {isRTL ? 'الأحذية' : 'Shoes'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=accessories" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>🎗️ {isRTL ? 'الإكسسوارات' : 'Accessories'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=stationery-books" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>📚 {isRTL ? 'الكتب والقرطاسية' : 'Books & Stationery'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=school-bags" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>🎒 {isRTL ? 'الحقائب المدرسية' : 'School Bags'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=lunch-boxes" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>🍱 {isRTL ? 'علب الطعام ومطارات الماء' : 'Lunch Boxes & Drinkware'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=electronics" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>⚡ {isRTL ? 'الإلكترونيات وملحقاتها' : 'Electronics & Accessories'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=fitness-sports" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>🏃 {isRTL ? 'اللياقة والرياضة' : 'Fitness & Sports'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=travel-outdoor" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>🧳 {isRTL ? 'السفر والرحلات' : 'Travel & Outdoor'}</span>
-                  </Link>
+                <div className="dropdown-body" style={{ padding: '0.4rem 0.5rem' }}>
+                  {allCategoryPoints.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={item.link}
+                      onClick={() => setCategoriesMenuOpen(false)}
+                      className="dropdown-link"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.55rem 0.75rem',
+                        borderRadius: '8px',
+                        textDecoration: 'none',
+                        transition: 'background-color 0.15s ease'
+                      }}
+                    >
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.86rem', fontWeight: '600', color: '#1f2937' }}>
+                        <span>{item.icon}</span>
+                        <span>{isRTL ? item.nameAr : item.nameEn}</span>
+                      </span>
+                      <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#800020', backgroundColor: '#fcf2f4', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>
+                        {item.badge}
+                      </span>
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}
           </div>
 
+          {/* Specific Point 3: Uniforms */}
           <Link
             to="/uniforms?category=school-uniforms"
-            className="nav-link"
+            className={`nav-link ${location.search.includes('school-uniforms') ? 'active-pill' : ''}`}
           >
             {isRTL ? 'الزي المدرسي' : 'Uniforms'}
           </Link>
 
+          {/* Specific Point 4: Shoes */}
+          <Link
+            to="/uniforms?category=shoes"
+            className={`nav-link ${location.search.includes('shoes') ? 'active-pill' : ''}`}
+          >
+            {isRTL ? 'الأحذية' : 'Shoes'}
+          </Link>
+
+          {/* Specific Point 5: Books & Stationery */}
           <Link
             to="/uniforms?category=stationery-books"
-            className="nav-link"
+            className={`nav-link ${location.search.includes('stationery-books') ? 'active-pill' : ''}`}
           >
             {isRTL ? 'الكتب والقرطاسية' : 'Books & Stationery'}
           </Link>
 
+          {/* Specific Point 6: Electronics */}
           <Link
             to="/uniforms?category=electronics"
-            className="nav-link"
+            className={`nav-link ${location.search.includes('electronics') ? 'active-pill' : ''}`}
           >
             {isRTL ? 'الإلكترونيات' : 'Electronics'}
           </Link>
 
+          {/* Specific Point 7: Sports */}
+          <Link
+            to="/uniforms?category=fitness-sports"
+            className={`nav-link ${location.search.includes('fitness-sports') ? 'active-pill' : ''}`}
+          >
+            {isRTL ? 'الرياضة' : 'Sports'}
+          </Link>
+
+          {/* Specific Point 8: My Orders */}
           <Link
             to="/my-orders"
             className={`nav-link ${isActive('/my-orders') ? 'active-pill' : ''}`}
@@ -217,19 +250,18 @@ export default function Header() {
             {t('myOrders')}
           </Link>
 
-          {isAdmin && (
-            <Link
-              to="/admin"
-              className={`nav-link ${isActive('/admin') ? 'active-pill' : ''}`}
-              style={{ color: '#800020', fontWeight: '700' }}
-            >
-              <ShieldAlert size={15} />
-              <span>Admin</span>
-            </Link>
-          )}
+          {/* Specific Point 9: Admin Dashboard */}
+          <Link
+            to="/admin"
+            className={`nav-link ${isActive('/admin') ? 'active-pill' : ''}`}
+            style={{ color: '#800020', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+          >
+            <ShieldAlert size={15} />
+            <span>{isRTL ? 'لوحة التحكم' : 'Admin'}</span>
+          </Link>
         </nav>
 
-        {/* Right: Search, Notifications, Cart, Parent Login, Language */}
+        {/* Right: Search, Notifications, Cart, Login & Language */}
         <div className="header-right">
           {/* Search Input Pill */}
           <form onSubmit={handleSearchSubmit} className="search-box-pill hide-mobile">
@@ -249,7 +281,7 @@ export default function Header() {
             />
           </form>
 
-          {/* Notifications Dropdown */}
+          {/* Store Notifications Dropdown */}
           <div style={{ position: 'relative' }} ref={notifRef}>
             <button
               className="icon-btn-round"
@@ -264,7 +296,7 @@ export default function Header() {
               <div className="dropdown-panel notif-dropdown">
                 <div className="dropdown-header">
                   <h4 style={{ fontSize: '0.9rem', fontWeight: '700', color: '#800020', margin: 0 }}>
-                    {isRTL ? 'إشعارات المدرسة' : 'School Notifications'}
+                    {isRTL ? 'إشعارات المتجر' : 'Store Notifications'}
                   </h4>
                   {unreadNotifs > 0 ? (
                     <button
@@ -282,12 +314,12 @@ export default function Header() {
                     <CheckCircle2 size={18} style={{ color: '#800020', flexShrink: 0 }} />
                     <div>
                       <p style={{ fontSize: '0.82rem', fontWeight: '600', color: '#111827', margin: 0 }}>
-                        {isRTL ? 'الزي المدرسي المعتمد متوفر' : 'Approved Uniform Stock Ready'}
+                        {isRTL ? 'جميع المنتجات والمقاسات متوفرة' : 'Store Collection in Stock'}
                       </p>
                       <p style={{ fontSize: '0.74rem', color: '#6b7280', margin: '2px 0 0' }}>
                         {isRTL
-                          ? 'تتوفر مقاسات قمصان البولو والبناطيل والتنانير المعتمدة بفرع صلالة.'
-                          : 'Full uniform sizing in stock for polo shirts, trousers, and skirts.'}
+                          ? 'تتوفر مقاسات الزي الرسمي، الأحذية، الحقائب والكتب والقرطاسية مع خياري الدفع بالبطاقة أو نقداً عند الاستلام.'
+                          : 'Uniforms, shoes, bags, books and accessories in stock with debit card & cash on delivery.'}
                       </p>
                     </div>
                   </div>
@@ -302,7 +334,7 @@ export default function Header() {
             {itemCount > 0 && <span className="badge-count">{itemCount}</span>}
           </Link>
 
-          {/* User Account / Parent Login Dropdown */}
+          {/* User Account / Login Dropdown */}
           <div style={{ position: 'relative' }} ref={userMenuRef}>
             {isAuthenticated ? (
               <button
@@ -317,7 +349,7 @@ export default function Header() {
             ) : (
               <Link to="/login" className="btn-parent-login">
                 <User size={16} />
-                <span>{t('parentLogin')}</span>
+                <span>{isRTL ? 'تسجيل الدخول' : 'Login'}</span>
               </Link>
             )}
 
@@ -332,12 +364,10 @@ export default function Header() {
                   </p>
                 </div>
                 <div className="dropdown-body" style={{ padding: '0.4rem 0' }}>
-                  {isAdmin && (
-                    <Link to="/admin" className="dropdown-link" style={{ color: '#800020', fontWeight: '600' }}>
-                      <ShieldAlert size={16} />
-                      <span>Admin Dashboard</span>
-                    </Link>
-                  )}
+                  <Link to="/admin" className="dropdown-link" style={{ color: '#800020', fontWeight: '600' }}>
+                    <ShieldAlert size={16} />
+                    <span>{isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}</span>
+                  </Link>
                   <Link to="/my-orders" className="dropdown-link">
                     <Package size={16} />
                     <span>{t('myOrders')}</span>
@@ -369,14 +399,14 @@ export default function Header() {
             className="btn-lang-toggle"
             title="Switch Language"
           >
-            {lang === 'en' ? 'عربي' : 'EN'}
+            {isRTL ? 'English' : 'عربي'}
           </button>
         </div>
       </div>
 
-      {/* Mobile Slide-Out Navigation Drawer */}
+      {/* Mobile Drawer with Specific Points & Sub-points */}
       {mobileMenuOpen && (
-        <div className="mobile-drawer-backdrop" onClick={() => setMobileMenuOpen(false)}>
+        <div className="mobile-drawer-overlay" onClick={() => setMobileMenuOpen(false)}>
           <div
             className="mobile-drawer"
             onClick={(e) => e.stopPropagation()}
@@ -397,7 +427,7 @@ export default function Header() {
             {/* Mobile Search */}
             <form onSubmit={handleSearchSubmit} style={{ padding: '1rem', borderBottom: '1px solid #f3f4f6' }}>
               <div style={{ position: 'relative' }}>
-                <Search size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                <Search size={16} style={{ position: 'absolute', [isRTL ? 'right' : 'left']: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
                 <input
                   type="text"
                   placeholder={t('searchPlaceholder')}
@@ -405,7 +435,7 @@ export default function Header() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '0.6rem 0.75rem 0.6rem 2.25rem',
+                    padding: isRTL ? '0.6rem 2.25rem 0.6rem 0.75rem' : '0.6rem 0.75rem 0.6rem 2.25rem',
                     border: '1px solid #d1d5db',
                     borderRadius: '8px',
                     fontSize: '0.85rem'
@@ -414,54 +444,33 @@ export default function Header() {
               </div>
             </form>
 
-            <div className="mobile-drawer-links">
+            <div className="mobile-drawer-links" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
               <Link to="/" className={`mobile-nav-link ${isActive('/') ? 'active' : ''}`}>
-                {t('home')}
+                🏠 {t('home')} (All Categories)
               </Link>
               <Link to="/uniforms" className={`mobile-nav-link ${isActive('/uniforms') ? 'active' : ''}`}>
-                {isRTL ? 'جميع الأقسام الـ 11' : 'All 11 Departments'}
+                🛍️ {isRTL ? 'جميع المنتجات (المتجر)' : 'All Products (Shop)'}
               </Link>
-              <Link to="/uniforms?category=school-uniforms" className="mobile-nav-link">
-                1. {isRTL ? 'الزي المدرسي والملابس' : 'School Uniforms & Clothing'}
-              </Link>
-              <Link to="/uniforms?category=school-bags" className="mobile-nav-link">
-                2. {isRTL ? 'الحقائب المدرسية والمستلزمات' : 'School Bags & Accessories'}
-              </Link>
-              <Link to="/uniforms?category=stationery-books" className="mobile-nav-link">
-                3. {isRTL ? 'القرطاسية والكتب' : 'Stationery & Books'}
-              </Link>
-              <Link to="/uniforms?category=lunch-boxes" className="mobile-nav-link">
-                4. {isRTL ? 'علب الطعام ومطارات المشروبات' : 'Lunch Boxes & Drinkware'}
-              </Link>
-              <Link to="/uniforms?category=healthcare" className="mobile-nav-link">
-                5. {isRTL ? 'الرعاية الصحية والعناية' : 'Healthcare & Personal Care'}
-              </Link>
-              <Link to="/uniforms?category=fitness-sports" className="mobile-nav-link">
-                6. {isRTL ? 'اللياقة والرياضة' : 'Fitness & Sports'}
-              </Link>
-              <Link to="/uniforms?category=electronics" className="mobile-nav-link">
-                7. {isRTL ? 'الإلكترونيات وملحقات الهاتف' : 'Electronics & Mobile'}
-              </Link>
-              <Link to="/uniforms?category=toys-educational" className="mobile-nav-link">
-                8. {isRTL ? 'ألعاب الذكاء والتعليم' : 'Toys & Educational Products'}
-              </Link>
-              <Link to="/uniforms?category=gifts-craft" className="mobile-nav-link">
-                9. {isRTL ? 'الهدايا والأعمال الفنية' : 'Gifts, Art & Craft'}
-              </Link>
-              <Link to="/uniforms?category=household" className="mobile-nav-link">
-                10. {isRTL ? 'المستلزمات المنزلية' : 'Household & Daily Essentials'}
-              </Link>
-              <Link to="/uniforms?category=travel-outdoor" className="mobile-nav-link">
-                11. {isRTL ? 'السفر والرحلات' : 'Travel & Outdoor'}
-              </Link>
-              <Link to="/my-orders" className={`mobile-nav-link ${isActive('/my-orders') ? 'active' : ''}`}>
-                {t('myOrders')}
-              </Link>
-              {isAdmin && (
-                <Link to="/admin" className="mobile-nav-link" style={{ color: '#800020', fontWeight: '700' }}>
-                  Admin Dashboard
+
+              <div style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: '800', color: '#800020', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {isRTL ? 'الأقسام والفئات:' : 'Departments & Categories:'}
+              </div>
+
+              {allCategoryPoints.map((item) => (
+                <Link key={item.id} to={item.link} className="mobile-nav-link" style={{ paddingInlineStart: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>{item.icon} {isRTL ? item.nameAr : item.nameEn}</span>
+                  <span style={{ fontSize: '0.7rem', color: '#800020', fontWeight: '700' }}>{item.badge}</span>
                 </Link>
-              )}
+              ))}
+
+              <div style={{ height: '1px', backgroundColor: '#e5e7eb', margin: '0.5rem 0' }} />
+
+              <Link to="/my-orders" className={`mobile-nav-link ${isActive('/my-orders') ? 'active' : ''}`}>
+                📦 {t('myOrders')}
+              </Link>
+              <Link to="/admin" className="mobile-nav-link" style={{ color: '#800020', fontWeight: '700' }}>
+                🛡️ {isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}
+              </Link>
             </div>
 
             <div className="mobile-drawer-footer">
@@ -485,7 +494,7 @@ export default function Header() {
                   style={{ width: '100%', textDecoration: 'none' }}
                 >
                   <User size={16} />
-                  <span>{t('parentLogin')}</span>
+                  <span>{isRTL ? 'تسجيل الدخول' : 'Login'}</span>
                 </Link>
               )}
             </div>

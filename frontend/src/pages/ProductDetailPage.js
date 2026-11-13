@@ -345,7 +345,7 @@ export default function ProductDetailPage() {
   const { id } = useParams();
   const { addToCart, toggleWishlist, isInWishlist } = useCart();
   const { t, isRTL } = useLanguage();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
 
   // Find the exact product clicked
@@ -581,20 +581,40 @@ export default function ProductDetailPage() {
 
           {/* Login Required Notice */}
           {!isAuthenticated && (
-            <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem', color: '#92400e', fontSize: '0.86rem' }}>
-              <Lock size={16} style={{ color: '#b45309', flexShrink: 0 }} />
-              <span>
-                {isRTL
-                  ? 'شراء الزي والمستلزمات المدرسية يتطلب تسجيل الدخول.'
-                  : 'Purchasing school items requires login.'}
-              </span>
-              <Link
-                to="/login"
-                state={{ from: { pathname: `/product/${product.id}` }, message: isRTL ? 'يرجى تسجيل الدخول أولاً لإتمام الشراء والطلب.' : 'Please log in to purchase and place an order.' }}
-                style={{ color: '#800020', fontWeight: '700', textDecoration: 'underline', marginInlineStart: 'auto' }}
-              >
-                {isRTL ? 'تسجيل الدخول' : 'Login'}
-              </Link>
+            <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px', padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.65rem', marginBottom: '1.25rem', color: '#92400e', fontSize: '0.86rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Lock size={16} style={{ color: '#b45309', flexShrink: 0 }} />
+                <span style={{ fontWeight: '600' }}>
+                  {isRTL
+                    ? 'شراء المنتجات يتطلب تسجيل الدخول أولاً.'
+                    : 'Customer login is required to purchase items.'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => login('demo@shop.com', 'customer123')}
+                  style={{
+                    backgroundColor: '#800020',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: '700',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ⚡ {isRTL ? 'دخول فوري كعميل' : 'Instant Demo Login'}
+                </button>
+                <Link
+                  to="/login"
+                  state={{ from: { pathname: `/product/${product.id}` }, message: isRTL ? 'يرجى تسجيل الدخول أولاً لإتمام الشراء والطلب.' : 'Please log in to purchase and place an order.' }}
+                  style={{ color: '#800020', fontWeight: '700', textDecoration: 'underline', fontSize: '0.8rem' }}
+                >
+                  {isRTL ? 'صفحة الدخول' : 'Login Page'}
+                </Link>
+              </div>
             </div>
           )}
 
