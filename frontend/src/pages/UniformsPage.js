@@ -167,15 +167,68 @@ export default function UniformsPage() {
     {
       id: 12,
       category: 'stationery',
+      subCategory: 'school-bags',
       sku: 'BAG-MRN-01',
       nameEn: 'School Backpack (Maroon)',
       nameAr: 'حقيبة مدرسية طبية مريحة (عنابي)',
       descEn: 'Ergonomic spine-support school bag',
       descAr: 'حقيبة مدرسية طبية مريحة مع دعم للظهر',
       price: 14.500,
-      image: '/images/category-books.jpg',
+      image: '/images/cat-bags.jpg',
       sizes: ['Junior (Grades 1-4)', 'Senior (Grades 5-12)'],
       defaultSize: 'Senior (Grades 5-12)'
+    },
+    {
+      id: 13,
+      category: 'lunch-boxes',
+      sku: 'LUNCH-BOX-SET',
+      nameEn: 'Insulated Lunch Box & Water Bottle Set',
+      nameAr: 'حافظة طعام ومطارة ماء عازلة للحرارة',
+      descEn: 'BPA-free leakproof lunch container with stainless steel bottle',
+      descAr: 'حافظة طعام مانعة للتسرب خالية من مادة BPA مع مطارة ماء ستانلس ستيل',
+      price: 5.500,
+      image: '/images/cat-lunchbox.jpg',
+      sizes: ['Standard (750ml)', 'Large (1000ml)'],
+      defaultSize: 'Standard (750ml)'
+    },
+    {
+      id: 14,
+      category: 'electronics',
+      sku: 'ELEC-CALC-SET',
+      nameEn: 'Scientific Calculator & Digital Stylus',
+      nameAr: 'آلة حاسبة علمية وقلم لمس رقمي',
+      descEn: 'High-precision scientific calculator approved for school exams',
+      descAr: 'آلة حاسبة علمية دقيقة ومعتمدة للاختبارات والمناهج المدرسية',
+      price: 8.500,
+      image: '/images/cat-electronics.jpg',
+      sizes: ['Standard Model'],
+      defaultSize: 'Standard Model'
+    },
+    {
+      id: 15,
+      category: 'fitness-sports',
+      sku: 'SPRT-TRAIN-SET',
+      nameEn: 'Athletics Training Shoes & Sport Bag',
+      nameAr: 'حذاء رياضي تدريبي وحقيبة رياضية',
+      descEn: 'Cushioned breathable athletic sports shoes with gym bag',
+      descAr: 'حذاء تدريب رياضي مبطن وخفيف الوزن مع حقيبة رياضية',
+      price: 11.500,
+      image: '/images/cat-sports.jpg',
+      sizes: ['32', '34', '36', '38', '40', '42'],
+      defaultSize: '36'
+    },
+    {
+      id: 16,
+      category: 'travel-outdoor',
+      sku: 'TRVL-BAG-DUF',
+      nameEn: 'Multi-Pocket Travel & Outdoor Duffel',
+      nameAr: 'حقيبة سفر ورحلات خارجية متعددة الجيوب',
+      descEn: 'Waterproof durable travel luggage bag with shoulder strap',
+      descAr: 'حقيبة سفر مقاومة للماء ومتينة مع حزام كتف مريح',
+      price: 13.000,
+      image: '/images/cat-travel.jpg',
+      sizes: ['Medium (35L)', 'Large (50L)'],
+      defaultSize: 'Medium (35L)'
     }
   ];
 
@@ -188,10 +241,24 @@ export default function UniformsPage() {
           product.category === selectedCategory ||
           product.subCategory === selectedCategory ||
           (selectedCategory === 'school-uniforms' && (product.category === 'uniforms' || product.category === 'school-uniforms')) ||
-          (selectedCategory === 'school-bags' && (product.category === 'bags' || product.category === 'school-bags' || product.category === 'accessories')) ||
+          (selectedCategory === 'uniforms' && (product.category === 'uniforms' || product.category === 'school-uniforms')) ||
+          (selectedCategory === 'boys-trousers' && (product.subCategory === 'boys-trousers' || product.category === 'trousers')) ||
+          (selectedCategory === 'trousers' && (product.subCategory === 'boys-trousers' || product.category === 'trousers')) ||
+          (selectedCategory === 'girls-skirts' && (product.subCategory === 'girls-skirts' || product.category === 'skirts')) ||
+          (selectedCategory === 'skirts' && (product.subCategory === 'girls-skirts' || product.category === 'skirts')) ||
+          (selectedCategory === 'shoes' && product.category === 'shoes') ||
+          (selectedCategory === 'accessories' && product.category === 'accessories') ||
           (selectedCategory === 'stationery-books' && (product.category === 'books' || product.category === 'stationery')) ||
           (selectedCategory === 'books-stationery' && (product.category === 'books' || product.category === 'stationery')) ||
-          (selectedCategory === 'shoes' && product.category === 'shoes');
+          (selectedCategory === 'books' && product.category === 'books') ||
+          (selectedCategory === 'stationery' && product.category === 'stationery') ||
+          (selectedCategory === 'school-bags' && (product.category === 'school-bags' || product.subCategory === 'school-bags' || product.id === 12)) ||
+          (selectedCategory === 'lunch-boxes' && (product.category === 'lunch-boxes' || product.category === 'lunch-drinkware')) ||
+          (selectedCategory === 'lunch-drinkware' && (product.category === 'lunch-boxes' || product.category === 'lunch-drinkware')) ||
+          (selectedCategory === 'electronics' && (product.category === 'electronics' || product.category === 'electronics-mobile')) ||
+          (selectedCategory === 'electronics-mobile' && (product.category === 'electronics' || product.category === 'electronics-mobile')) ||
+          (selectedCategory === 'fitness-sports' && (product.category === 'fitness-sports' || product.category === 'sports')) ||
+          (selectedCategory === 'travel-outdoor' && (product.category === 'travel-outdoor' || product.category === 'travel'));
         if (!matchesCategory) return false;
       }
 
@@ -229,15 +296,18 @@ export default function UniformsPage() {
   };
 
   const categoriesList = [
-    { id: 'all', label: isRTL ? 'جميع الأقسام' : 'All Departments', count: 12 },
-    { id: 'school-uniforms', label: isRTL ? 'الزي المدرسي والملابس' : 'School Uniforms & Clothing', count: 3 },
-    { id: 'school-bags', label: isRTL ? 'الحقائب المدرسية والمستلزمات' : 'School Bags & Accessories', count: 2 },
-    { id: 'stationery-books', label: isRTL ? 'القرطاسية والكتب' : 'Stationery & Books', count: 4 },
-    { id: 'lunch-drinkware', label: isRTL ? 'حافظات الطعام وعلب المشروبات' : 'Lunch Boxes & Drinkware', count: 1 },
-    { id: 'shoes', label: isRTL ? 'الأحذية الرياضية والمدرسية' : 'Shoes & Footwear', count: 2 },
-    { id: 'electronics-mobile', label: isRTL ? 'الإلكترونيات وملحقات الهاتف' : 'Electronics & Mobile', count: 1 },
-    { id: 'fitness-sports', label: isRTL ? 'اللياقة البدنية والرياضة' : 'Fitness & Sports', count: 1 },
-    { id: 'travel-outdoor', label: isRTL ? 'السفر والرحلات الخارجية' : 'Travel & Outdoor', count: 1 }
+    { id: 'all', label: isRTL ? 'جميع الأقسام' : 'All Categories', count: 16 },
+    { id: 'school-uniforms', label: isRTL ? 'الزي المدرسي' : 'School Uniforms', count: 3 },
+    { id: 'boys-trousers', label: isRTL ? 'بناطيل الأولاد' : "Boys' Trousers", count: 1 },
+    { id: 'girls-skirts', label: isRTL ? 'تنانير البنات' : "Girls' Skirts", count: 1 },
+    { id: 'shoes', label: isRTL ? 'الأحذية المدرسية' : 'School Shoes', count: 2 },
+    { id: 'accessories', label: isRTL ? 'الإكسسوارات والجوارب' : 'Accessories & Socks', count: 2 },
+    { id: 'stationery-books', label: isRTL ? 'الكتب والقرطاسية' : 'Books & Stationery', count: 4 },
+    { id: 'school-bags', label: isRTL ? 'الحقائب المدرسية' : 'School Bags', count: 1 },
+    { id: 'lunch-boxes', label: isRTL ? 'حافظات وعلب الطعام' : 'Lunch Boxes & Drinkware', count: 1 },
+    { id: 'electronics', label: isRTL ? 'الإلكترونيات والآلات' : 'Electronics & Tech', count: 1 },
+    { id: 'fitness-sports', label: isRTL ? 'اللياقة والرياضة' : 'Fitness & Sports', count: 1 },
+    { id: 'travel-outdoor', label: isRTL ? 'السفر والرحلات' : 'Travel & Outdoor', count: 1 }
   ];
 
   return (

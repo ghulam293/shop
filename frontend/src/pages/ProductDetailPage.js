@@ -262,6 +262,82 @@ export const officialProductsList = [
     images: ['/images/category-books.jpg'],
     descEn: 'Official maroon backpack with ergonomic orthopedic back padding, reflective safety strips, water-repellent fabric, and heavy-duty zippers.',
     descAr: 'حقيبة مدرسية متينة باللون العنابي، تصميم مريح للظهر مزودة بشرائط عاكسة وأقمشة مقاومة للماء.'
+  },
+  {
+    id: 13,
+    sku: 'LUNCH-BOX-SET',
+    nameEn: 'Insulated Lunch Box & Water Bottle Set',
+    nameAr: 'حافظة طعام ومطارة ماء عازلة للحرارة',
+    subtitleEn: 'Food-grade Stainless Steel & BPA-Free Container',
+    subtitleAr: 'ستانلس ستيل غذائي آمن ومضاد للتسرب خالي من مادة BPA',
+    category: 'Lunch Boxes',
+    categorySlug: 'lunch-boxes',
+    price: 5.500,
+    rating: 4.9,
+    reviewsCount: 64,
+    sizes: ['Standard (750ml)', 'Large (1000ml)'],
+    sizeLabel: 'Capacity Size',
+    defaultSize: 'Standard (750ml)',
+    images: ['/images/cat-lunchbox.jpg'],
+    descEn: 'High-grade insulated lunch box with multi-layer compartments and matching leakproof water bottle. Keeps food fresh for hours.',
+    descAr: 'حافظة طعام معزولة عالية الجودة مع أقسام متعددة ومطارة ماء مانعة للتسرب، تحفظ الطعام طازجاً لساعات.'
+  },
+  {
+    id: 14,
+    sku: 'ELEC-CALC-SET',
+    nameEn: 'Scientific Calculator & Digital Stylus',
+    nameAr: 'آلة حاسبة علمية وقلم لمس رقمي',
+    subtitleEn: 'Exam-Approved Scientific & Computing Kit',
+    subtitleAr: 'طقم حسابي متطور معتمد للاختبارات والمناهج',
+    category: 'Electronics',
+    categorySlug: 'electronics',
+    price: 8.500,
+    rating: 4.8,
+    reviewsCount: 52,
+    sizes: ['Standard Model'],
+    sizeLabel: 'Kit Version',
+    defaultSize: 'Standard Model',
+    images: ['/images/cat-electronics.jpg'],
+    descEn: 'Multifunctional dual-power scientific calculator with high-contrast display and ergonomic stylus pen for digital learning tablets.',
+    descAr: 'آلة حاسبة علمية متعددة الوظائف تعمل بالطاقة المزدوجة مع شاشة عالية الوضوح وقلم لمس دقيق للأجهزة اللوحية.'
+  },
+  {
+    id: 15,
+    sku: 'SPRT-TRAIN-SET',
+    nameEn: 'Athletics Training Shoes & Sport Bag',
+    nameAr: 'حذاء رياضي تدريبي وحقيبة رياضية',
+    subtitleEn: 'Cushioned Non-Slip School Sports Gear',
+    subtitleAr: 'أدوات رياضية مدرسية مبطنة مانعة للانزلاق',
+    category: 'Sports',
+    categorySlug: 'fitness-sports',
+    price: 11.500,
+    rating: 4.9,
+    reviewsCount: 88,
+    sizes: ['32', '34', '36', '38', '40', '42'],
+    sizeLabel: 'Shoe Size',
+    defaultSize: '36',
+    images: ['/images/cat-sports.jpg'],
+    descEn: 'Breathable lightweight athletic sport shoes with shock-absorbing soles and a durable gym drawstring kit bag.',
+    descAr: 'حذاء تدريب رياضي خفيف الوزن ومسامي بنعل ممتص للصدمات مع حقيبة رياضية متينة للأنشطة والتربية الرياضية.'
+  },
+  {
+    id: 16,
+    sku: 'TRVL-BAG-DUF',
+    nameEn: 'Multi-Pocket Travel & Outdoor Duffel',
+    nameAr: 'حقيبة سفر ورحلات خارجية متعددة الجيوب',
+    subtitleEn: 'Heavy-Duty Water-Repellent Adventure Bag',
+    subtitleAr: 'حقيبة رحلات متينة ومقاومة للماء لكافة الاستخدامات',
+    category: 'Travel',
+    categorySlug: 'travel-outdoor',
+    price: 13.000,
+    rating: 5.0,
+    reviewsCount: 71,
+    sizes: ['Medium (35L)', 'Large (50L)'],
+    sizeLabel: 'Bag Capacity',
+    defaultSize: 'Medium (35L)',
+    images: ['/images/cat-travel.jpg'],
+    descEn: 'Spacious all-weather travel bag with reinforced carry handles, adjustable shoulder strap, and dedicated shoe compartment.',
+    descAr: 'حقيبة سفر واسعة ومقاومة لجميع الظروف الجوية مزودة بمقابض معززة وحزام كتف قابل للتعديل ومقصورة خاصة للأحذية.'
   }
 ];
 
@@ -311,6 +387,28 @@ export default function ProductDetailPage() {
     );
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      navigate('/login', {
+        state: { from: { pathname: '/cart' }, message: isRTL ? 'يرجى تسجيل الدخول أولاً لإتمام الشراء.' : 'Please log in to purchase.' }
+      });
+      return;
+    }
+    addToCart(
+      {
+        id: product.id,
+        sku: product.sku,
+        name_en: product.nameEn,
+        name_ar: product.nameAr,
+        base_price: product.price,
+        image: product.images[0]
+      },
+      selectedSize,
+      quantity
+    );
+    navigate('/cart');
   };
 
   return (
@@ -500,17 +598,42 @@ export default function ProductDetailPage() {
             </div>
           )}
 
-          {/* Action Buttons: Add to Cart & Wishlist */}
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+          {/* Action Buttons: Add to Cart, Buy Now & Wishlist */}
+          <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
             {isAuthenticated ? (
-              <button
-                onClick={handleAddCurrent}
-                className="btn-primary"
-                style={{ flex: 1, minWidth: '180px', padding: '0.85rem 1.5rem', borderRadius: '8px', fontSize: '1rem', fontWeight: '700', backgroundColor: added ? '#16a34a' : '#800020' }}
-              >
-                <ShoppingCart size={19} />
-                <span>{added ? (isRTL ? 'تمت الإضافة للسلة!' : 'Added to Cart!') : (isRTL ? `إضافة إلى السلة • ${(product.price * quantity).toFixed(3)} ر.ع` : `Add to Cart • OMR ${(product.price * quantity).toFixed(3)}`)}</span>
-              </button>
+              <>
+                <button
+                  onClick={handleAddCurrent}
+                  className="btn-primary"
+                  style={{ flex: 1, minWidth: '160px', padding: '0.85rem 1.25rem', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '700', backgroundColor: added ? '#16a34a' : '#800020' }}
+                >
+                  <ShoppingCart size={18} />
+                  <span>{added ? (isRTL ? 'تمت الإضافة!' : 'Added!') : (isRTL ? 'إضافة إلى السلة' : 'Add to Cart')}</span>
+                </button>
+                <button
+                  onClick={handleBuyNow}
+                  style={{
+                    flex: 1,
+                    minWidth: '160px',
+                    padding: '0.85rem 1.25rem',
+                    borderRadius: '8px',
+                    fontSize: '0.95rem',
+                    fontWeight: '800',
+                    backgroundColor: '#ffd700',
+                    color: '#4a0012',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    boxShadow: '0 2px 8px rgba(212, 175, 55, 0.3)'
+                  }}
+                >
+                  <span>{isRTL ? 'شراء الآن مباشرة' : 'Buy Now'}</span>
+                  <ArrowRight size={17} style={{ transform: isRTL ? 'rotate(180deg)' : 'none' }} />
+                </button>
+              </>
             ) : (
               <button
                 onClick={() => navigate('/login', { state: { from: { pathname: `/product/${product.id}` }, message: isRTL ? 'يرجى تسجيل الدخول أولاً لإتمام الشراء والطلب.' : 'Please log in to purchase and place an order.' } })}
@@ -528,7 +651,7 @@ export default function ProductDetailPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.85rem 1.5rem',
+                padding: '0.85rem 1.25rem',
                 borderRadius: '8px',
                 border: '1px solid #d1d5db',
                 backgroundColor: '#ffffff',
@@ -538,7 +661,7 @@ export default function ProductDetailPage() {
               }}
             >
               <Heart size={18} fill={isInWishlist(product.id) ? '#dc2626' : 'none'} />
-              <span>{isInWishlist(product.id) ? (isRTL ? 'في المفضلة' : 'Saved in Wishlist') : (isRTL ? 'إضافة للمفضلة' : 'Add to Wishlist')}</span>
+              <span>{isInWishlist(product.id) ? (isRTL ? 'في المفضلة' : 'Saved') : (isRTL ? 'المفضلة' : 'Wishlist')}</span>
             </button>
           </div>
 
