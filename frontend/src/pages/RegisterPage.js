@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, Lock, GraduationCap, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
+import { ShoppingCart, User, Mail, Phone, Lock, GraduationCap, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { useLanguage } from '../context/LanguageContext.js';
 

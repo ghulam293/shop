@@ -286,7 +286,9 @@
 }
 
 .nav-dropdown {
-  width: 260px;
+  min-width: 340px;
+  max-width: 420px;
+  width: auto;
   left: 0;
   right: auto;
 }
@@ -1473,7 +1475,7 @@
 
 @media (max-width: 768px) {
   .app-layout {
-    padding-bottom: 64px;
+    padding-bottom: 72px;
   }
 
   .mobile-bottom-app-bar {
@@ -1483,10 +1485,12 @@
     left: 0;
     right: 0;
     z-index: 999;
-    background: #ffffff;
-    border-top: 1px solid #e5e7eb;
-    box-shadow: 0 -3px 16px rgba(0, 0, 0, 0.08);
-    height: 62px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1.5px solid #ebdada;
+    box-shadow: 0 -4px 24px rgba(128, 0, 32, 0.09);
+    height: 64px;
   }
 
   .bottom-bar-inner {

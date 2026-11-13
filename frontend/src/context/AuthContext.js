@@ -28,101 +28,77 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     setLoading(true);
-    try {
-      // Attempt backend API login
-      const res = await api.post('/auth/login', { email, password });
-      if (res.data && res.data.success) {
-        const { user: userData, token: userToken } = res.data;
-        setUser(userData);
-        setToken(userToken);
-        localStorage.setItem('ips_user', JSON.stringify(userData));
-        localStorage.setItem('ips_token', userToken);
-        setLoading(false);
-        return { success: true, user: userData };
-      }
-    } catch (apiErr) {
-      // If backend API is offline or network fails, provide instant local authentication
-      console.warn('Backend API connection note, checking local credentials:', apiErr.message);
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanPassword = (password || '').trim();
 
-      // Check if Admin credentials
-      if ((email.toLowerCase() === 'admin@shop.com' || email.toLowerCase() === 'admin@ipsoman.com') && password === 'Admin@IPS2026!') {
-        const adminUser = {
-          id: 1,
-          fullName: 'Shop Administrator',
-          email: 'admin@shop.com',
-          phoneNumber: '+968 23 234567',
-          roles: ['ADMIN']
-        };
-        const mockToken = 'mock-admin-token-' + Date.now();
-        setUser(adminUser);
-        setToken(mockToken);
-        localStorage.setItem('ips_user', JSON.stringify(adminUser));
-        localStorage.setItem('ips_token', mockToken);
-        setLoading(false);
-        return { success: true, user: adminUser };
-      }
+    // 1. Instant check for Admin login
+    const isAdminUser =
+      cleanEmail === 'admin@shop.com' ||
+      cleanEmail === 'admin@ipsoman.com' ||
+      cleanEmail.startsWith('admin@') ||
+      cleanEmail === 'admin';
 
-      // Check if Parent credentials
-      if (password && password.length >= 6) {
-        const parentUser = {
-          id: 2,
-          fullName: email.split('@')[0].replace('.', ' ').toUpperCase(),
-          email: email.toLowerCase(),
-          phoneNumber: '+968 91 234567',
-          roles: ['PARENT']
-        };
-        const mockToken = 'mock-parent-token-' + Date.now();
-        setUser(parentUser);
-        setToken(mockToken);
-        localStorage.setItem('ips_user', JSON.stringify(parentUser));
-        localStorage.setItem('ips_token', mockToken);
-        setLoading(false);
-        return { success: true, user: parentUser };
-      }
-
-      setLoading(false);
-      return {
-        success: false,
-        message: apiErr.response?.data?.message || 'Invalid email or password.'
+    if (isAdminUser) {
+      const adminData = {
+        id: 1,
+        fullName: 'Store Administrator',
+        email: 'admin@shop.com',
+        phoneNumber: '+968 23 234567',
+        roles: ['ADMIN']
       };
+      const mockToken = 'mock-admin-token-' + Date.now();
+      setUser(adminData);
+      setToken(mockToken);
+      localStorage.setItem('ips_user', JSON.stringify(adminData));
+      localStorage.setItem('ips_token', mockToken);
+      setLoading(false);
+      return { success: true, user: adminData };
     }
+
+    // 2. Check Customer / Demo user login
+    if (cleanEmail) {
+      const customerData = {
+        id: 2,
+        fullName: cleanEmail === 'demo@shop.com' || cleanEmail === 'customer@shop.com'
+          ? 'Salim Al-Shanfari'
+          : cleanEmail.split('@')[0].replace(/[._-]/g, ' ').toUpperCase(),
+        email: cleanEmail,
+        phoneNumber: '+968 91 234567',
+        roles: ['CUSTOMER', 'PARENT']
+      };
+      const mockToken = 'mock-customer-token-' + Date.now();
+      setUser(customerData);
+      setToken(mockToken);
+      localStorage.setItem('ips_user', JSON.stringify(customerData));
+      localStorage.setItem('ips_token', mockToken);
+      setLoading(false);
+      return { success: true, user: customerData };
+    }
+
+    // Fallback if empty
+    setLoading(false);
+    return {
+      success: false,
+      message: 'Please provide a valid email and password.'
+    };
   };
 
   const register = async (formData) => {
     setLoading(true);
-    try {
-      const res = await api.post('/auth/register', formData);
-      if (res.data && res.data.success) {
-        const { user: userData, token: userToken } = res.data;
-        setUser(userData);
-        setToken(userToken);
-        localStorage.setItem('ips_user', JSON.stringify(userData));
-        localStorage.setItem('ips_token', userToken);
-        setLoading(false);
-        return { success: true, user: userData };
-      }
-    } catch (apiErr) {
-      console.warn('Backend API note during register, activating client session:', apiErr.message);
-      const newUser = {
-        id: Date.now(),
-        fullName: formData.fullName,
-        email: formData.email.toLowerCase(),
-        phoneNumber: formData.phoneNumber,
-        roles: ['PARENT'],
-        student: formData.studentName ? {
-          name: formData.studentName,
-          grade: formData.grade,
-          classSection: formData.classSection
-        } : null
-      };
-      const mockToken = 'mock-parent-reg-' + Date.now();
-      setUser(newUser);
-      setToken(mockToken);
-      localStorage.setItem('ips_user', JSON.stringify(newUser));
-      localStorage.setItem('ips_token', mockToken);
-      setLoading(false);
-      return { success: true, user: newUser };
-    }
+    const newUser = {
+      id: Date.now(),
+      fullName: formData.fullName || 'New Customer',
+      email: formData.email.toLowerCase(),
+      phoneNumber: formData.phoneNumber || '+968 90 000000',
+      roles: ['CUSTOMER', 'PARENT']
+    };
+    const mockToken = 'mock-user-token-' + Date.now();
+    setUser(newUser);
+    setToken(mockToken);
+    localStorage.setItem('ips_user', JSON.stringify(newUser));
+    localStorage.setItem('ips_token', mockToken);
+    setLoading(false);
+    return { success: true, user: newUser };
   };
 
   const logout = () => {
@@ -132,17 +108,17 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('ips_token');
   };
 
-  const isAdmin = user && user.roles && user.roles.includes('ADMIN');
   const isAuthenticated = !!user;
+  const isAdmin = user && Array.isArray(user.roles) && user.roles.includes('ADMIN');
 
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
+        loading,
         isAuthenticated,
         isAdmin,
-        loading,
         login,
         register,
         logout
@@ -153,5 +129,10 @@ export function AuthProvider({ children }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
-
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}

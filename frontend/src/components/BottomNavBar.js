@@ -28,7 +28,7 @@ export default function BottomNavBar() {
       id: 'categories',
       labelEn: 'Categories',
       labelAr: 'الفئات',
-      path: '/uniforms',
+      path: '/#categories',
       icon: Grid
     },
     {
