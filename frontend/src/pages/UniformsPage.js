@@ -247,18 +247,18 @@ export default function UniformsPage() {
         {/* Left Sidebar matching Reference Screenshot 2 */}
         <aside className="hide-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          {/* Company Department Shop Box */}
+          {/* Shop Brand Box - No Logo */}
           <div style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <div style={{ width: '42px', height: '42px', backgroundColor: '#800020', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}>
-                <img src="/images/company-emblem.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ width: '42px', height: '42px', backgroundColor: '#800020', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                <ShoppingCart size={22} />
               </div>
               <div>
-                <h3 style={{ fontSize: '0.92rem', fontWeight: '800', color: '#111827', margin: 0, lineHeight: 1.25 }}>
-                  {isRTL ? 'تمكين الابتكارات الدولية' : 'Empowering Innovations'}
+                <h3 style={{ fontSize: '1.15rem', fontWeight: '900', color: '#800020', margin: 0, lineHeight: 1.2 }}>
+                  {isRTL ? 'المتجر' : 'Shop'}
                 </h3>
-                <p style={{ fontSize: '0.72rem', color: '#b8860b', fontWeight: '600', margin: '2px 0 0' }}>
-                  {isRTL ? '١١ قسماً متخصصاً' : '11 Department Store'}
+                <p style={{ fontSize: '0.74rem', color: '#6b7280', margin: '2px 0 0' }}>
+                  {isRTL ? 'المتجر الإلكتروني المعتمد' : 'Official Online Store'}
                 </p>
               </div>
             </div>
@@ -267,7 +267,7 @@ export default function UniformsPage() {
           {/* Categories Nav */}
           <div style={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
             <h4 style={{ fontSize: '0.92rem', fontWeight: '800', color: '#111827', margin: '0 0 1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #f3f4f6' }}>
-              {isRTL ? 'الأقسام المتاحة' : 'Product Departments'}
+              {isRTL ? 'الفئات والأقسام' : 'Shop Categories'}
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               {categoriesList.map((cat) => (
@@ -298,18 +298,13 @@ export default function UniformsPage() {
             </div>
           </div>
 
-          {/* Classic Emblem Quality Card */}
-          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #d4af37', background: 'linear-gradient(135deg, #3d000f 0%, #68051e 100%)', padding: '1.25rem', color: '#ffffff', textAlign: 'center' }}>
-            <img
-              src="/images/company-emblem.png"
-              alt="Seal"
-              style={{ width: '56px', height: '56px', objectFit: 'contain', margin: '0 auto 0.75rem' }}
-            />
-            <div style={{ fontWeight: '800', fontSize: '0.92rem', color: '#f7df8b' }}>
-              {isRTL ? 'جودة معتمدة ١٠٠٪' : '100% Quality Guaranteed'}
+          {/* Clean Quality & Payment Card - No Logo */}
+          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', backgroundColor: '#fdf8f9', padding: '1.25rem', textAlign: 'center' }}>
+            <div style={{ fontWeight: '800', fontSize: '0.92rem', color: '#800020', marginBottom: '0.4rem' }}>
+              {isRTL ? 'طرق دفع معتمدة' : 'Accepted Payments'}
             </div>
-            <div style={{ fontSize: '0.74rem', color: '#e5d1d6', marginTop: '4px', lineHeight: 1.4 }}>
-              {isRTL ? 'تمكين الابتكارات الدولية (ش.م.م)' : 'Empowering International Innovations (L.L.C)'}
+            <div style={{ fontSize: '0.78rem', color: '#4b5563', lineHeight: '1.5' }}>
+              {isRTL ? '• بطاقة بنكية (خصم / ائتمان)\n• الدفع نقداً عند الاستلام' : '• Debit / Credit Card\n• Cash on Delivery (COD)'}
             </div>
           </div>
 

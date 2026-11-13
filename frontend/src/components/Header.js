@@ -79,30 +79,28 @@ export default function Header() {
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Left: Official Company Logo, Company Name, Shop Button */}
+        {/* Left: Only Shop Name - No Logo */}
         <div className="header-left">
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img
-              src="/images/company-emblem.png"
-              alt="Empowering International Innovations"
-              className="school-logo-img"
-              style={{ height: '44px', width: 'auto', objectFit: 'contain' }}
-            />
-            <div className="school-branding-text">
-              <span className="school-name-ar" style={{ fontWeight: '800', color: '#111827', fontSize: '0.92rem' }}>
-                تمكين الابتكارات الدولية (ش.م.م)
-              </span>
-              <span className="school-name-en" style={{ fontWeight: '700', color: '#800020', fontSize: '0.74rem', letterSpacing: '0.02em' }}>
-                Empowering International Innovations (L.L.C)
-              </span>
-            </div>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <span style={{
+              fontSize: '1.45rem',
+              fontWeight: '900',
+              color: '#800020',
+              letterSpacing: '-0.02em',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem'
+            }}>
+              <ShoppingCart size={24} color="#800020" />
+              <span>{isRTL ? 'المتجر' : 'Shop'}</span>
+            </span>
           </Link>
 
           <div className="header-divider hide-mobile" />
 
           <Link to="/uniforms" className="btn-school-shop-pill hide-mobile">
-            <ShoppingCart size={16} />
-            <span>{isRTL ? 'المتجر الشامل' : 'Shop All'}</span>
+            <ShoppingCart size={15} />
+            <span>{isRTL ? 'تسوق الآن' : 'Shop Now'}</span>
           </Link>
         </div>
 
@@ -115,7 +113,7 @@ export default function Header() {
             {t('home')}
           </Link>
 
-          {/* 11 Departments Navigation with Interactive Dropdown */}
+          {/* Categories Navigation with Interactive Dropdown */}
           <div style={{ position: 'relative' }} ref={uniformsRef}>
             <button
               onClick={() => setUniformsMenuOpen(!uniformsMenuOpen)}
@@ -123,7 +121,7 @@ export default function Header() {
               className={`nav-link ${isActive('/uniforms') || location.pathname.startsWith('/product') ? 'active-pill' : ''}`}
               style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
             >
-              <span>{isRTL ? 'الأقسام الـ 11' : '11 Departments'}</span>
+              <span>{isRTL ? 'الفئات والأقسام' : 'Categories'}</span>
               <ChevronDown
                 size={14}
                 style={{
@@ -138,53 +136,53 @@ export default function Header() {
               <div
                 className="dropdown-panel nav-dropdown"
                 onMouseLeave={() => setUniformsMenuOpen(false)}
-                style={{ minWidth: '300px', maxHeight: '420px', overflowY: 'auto' }}
+                style={{ minWidth: '300px', maxHeight: '440px', overflowY: 'auto' }}
               >
                 <div className="dropdown-header">
                   <span style={{ fontSize: '0.82rem', fontWeight: '800', color: '#800020' }}>
-                    {isRTL ? 'أقسام المتجر الـ 11' : 'Shop 11 Departments'}
+                    {isRTL ? 'جميع الأقسام والفئات' : 'All Shop Categories'}
                   </span>
                   <Link
                     to="/uniforms"
                     onClick={() => setUniformsMenuOpen(false)}
-                    style={{ fontSize: '0.75rem', color: '#6b7280', textDecoration: 'underline' }}
+                    style={{ fontSize: '0.75rem', color: '#800020', fontWeight: '700', textDecoration: 'underline' }}
                   >
                     {isRTL ? 'عرض الكل' : 'View All'}
                   </Link>
                 </div>
                 <div className="dropdown-body">
                   <Link to="/uniforms?category=school-uniforms" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>1. {isRTL ? 'الزي المدرسي والملابس' : 'School Uniforms & Clothing'}</span>
+                    <span>👕 {isRTL ? 'الزي المدرسي' : 'Uniforms'}</span>
                   </Link>
-                  <Link to="/uniforms?category=school-bags" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>2. {isRTL ? 'الحقائب المدرسية والمستلزمات' : 'School Bags & Accessories'}</span>
+                  <Link to="/uniforms?category=boys-trousers" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
+                    <span>👖 {isRTL ? 'بناطيل الأولاد' : "Boys' Trousers"}</span>
+                  </Link>
+                  <Link to="/uniforms?category=girls-skirts" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
+                    <span>👗 {isRTL ? 'تنانير البنات' : "Girls' Skirts"}</span>
+                  </Link>
+                  <Link to="/uniforms?category=shoes" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
+                    <span>👞 {isRTL ? 'الأحذية' : 'Shoes'}</span>
+                  </Link>
+                  <Link to="/uniforms?category=accessories" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
+                    <span>🎗️ {isRTL ? 'الإكسسوارات' : 'Accessories'}</span>
                   </Link>
                   <Link to="/uniforms?category=stationery-books" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>3. {isRTL ? 'القرطاسية والكتب الدراسية' : 'Stationery & Books'}</span>
+                    <span>📚 {isRTL ? 'الكتب والقرطاسية' : 'Books & Stationery'}</span>
+                  </Link>
+                  <Link to="/uniforms?category=school-bags" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
+                    <span>🎒 {isRTL ? 'الحقائب المدرسية' : 'School Bags'}</span>
                   </Link>
                   <Link to="/uniforms?category=lunch-boxes" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>4. {isRTL ? 'علب الطعام ومطارات المشروبات' : 'Lunch Boxes & Drinkware'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=healthcare" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>5. {isRTL ? 'الرعاية الصحية والعناية الشخصية' : 'Healthcare & Personal Care'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=fitness-sports" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>6. {isRTL ? 'معدات اللياقة والرياضة' : 'Fitness & Sports Equipment'}</span>
+                    <span>🍱 {isRTL ? 'علب الطعام ومطارات الماء' : 'Lunch Boxes & Drinkware'}</span>
                   </Link>
                   <Link to="/uniforms?category=electronics" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>7. {isRTL ? 'الإلكترونيات وملحقات الهاتف' : 'Electronics & Mobile Accessories'}</span>
+                    <span>⚡ {isRTL ? 'الإلكترونيات وملحقاتها' : 'Electronics & Accessories'}</span>
                   </Link>
-                  <Link to="/uniforms?category=toys-educational" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>8. {isRTL ? 'ألعاب الذكاء والتعليم' : 'Toys & Educational Products'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=gifts-craft" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>9. {isRTL ? 'الهدايا والأعمال الفنية' : 'Gifts, Art & Craft'}</span>
-                  </Link>
-                  <Link to="/uniforms?category=household" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>10. {isRTL ? 'المستلزمات المنزلية اليومية' : 'Household & Daily Essentials'}</span>
+                  <Link to="/uniforms?category=fitness-sports" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
+                    <span>🏃 {isRTL ? 'اللياقة والرياضة' : 'Fitness & Sports'}</span>
                   </Link>
                   <Link to="/uniforms?category=travel-outdoor" onClick={() => setUniformsMenuOpen(false)} className="dropdown-link">
-                    <span>11. {isRTL ? 'إكسسوارات السفر والرحلات' : 'Travel & Outdoor Accessories'}</span>
+                    <span>🧳 {isRTL ? 'السفر والرحلات' : 'Travel & Outdoor'}</span>
                   </Link>
                 </div>
               </div>
@@ -385,16 +383,11 @@ export default function Header() {
             style={{ direction: isRTL ? 'rtl' : 'ltr' }}
           >
             <div className="mobile-drawer-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <img src="/images/company-emblem.png" alt="EII Logo" style={{ height: '38px', width: 'auto' }} />
-                <div>
-                  <div style={{ fontWeight: '800', color: '#800020', fontSize: '0.88rem' }}>
-                    تمكين الابتكارات الدولية
-                  </div>
-                  <div style={{ fontSize: '0.7rem', color: '#4b5563', fontWeight: '600' }}>
-                    Empowering International Innovations
-                  </div>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.35rem', fontWeight: '900', color: '#800020', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <ShoppingCart size={22} color="#800020" />
+                  {isRTL ? 'المتجر' : 'Shop'}
+                </span>
               </div>
               <button onClick={() => setMobileMenuOpen(false)} style={{ color: '#374151', background: 'none', border: 'none', cursor: 'pointer' }}>
                 <X size={22} />

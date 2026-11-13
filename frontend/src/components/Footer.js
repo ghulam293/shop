@@ -1,93 +1,106 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Clock, Layers, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, ShoppingCart, ShieldCheck, CreditCard, Banknote } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.js';
 
 export default function Footer() {
   const { isRTL } = useLanguage();
 
   return (
-    <footer style={{ backgroundColor: '#111827', color: '#e5e7eb', marginTop: 'auto', borderTop: '4px solid #D4AF37' }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '3.5rem 1.5rem 1.5rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2.5rem', marginBottom: '2.5rem' }}>
+    <footer style={{ backgroundColor: '#111827', color: '#e5e7eb', marginTop: 'auto', borderTop: '3px solid #800020' }}>
+      <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '3rem 1.5rem 1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2.5rem', marginBottom: '2.5rem' }}>
           
-          {/* Col 1: Company Identity */}
+          {/* Col 1: Only Shop Name */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-              <img
-                src="/images/company-emblem.png"
-                alt="Empowering International Innovations"
-                style={{ height: '52px', width: 'auto' }}
-              />
-              <div>
-                <h4 style={{ color: '#D4AF37', fontSize: '1.05rem', fontWeight: '800', margin: 0 }}>
-                  {isRTL ? 'تمكين الابتكارات الدولية (ش.م.م)' : 'Empowering International Innovations (L.L.C)'}
-                </h4>
-                <p style={{ color: '#9ca3af', fontSize: '0.78rem', margin: '3px 0 0' }}>
-                  {isRTL ? 'متجر الأقسام المتكاملة' : 'Premier Multi-Department Shop'}
-                </p>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '1.4rem', fontWeight: '900', color: '#ffd700', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <ShoppingCart size={22} color="#ffd700" />
+                {isRTL ? 'المتجر' : 'Shop'}
+              </span>
             </div>
-            <p style={{ color: '#9ca3af', fontSize: '0.84rem', lineHeight: '1.65' }}>
+            <p style={{ color: '#9ca3af', fontSize: '0.85rem', lineHeight: '1.65', marginBottom: '1.25rem' }}>
               {isRTL
-                ? 'متجر متكامل يجمع أحد عشر قسماً رئيسياً لتلبية احتياجات الطلاب، العائلات، المعلمين ومحبي الرياضة والسفر في تجربة تسوق واحدة وراقية.'
-                : 'A convenient retail destination bringing eleven product departments together in one place: school, family, health, fitness, technology, household, and travel essentials.'}
+                ? 'متجر إلكتروني متكامل يوفر أزياء المدارس، الأحذية، الحقائب، الكتب، القرطاسية وكافة المستلزمات اليومية بجودة مضمونة.'
+                : 'Your comprehensive shopping destination for school uniforms, footwear, backpacks, books, stationery, and daily essentials.'}
             </p>
+            {/* Accepted Payments */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                backgroundColor: '#1f2937',
+                padding: '0.35rem 0.75rem',
+                borderRadius: '6px',
+                fontSize: '0.78rem',
+                color: '#f3f4f6'
+              }}>
+                <CreditCard size={15} color="#ffd700" />
+                Debit / Credit Card
+              </span>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                backgroundColor: '#1f2937',
+                padding: '0.35rem 0.75rem',
+                borderRadius: '6px',
+                fontSize: '0.78rem',
+                color: '#f3f4f6'
+              }}>
+                <Banknote size={15} color="#ffd700" />
+                Cash on Delivery
+              </span>
+            </div>
           </div>
 
-          {/* Col 2: The 11 Departments */}
+          {/* Col 2: Categories */}
           <div>
             <h4 style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: '700', marginBottom: '1rem', borderBottom: '2px solid #800020', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              {isRTL ? 'أقسام المتجر الـ 11' : '11 Retail Departments'}
+              {isRTL ? 'الفئات الرئيسية' : 'Popular Categories'}
             </h4>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.45rem', fontSize: '0.82rem' }}>
-              <Link to="/uniforms?category=school-uniforms" style={{ color: '#9ca3af', textDecoration: 'none' }}>1. School Uniforms & Clothing</Link>
-              <Link to="/uniforms?category=school-bags" style={{ color: '#9ca3af', textDecoration: 'none' }}>2. School Bags & Accessories</Link>
-              <Link to="/uniforms?category=stationery-books" style={{ color: '#9ca3af', textDecoration: 'none' }}>3. Stationery & Books</Link>
-              <Link to="/uniforms?category=lunch-boxes" style={{ color: '#9ca3af', textDecoration: 'none' }}>4. Lunch Boxes & Drinkware</Link>
-              <Link to="/uniforms?category=healthcare" style={{ color: '#9ca3af', textDecoration: 'none' }}>5. Healthcare & Personal Care</Link>
-              <Link to="/uniforms?category=fitness-sports" style={{ color: '#9ca3af', textDecoration: 'none' }}>6. Fitness & Sports Equipment</Link>
-              <Link to="/uniforms?category=electronics" style={{ color: '#9ca3af', textDecoration: 'none' }}>7. Electronics & Mobile Accessories</Link>
-              <Link to="/uniforms?category=travel-outdoor" style={{ color: '#9ca3af', textDecoration: 'none' }}>8-11. Toys, Gifts, Home & Travel</Link>
+              <Link to="/uniforms?category=school-uniforms" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Uniforms & Shirts</Link>
+              <Link to="/uniforms?category=boys-trousers" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Boys' Trousers</Link>
+              <Link to="/uniforms?category=girls-skirts" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Girls' Pleated Skirts</Link>
+              <Link to="/uniforms?category=shoes" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Leather School Shoes</Link>
+              <Link to="/uniforms?category=accessories" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Belts, Ties & Socks</Link>
+              <Link to="/uniforms?category=stationery-books" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Books & Stationery</Link>
             </div>
           </div>
 
-          {/* Col 3: Customer Groups & Services */}
+          {/* Col 3: Customer Service */}
           <div>
             <h4 style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: '700', marginBottom: '1rem', borderBottom: '2px solid #800020', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              {isRTL ? 'فئات العملاء والخدمات' : 'Customer Groups Served'}
+              {isRTL ? 'خدمة العملاء' : 'Customer Care'}
             </h4>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.82rem', color: '#9ca3af' }}>
-              <li>• <strong>Students & Parents:</strong> Uniforms, bags, lunchware & books</li>
-              <li>• <strong>Teachers & Schools:</strong> Classroom materials & stationery</li>
-              <li>• <strong>Office Workers:</strong> Computer accessories & chargers</li>
-              <li>• <strong>Fitness Customers:</strong> Sports gear & drinkware</li>
-              <li>• <strong>Travellers & Outdoors:</strong> Luggage, organizers & gear</li>
-              <li>• <strong>General Shoppers:</strong> Tech, gifts & household items</li>
-            </ul>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.82rem', color: '#9ca3af' }}>
+              <Link to="/my-orders" style={{ color: '#9ca3af', textDecoration: 'none' }}>• {isRTL ? 'تتبع الطلبات' : 'Order Tracking'}</Link>
+              <Link to="/cart" style={{ color: '#9ca3af', textDecoration: 'none' }}>• {isRTL ? 'سلة التسوق' : 'Shopping Cart'}</Link>
+              <Link to="/login" style={{ color: '#9ca3af', textDecoration: 'none' }}>• {isRTL ? 'تسجيل الدخول' : 'Account Login'}</Link>
+              <span>• {isRTL ? 'سياسة استبدال المقاسات خلال ٧ أيام' : '7-Day Size Exchange Policy'}</span>
+              <span>• {isRTL ? 'دفع آمن بالبطاقة أو نقداً' : 'Secure Card & Cash on Delivery'}</span>
+            </div>
           </div>
 
-          {/* Col 4: Contact & Operations */}
+          {/* Col 4: Operations & Hours */}
           <div>
             <h4 style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: '700', marginBottom: '1rem', borderBottom: '2px solid #800020', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              {isRTL ? 'التواصل وخدمة العملاء' : 'Support & Operations'}
+              {isRTL ? 'أوقات العمل والتواصل' : 'Hours & Support'}
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.84rem', color: '#9ca3af' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                <MapPin size={16} style={{ color: '#D4AF37', marginTop: '2px', flexShrink: 0 }} />
-                <span>Empowering International Innovations (L.L.C), Customer Support & Fulfillment</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Clock size={16} style={{ color: '#ffd700', flexShrink: 0 }} />
+                <span>Sat – Thu: 8:00 AM – 8:00 PM</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Clock size={16} style={{ color: '#D4AF37', flexShrink: 0 }} />
-                <span>Working Hours: Sat – Thu: 8:00 AM – 8:00 PM</span>
+                <ShieldCheck size={16} style={{ color: '#ffd700', flexShrink: 0 }} />
+                <span>100% Guaranteed Satisfaction</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Mail size={16} style={{ color: '#D4AF37', flexShrink: 0 }} />
-                <span>support@empoweringinnovations.com</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <ShieldCheck size={16} style={{ color: '#D4AF37', flexShrink: 0 }} />
-                <span>Written Exchange, Warranty & Return Policy</span>
+                <Mail size={16} style={{ color: '#ffd700', flexShrink: 0 }} />
+                <span>support@shop.com</span>
               </div>
             </div>
           </div>
@@ -95,9 +108,18 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div style={{ borderTop: '1px solid #1f2937', paddingTop: '1.5rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', color: '#6b7280' }}>
-          <p>© {new Date().getFullYear()} Empowering International Innovations (L.L.C) • تمكين الابتكارات الدولية (ش.م.م). All Rights Reserved.</p>
-          <p style={{ color: '#D4AF37' }}>Phase 1 Core Launch • 11 Product Departments</p>
+        <div style={{
+          borderTop: '1px solid #1f2937',
+          paddingTop: '1.25rem',
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '0.78rem',
+          color: '#6b7280'
+        }}>
+          <p>© {new Date().getFullYear()} Shop. All Rights Reserved.</p>
+          <p style={{ color: '#ffd700' }}>{isRTL ? 'دفع بالبطاقة البنكية • نقداً عند الاستلام' : 'Debit Card • Cash on Delivery'}</p>
         </div>
       </div>
     </footer>
