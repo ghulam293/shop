@@ -8,7 +8,7 @@ export default function CategoryCards() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('ALL');
 
-  // The 11 official shop departments defined in Shop_Proposal.pdf
+  // The 11 official curated shop collections defined in Shop_Proposal.pdf
   const departments = [
     {
       id: 'school-uniforms',
@@ -21,7 +21,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=school-uniforms',
       count: 'Official Uniforms',
       group: 'CLOTHING',
-      tag: 'Department 1'
+      tag: 'Collection 01',
+      tagEn: 'Collection 01',
+      tagAr: 'التشكيلة 01'
     },
     {
       id: 'school-bags',
@@ -34,7 +36,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=school-bags',
       count: 'Spine-Support Bags',
       group: 'ESSENTIALS',
-      tag: 'Department 2'
+      tag: 'Collection 02',
+      tagEn: 'Collection 02',
+      tagAr: 'التشكيلة 02'
     },
     {
       id: 'stationery-books',
@@ -47,7 +51,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=stationery-books',
       count: 'Cambridge Books',
       group: 'STUDY',
-      tag: 'Department 3'
+      tag: 'Collection 03',
+      tagEn: 'Collection 03',
+      tagAr: 'التشكيلة 03'
     },
     {
       id: 'lunch-boxes',
@@ -60,7 +66,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=lunch-boxes',
       count: 'BPA-Free Sets',
       group: 'ESSENTIALS',
-      tag: 'Department 4'
+      tag: 'Collection 04',
+      tagEn: 'Collection 04',
+      tagAr: 'التشكيلة 04'
     },
     {
       id: 'healthcare',
@@ -73,7 +81,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=healthcare',
       count: 'Health & Hygiene',
       group: 'HEALTH',
-      tag: 'Department 5'
+      tag: 'Collection 05',
+      tagEn: 'Collection 05',
+      tagAr: 'التشكيلة 05'
     },
     {
       id: 'fitness-sports',
@@ -86,7 +96,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=fitness-sports',
       count: 'Athletics & Training',
       group: 'TECH_SPORTS',
-      tag: 'Department 6'
+      tag: 'Collection 06',
+      tagEn: 'Collection 06',
+      tagAr: 'التشكيلة 06'
     },
     {
       id: 'electronics',
@@ -99,7 +111,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=electronics',
       count: 'Exam-Approved Tech',
       group: 'TECH_SPORTS',
-      tag: 'Department 7'
+      tag: 'Collection 07',
+      tagEn: 'Collection 07',
+      tagAr: 'التشكيلة 07'
     },
     {
       id: 'toys-educational',
@@ -112,7 +126,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=toys-educational',
       count: 'Learning-Based Play',
       group: 'STUDY',
-      tag: 'Department 8'
+      tag: 'Collection 08',
+      tagEn: 'Collection 08',
+      tagAr: 'التشكيلة 08'
     },
     {
       id: 'gifts-craft',
@@ -125,7 +141,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=gifts-craft',
       count: 'Art & Creative Kits',
       group: 'STUDY',
-      tag: 'Department 9'
+      tag: 'Collection 09',
+      tagEn: 'Collection 09',
+      tagAr: 'التشكيلة 09'
     },
     {
       id: 'household',
@@ -138,7 +156,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=household',
       count: 'Home Organization',
       group: 'ESSENTIALS',
-      tag: 'Department 10'
+      tag: 'Collection 10',
+      tagEn: 'Collection 10',
+      tagAr: 'التشكيلة 10'
     },
     {
       id: 'travel-outdoor',
@@ -151,7 +171,9 @@ export default function CategoryCards() {
       link: '/uniforms?category=travel-outdoor',
       count: 'Luggage & Outdoor',
       group: 'ESSENTIALS',
-      tag: 'Department 11'
+      tag: 'Collection 11',
+      tagEn: 'Collection 11',
+      tagAr: 'التشكيلة 11'
     }
   ];
 
@@ -195,9 +217,9 @@ export default function CategoryCards() {
             gap: '1rem'
           }}>
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', color: '#800020', fontWeight: '800', fontSize: '0.84rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', color: '#9E2A2B', fontWeight: '800', fontSize: '0.84rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
                 <Sparkles size={16} color="#D4AF37" />
-                <span>{isRTL ? 'المتجر الشامل — 11 قسماً معتمداً' : 'Shop — 11 Official Departments'}</span>
+                <span>{isRTL ? 'المتجر الشامل — 11 تشكيلة مختارة' : 'Shop — 11 Curated Collections'}</span>
               </div>
               <h1 style={{
                 fontSize: 'clamp(1.75rem, 3vw, 2.35rem)',
@@ -206,21 +228,21 @@ export default function CategoryCards() {
                 margin: 0,
                 letterSpacing: '-0.02em'
               }}>
-                {isRTL ? 'تسوق حسب الفئات والأقسام' : 'Browse All 11 Shop Departments'}
+                {isRTL ? 'استكشف التشكيلات والمجموعات الراقية' : 'Explore All 11 Curated Collections'}
               </h1>
               <p style={{ fontSize: '0.95rem', color: '#6b7280', margin: '0.4rem 0 0' }}>
                 {isRTL
-                  ? 'جميع الأقسام الـ 11 مزودة بصور حقيقية عالية الجودة ومنتجات متوفرة للشراء المباشر.'
-                  : 'All 11 departments equipped with high-resolution photography and products ready for instant order.'}
+                  ? 'جميع التشكيلات الـ 11 مزودة بصور حقيقية عالية الجودة ومنتجات متوفرة للشراء المباشر.'
+                  : 'All 11 collections equipped with high-resolution photography and products ready for instant order.'}
               </p>
             </div>
 
             {/* Live Search Inside Categories */}
             <div style={{ position: 'relative', width: '100%', maxWidth: '340px' }}>
-              <Search size={18} style={{ position: 'absolute', [isRTL ? 'right' : 'left']: '14px', top: '50%', transform: 'translateY(-50%)', color: '#800020' }} />
+              <Search size={18} style={{ position: 'absolute', [isRTL ? 'right' : 'left']: '14px', top: '50%', transform: 'translateY(-50%)', color: '#9E2A2B' }} />
               <input
                 type="text"
-                placeholder={isRTL ? 'ابحث في الأقسام الـ 11...' : 'Search 11 departments (uniforms, tech, health)...'}
+                placeholder={isRTL ? 'ابحث في التشكيلات الـ 11...' : 'Search collections (uniforms, tech, health)...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -233,7 +255,7 @@ export default function CategoryCards() {
                   backgroundColor: '#f9fafb',
                   transition: 'border-color 0.2s ease'
                 }}
-                onFocus={(e) => { e.target.style.borderColor = '#800020'; e.target.style.backgroundColor = '#ffffff'; }}
+                onFocus={(e) => { e.target.style.borderColor = '#9E2A2B'; e.target.style.backgroundColor = '#ffffff'; }}
                 onBlur={(e) => { e.target.style.borderColor = '#d1d5db'; e.target.style.backgroundColor = '#f9fafb'; }}
               />
             </div>
@@ -241,17 +263,17 @@ export default function CategoryCards() {
 
           {/* Filter Pills Row */}
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px solid #f3e8eb', paddingTop: '1rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#800020', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginEnd: '0.5rem' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#9E2A2B', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginEnd: '0.5rem' }}>
               <Filter size={14} />
-              <span>{isRTL ? 'تصفية الأقسام:' : 'Filter Departments:'}</span>
+              <span>{isRTL ? 'تصفية التشكيلات:' : 'Filter Collections:'}</span>
             </span>
             {[
-              { id: 'ALL', labelEn: 'All 11 Departments', labelAr: 'جميع الأقسام الـ 11' },
-              { id: 'CLOTHING', labelEn: 'Uniforms & Clothing', labelAr: 'الزي والملابس' },
-              { id: 'STUDY', labelEn: 'Books, Toys & Art', labelAr: 'الكتب، الألعاب والفنون' },
+              { id: 'ALL', labelEn: 'All 11 Collections', labelAr: 'جميع التشكيلات الـ 11' },
+              { id: 'CLOTHING', labelEn: 'Uniforms & Attire', labelAr: 'الزي والملابس' },
+              { id: 'STUDY', labelEn: 'Books, STEM & Art', labelAr: 'الكتب، العلوم والفنون' },
               { id: 'ESSENTIALS', labelEn: 'Bags, Food & Home', labelAr: 'الحقائب، الطعام والمنزل' },
-              { id: 'HEALTH', labelEn: 'Healthcare & Hygiene', labelAr: 'الرعاية الصحية' },
-              { id: 'TECH_SPORTS', labelEn: 'Tech & Fitness Equipment', labelAr: 'التقنية والرياضة' }
+              { id: 'HEALTH', labelEn: 'Wellness & Care', labelAr: 'الرعاية الصحية' },
+              { id: 'TECH_SPORTS', labelEn: 'Tech & Athletics', labelAr: 'التقنية والرياضة' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -261,8 +283,8 @@ export default function CategoryCards() {
                   borderRadius: '9999px',
                   fontSize: '0.82rem',
                   fontWeight: selectedGroup === tab.id ? '800' : '600',
-                  border: selectedGroup === tab.id ? '1px solid #800020' : '1px solid #e5e7eb',
-                  backgroundColor: selectedGroup === tab.id ? '#800020' : '#ffffff',
+                  border: selectedGroup === tab.id ? '1px solid #9E2A2B' : '1px solid #e5e7eb',
+                  backgroundColor: selectedGroup === tab.id ? '#9E2A2B' : '#ffffff',
                   color: selectedGroup === tab.id ? '#ffffff' : '#374151',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease'
@@ -307,21 +329,22 @@ export default function CategoryCards() {
                 e.currentTarget.style.borderColor = '#ebdada';
               }}
             >
-              {/* Department Tag Badge */}
+              {/* Curated Collection Tag Badge */}
               <div style={{
                 position: 'absolute',
                 top: '12px',
                 [isRTL ? 'right' : 'left']: '12px',
                 zIndex: 2,
-                backgroundColor: '#800020',
+                backgroundColor: '#9E2A2B',
                 color: '#ffffff',
                 fontSize: '0.72rem',
                 fontWeight: '800',
                 padding: '0.22rem 0.65rem',
                 borderRadius: '9999px',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.18)'
+                boxShadow: '0 2px 6px rgba(158, 42, 43, 0.25)',
+                letterSpacing: '0.02em'
               }}>
-                {dept.tag}
+                {isRTL ? (dept.tagAr || dept.tag) : (dept.tagEn || dept.tag)}
               </div>
 
               {/* High-Resolution Product Photo Box */}
@@ -389,7 +412,7 @@ export default function CategoryCards() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  backgroundColor: '#800020',
+                  backgroundColor: '#9E2A2B',
                   color: '#ffffff',
                   padding: '0.65rem 0.95rem',
                   borderRadius: '10px',
@@ -397,7 +420,7 @@ export default function CategoryCards() {
                   fontSize: '0.86rem',
                   transition: 'background-color 0.2s ease'
                 }}>
-                  <span>{isRTL ? 'تصفح منتجات القسم' : 'Explore Department'}</span>
+                  <span>{isRTL ? 'استكشف التشكيلة' : 'Explore Collection'}</span>
                   <ArrowRight
                     size={16}
                     color="#ffffff"
@@ -415,14 +438,14 @@ export default function CategoryCards() {
         {filteredDepartments.length === 0 && (
           <div style={{ textAlign: 'center', padding: '4rem 1rem', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #ebdada' }}>
             <p style={{ fontSize: '1.1rem', fontWeight: '700', color: '#111827' }}>
-              {isRTL ? 'لم يتم العثور على أقسام مطابقة' : 'No matching departments found'}
+              {isRTL ? 'لم يتم العثور على تشكيلات مطابقة' : 'No matching collections found'}
             </p>
             <button
               onClick={() => { setSearchQuery(''); setSelectedGroup('ALL'); }}
               style={{
                 marginTop: '1rem',
                 padding: '0.65rem 1.25rem',
-                backgroundColor: '#800020',
+                backgroundColor: '#9E2A2B',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '8px',

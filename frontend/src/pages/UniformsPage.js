@@ -17,7 +17,7 @@ export default function UniformsPage() {
   const searchQuery = searchParams.get('search') || '';
   const [sortBy, setSortBy] = useState('featured');
 
-  // Complete catalog covering all 11 departments from Shop_Proposal.pdf with high-resolution photos
+  // Complete catalog covering all 11 curated collections with high-resolution photos
   const allProducts = [
     {
       id: 1,
@@ -31,7 +31,8 @@ export default function UniformsPage() {
       image: '/products/polo-shirt-front.jpg',
       sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
       defaultSize: 'M',
-      dept: 'Department 1'
+      collectionEn: 'Uniforms & Attire',
+      collectionAr: 'الأزياء المدرسية'
     },
     {
       id: 2,
@@ -46,7 +47,8 @@ export default function UniformsPage() {
       image: '/products/boys-gray-trousers.jpg',
       sizes: ['26', '28', '30', '32', '34', '36'],
       defaultSize: '30',
-      dept: 'Department 1'
+      collectionEn: 'Formal Attire',
+      collectionAr: 'الأزياء المدرسية'
     },
     {
       id: 3,
@@ -61,7 +63,8 @@ export default function UniformsPage() {
       image: '/products/girls-gray-skirt.jpg',
       sizes: ['26', '28', '30', '32', '34', '36'],
       defaultSize: '28',
-      dept: 'Department 1'
+      collectionEn: 'Classic Uniform',
+      collectionAr: 'الأزياء المدرسية'
     },
     {
       id: 4,
@@ -75,7 +78,8 @@ export default function UniformsPage() {
       image: '/products/boys-black-shoes.jpg',
       sizes: ['32', '34', '36', '38', '40', '42'],
       defaultSize: '36',
-      dept: 'Department 1'
+      collectionEn: 'Footwear Collection',
+      collectionAr: 'تشكيلة الأحذية'
     },
     {
       id: 5,
@@ -89,7 +93,8 @@ export default function UniformsPage() {
       image: '/products/girls-black-shoes.jpg',
       sizes: ['30', '32', '34', '36', '38', '40'],
       defaultSize: '34',
-      dept: 'Department 1'
+      collectionEn: 'Footwear Collection',
+      collectionAr: 'تشكيلة الأحذية'
     },
     {
       id: 6,
@@ -103,7 +108,8 @@ export default function UniformsPage() {
       image: '/products/school-accessories-set.jpg',
       sizes: ['Standard'],
       defaultSize: 'Standard',
-      dept: 'Department 1'
+      collectionEn: 'Accessories',
+      collectionAr: 'إكسسوارات الزي'
     },
     {
       id: 7,
@@ -117,7 +123,8 @@ export default function UniformsPage() {
       image: '/products/school-socks-white.jpg',
       sizes: ['S (28-33)', 'M (34-38)', 'L (39-44)'],
       defaultSize: 'M (34-38)',
-      dept: 'Department 1'
+      collectionEn: 'Accessories',
+      collectionAr: 'إكسسوارات الزي'
     },
     {
       id: 8,
@@ -131,7 +138,8 @@ export default function UniformsPage() {
       image: '/products/cambridge-english-book.jpg',
       sizes: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5', 'Stage 6'],
       defaultSize: 'Stage 3',
-      dept: 'Department 3'
+      collectionEn: 'Academic & Books',
+      collectionAr: 'الكتب الأكاديمية'
     },
     {
       id: 9,
@@ -145,7 +153,8 @@ export default function UniformsPage() {
       image: '/products/cambridge-math-book.jpg',
       sizes: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5', 'Stage 6'],
       defaultSize: 'Stage 3',
-      dept: 'Department 3'
+      collectionEn: 'Academic & Books',
+      collectionAr: 'الكتب الأكاديمية'
     },
     {
       id: 10,
@@ -159,7 +168,8 @@ export default function UniformsPage() {
       image: '/products/arabic-language-book.jpg',
       sizes: ['Grade 1-3', 'Grade 4-6', 'Grade 7-9'],
       defaultSize: 'Grade 4-6',
-      dept: 'Department 3'
+      collectionEn: 'Academic & Books',
+      collectionAr: 'الكتب الأكاديمية'
     },
     {
       id: 11,
@@ -173,7 +183,8 @@ export default function UniformsPage() {
       image: '/products/cambridge-science-book.jpg',
       sizes: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5', 'Stage 6'],
       defaultSize: 'Stage 4',
-      dept: 'Department 3'
+      collectionEn: 'Academic & Books',
+      collectionAr: 'الكتب الأكاديمية'
     },
     {
       id: 12,
@@ -187,7 +198,8 @@ export default function UniformsPage() {
       image: '/products/school-bags-accessories.jpg',
       sizes: ['Junior (Grades 1-4)', 'Senior (Grades 5-12)'],
       defaultSize: 'Senior (Grades 5-12)',
-      dept: 'Department 2'
+      collectionEn: 'School Bags',
+      collectionAr: 'الحقائب المدرسية'
     },
     {
       id: 13,
@@ -201,7 +213,8 @@ export default function UniformsPage() {
       image: '/products/lunch-boxes-drinkware.jpg',
       sizes: ['Standard (750ml)', 'Large (1000ml)'],
       defaultSize: 'Standard (750ml)',
-      dept: 'Department 4'
+      collectionEn: 'Dining & Drinkware',
+      collectionAr: 'المستلزمات اليومية'
     },
     {
       id: 14,
@@ -215,7 +228,8 @@ export default function UniformsPage() {
       image: '/products/healthcare-personal-care.jpg',
       sizes: ['Standard Kit', 'Deluxe Family Pack'],
       defaultSize: 'Standard Kit',
-      dept: 'Department 5'
+      collectionEn: 'Wellness & Care',
+      collectionAr: 'العناية والصحة'
     },
     {
       id: 15,
@@ -229,7 +243,8 @@ export default function UniformsPage() {
       image: '/products/fitness-sports-equipment.jpg',
       sizes: ['2kg Pair', '3kg Pair', '5kg Pair'],
       defaultSize: '3kg Pair',
-      dept: 'Department 6'
+      collectionEn: 'Athletics & Sports',
+      collectionAr: 'اللياقة والرياضة'
     },
     {
       id: 16,
@@ -243,7 +258,8 @@ export default function UniformsPage() {
       image: '/products/electronics-mobile-accessories.jpg',
       sizes: ['Exam Standard'],
       defaultSize: 'Exam Standard',
-      dept: 'Department 7'
+      collectionEn: 'Electronics & Tech',
+      collectionAr: 'الإلكترونيات والتقنية'
     },
     {
       id: 17,
@@ -257,7 +273,8 @@ export default function UniformsPage() {
       image: '/products/toys-educational-products.jpg',
       sizes: ['Age 4-8', 'Age 8-14'],
       defaultSize: 'Age 8-14',
-      dept: 'Department 8'
+      collectionEn: 'Educational & STEM',
+      collectionAr: 'التعليم والذكاء'
     },
     {
       id: 18,
@@ -271,7 +288,8 @@ export default function UniformsPage() {
       image: '/products/gifts-art-craft.jpg',
       sizes: ['12-Color Set', '24-Color Set'],
       defaultSize: '24-Color Set',
-      dept: 'Department 9'
+      collectionEn: 'Fine Arts & Gifts',
+      collectionAr: 'الفنون والهدايا'
     },
     {
       id: 19,
@@ -285,7 +303,8 @@ export default function UniformsPage() {
       image: '/products/household-daily-essentials.jpg',
       sizes: ['Medium 3-Pack', 'Large 2-Pack'],
       defaultSize: 'Medium 3-Pack',
-      dept: 'Department 10'
+      collectionEn: 'Home Essentials',
+      collectionAr: 'المستلزمات المنزلية'
     },
     {
       id: 20,
@@ -299,7 +318,8 @@ export default function UniformsPage() {
       image: '/products/travel-outdoor-accessories.jpg',
       sizes: ['Medium (35L)', 'Large (55L)'],
       defaultSize: 'Medium (35L)',
-      dept: 'Department 11'
+      collectionEn: 'Travel & Outdoor',
+      collectionAr: 'السفر والرحلات'
     }
   ];
 
@@ -363,24 +383,24 @@ export default function UniformsPage() {
     setTimeout(() => setAddedItem(null), 1800);
   };
 
-  // Complete departments list matching Shop_Proposal.pdf with high-resolution landscape images
+  // Complete curated collections list matching Shop_Proposal.pdf with high-resolution landscape images
   const categoriesList = [
-    { id: 'all', label: isRTL ? 'جميع الأقسام الـ 11' : 'All 11 Departments', count: 20, image: '/products/polo-shirt-front.jpg' },
-    { id: 'school-uniforms', label: isRTL ? '1. الزي المدرسي والملابس' : '1. School Uniforms & Clothing', count: 3, image: '/products/polo-shirt-front.jpg' },
+    { id: 'all', label: isRTL ? 'جميع التشكيلات (20)' : 'All Collections (20)', count: 20, image: '/products/polo-shirt-front.jpg' },
+    { id: 'school-uniforms', label: isRTL ? '1. الزي المدرسي والملابس' : '1. School Uniforms & Attire', count: 3, image: '/products/polo-shirt-front.jpg' },
     { id: 'boys-trousers', label: isRTL ? '• بناطيل الأولاد' : "• Boys' Trousers", count: 1, image: '/products/boys-gray-trousers.jpg' },
     { id: 'girls-skirts', label: isRTL ? '• تنانير البنات' : "• Girls' Skirts", count: 1, image: '/products/girls-gray-skirt.jpg' },
-    { id: 'shoes', label: isRTL ? '• الأحذية المدرسية' : '• School Shoes', count: 2, image: '/products/boys-black-shoes.jpg' },
-    { id: 'accessories', label: isRTL ? '• الإكسسوارات (أحزمة وجوارب)' : '• Belts & Socks', count: 2, image: '/products/school-accessories-set.jpg' },
-    { id: 'school-bags', label: isRTL ? '2. الحقائب المدرسية والمستلزمات' : '2. School Bags & Accessories', count: 1, image: '/products/school-bags-accessories.jpg' },
-    { id: 'stationery-books', label: isRTL ? '3. الكتب والقرطاسية' : '3. Stationery & Books', count: 4, image: '/products/cambridge-english-book.jpg' },
-    { id: 'lunch-boxes', label: isRTL ? '4. علب الطعام ومطارات المشروبات' : '4. Lunch Boxes & Drinkware', count: 1, image: '/products/lunch-boxes-drinkware.jpg' },
-    { id: 'healthcare', label: isRTL ? '5. الرعاية الصحية والعناية' : '5. Healthcare & Personal Care', count: 1, image: '/products/healthcare-personal-care.jpg' },
-    { id: 'fitness-sports', label: isRTL ? '6. اللياقة والرياضة' : '6. Fitness & Sports Equipment', count: 1, image: '/products/fitness-sports-equipment.jpg' },
-    { id: 'electronics', label: isRTL ? '7. الإلكترونيات وملحقات الهاتف' : '7. Electronics & Mobile', count: 1, image: '/products/electronics-mobile-accessories.jpg' },
-    { id: 'toys-educational', label: isRTL ? '8. ألعاب الذكاء والتعليم' : '8. Toys & Educational', count: 1, image: '/products/toys-educational-products.jpg' },
-    { id: 'gifts-craft', label: isRTL ? '9. الهدايا والأعمال الفنية' : '9. Gifts, Art & Craft', count: 1, image: '/products/gifts-art-craft.jpg' },
-    { id: 'household', label: isRTL ? '10. المستلزمات المنزلية' : '10. Household & Daily', count: 1, image: '/products/household-daily-essentials.jpg' },
-    { id: 'travel-outdoor', label: isRTL ? '11. السفر والرحلات' : '11. Travel & Outdoor', count: 1, image: '/products/travel-outdoor-accessories.jpg' }
+    { id: 'shoes', label: isRTL ? '• الأحذية المدرسية' : '• Footwear Collection', count: 2, image: '/products/boys-black-shoes.jpg' },
+    { id: 'accessories', label: isRTL ? '• الإكسسوارات (أحزمة وجوارب)' : '• Belts & Accessories', count: 2, image: '/products/school-accessories-set.jpg' },
+    { id: 'school-bags', label: isRTL ? '2. الحقائب المدرسية والمستلزمات' : '2. School Bags & Packs', count: 1, image: '/products/school-bags-accessories.jpg' },
+    { id: 'stationery-books', label: isRTL ? '3. الكتب والقرطاسية الأكاديمية' : '3. Academic Books & Stationery', count: 4, image: '/products/cambridge-english-book.jpg' },
+    { id: 'lunch-boxes', label: isRTL ? '4. علب الطعام ومطارات المشروبات' : '4. Dining & Drinkware', count: 1, image: '/products/lunch-boxes-drinkware.jpg' },
+    { id: 'healthcare', label: isRTL ? '5. الرعاية الصحية والعناية' : '5. Wellness & Personal Care', count: 1, image: '/products/healthcare-personal-care.jpg' },
+    { id: 'fitness-sports', label: isRTL ? '6. اللياقة والرياضة البدنية' : '6. Athletics & Sports Gear', count: 1, image: '/products/fitness-sports-equipment.jpg' },
+    { id: 'electronics', label: isRTL ? '7. الإلكترونيات وملحقات التقنية' : '7. Electronics & Tech Gear', count: 1, image: '/products/electronics-mobile-accessories.jpg' },
+    { id: 'toys-educational', label: isRTL ? '8. ألعاب الذكاء والتعليم' : '8. Educational & STEM Play', count: 1, image: '/products/toys-educational-products.jpg' },
+    { id: 'gifts-craft', label: isRTL ? '9. الهدايا والأعمال الفنية' : '9. Fine Arts, Crafts & Gifts', count: 1, image: '/products/gifts-art-craft.jpg' },
+    { id: 'household', label: isRTL ? '10. المستلزمات والمنظمات المنزلية' : '10. Household Essentials', count: 1, image: '/products/household-daily-essentials.jpg' },
+    { id: 'travel-outdoor', label: isRTL ? '11. السفر والرحلات الخارجية' : '11. Travel & Outdoor Luggage', count: 1, image: '/products/travel-outdoor-accessories.jpg' }
   ];
 
   return (
@@ -389,15 +409,15 @@ export default function UniformsPage() {
       <div className="uniforms-hero-bar" style={{ backgroundColor: '#ffffff', borderBottom: '1.5px solid #ebdada', padding: '1.5rem 1rem' }}>
         <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', color: '#800020', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.2rem' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', color: '#9E2A2B', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.2rem' }}>
               <Sparkles size={15} color="#D4AF37" />
-              <span>{isRTL ? 'المتجر الشامل' : 'Official Store Catalog'}</span>
+              <span>{isRTL ? 'كتالوج المتجر الراقي' : 'Curated Store Catalog'}</span>
             </div>
             <h1 style={{ fontSize: '1.65rem', fontWeight: '900', color: '#111827', margin: 0 }}>
-              {isRTL ? 'جميع المنتجات والأقسام الـ 11' : 'All Products & 11 Departments'}
+              {isRTL ? 'جميع المنتجات والتشكيلات الراقية' : 'All Products & Curated Collections'}
             </h1>
             <p style={{ fontSize: '0.84rem', color: '#6b7280', margin: '3px 0 0' }}>
-              {filteredProducts.length} {isRTL ? 'منتجات متوفرة بجودة عالية' : 'high-quality products in stock'}
+              {filteredProducts.length} {isRTL ? 'منتجات مختارة بجودة عالية ومتوفرة للطلب' : 'curated high-quality products in stock'}
             </p>
           </div>
 
@@ -421,7 +441,7 @@ export default function UniformsPage() {
                 type="button"
                 onClick={() => login('demo@shop.com', 'customer123')}
                 style={{
-                  backgroundColor: '#800020',
+                  backgroundColor: '#9E2A2B',
                   color: '#ffffff',
                   border: 'none',
                   padding: '0.35rem 0.65rem',
@@ -451,9 +471,9 @@ export default function UniformsPage() {
           flexShrink: 0
         }} className="hide-mobile">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid #f3e8eb' }}>
-            <Filter size={18} color="#800020" />
+            <Filter size={18} color="#9E2A2B" />
             <h3 style={{ fontSize: '0.98rem', fontWeight: '800', color: '#111827', margin: 0 }}>
-              {isRTL ? 'الأقسام الـ 11' : '11 Departments'}
+              {isRTL ? 'التشكيلات المختارة' : 'Curated Collections'}
             </h3>
           </div>
 
@@ -571,20 +591,22 @@ export default function UniformsPage() {
                   position: 'relative'
                 }}
               >
-                {/* Department Chip */}
+                {/* Curated Collection Chip Badge */}
                 <div style={{
                   position: 'absolute',
                   top: '10px',
                   [isRTL ? 'right' : 'left']: '10px',
                   zIndex: 2,
-                  backgroundColor: '#800020',
+                  backgroundColor: '#9E2A2B',
                   color: '#ffffff',
                   fontSize: '0.68rem',
                   fontWeight: '800',
-                  padding: '0.18rem 0.55rem',
-                  borderRadius: '9999px'
+                  padding: '0.22rem 0.65rem',
+                  borderRadius: '9999px',
+                  boxShadow: '0 2px 6px rgba(158, 42, 43, 0.25)',
+                  letterSpacing: '0.02em'
                 }}>
-                  {prod.dept}
+                  {isRTL ? (prod.collectionAr || 'تشكيلة راقية') : (prod.collectionEn || 'Curated Collection')}
                 </div>
 
                 {/* Wishlist Button */}
