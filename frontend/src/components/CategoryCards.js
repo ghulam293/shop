@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Search, Grid, Sparkles, Filter, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Search, Sparkles, Filter, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.js';
 
 export default function CategoryCards() {
@@ -8,156 +8,168 @@ export default function CategoryCards() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('ALL');
 
-  const categories = [
+  // The 11 official shop departments defined in Shop_Proposal.pdf
+  const departments = [
     {
-      id: 'uniforms',
-      nameEn: 'Uniforms',
-      nameAr: 'الزي المدرسي',
-      descEn: 'Official polo shirts, shirts & uniform sets',
-      descAr: 'قمصان البولو والزي الرسمي المعتمد',
+      id: 'school-uniforms',
+      deptNumber: 1,
+      nameEn: 'School Uniforms & Clothing',
+      nameAr: 'الزي المدرسي والملابس',
+      descEn: 'Polo shirts, trousers, pleated skirts, shoes, ties, belts & socks',
+      descAr: 'قمصان البولو، البناطيل، التنانير، الأحذية الرسمية والجوارب',
       image: '/products/polo-shirt-front.jpg',
       link: '/uniforms?category=school-uniforms',
-      count: 'Official Sets',
+      count: 'Official Uniforms',
       group: 'CLOTHING',
-      tag: 'Best Seller'
-    },
-    {
-      id: 'trousers',
-      nameEn: "Boys' Trousers",
-      nameAr: 'بناطيل الأولاد',
-      descEn: 'Tailored gray and navy formal trousers',
-      descAr: 'بناطيل رمادية وكحلية بقصة مريحة',
-      image: '/products/boys-gray-trousers.jpg',
-      link: '/uniforms?category=boys-trousers',
-      count: 'Sizes 24 - 40',
-      group: 'CLOTHING',
-      tag: 'Durable'
-    },
-    {
-      id: 'skirts',
-      nameEn: "Girls' Skirts",
-      nameAr: 'تنانير البنات',
-      descEn: 'Classic pleated and A-line school skirts',
-      descAr: 'تنانير بكسرات كلاسيكية وجودة عالية',
-      image: '/products/girls-gray-skirt.jpg',
-      link: '/uniforms?category=girls-skirts',
-      count: 'Sizes 22 - 38',
-      group: 'CLOTHING',
-      tag: 'Pleated'
-    },
-    {
-      id: 'shoes',
-      nameEn: 'Shoes & Footwear',
-      nameAr: 'الأحذية المدرسية',
-      descEn: 'Oxford black leather & athletic shoes',
-      descAr: 'أحذية جلدية سوداء وأحذية رياضية',
-      image: '/products/boys-black-shoes.jpg',
-      link: '/uniforms?category=shoes',
-      count: 'Sizes 28 - 44',
-      group: 'FOOTWEAR',
-      tag: 'Pure Leather'
-    },
-    {
-      id: 'accessories',
-      nameEn: 'Accessories',
-      nameAr: 'الإكسسوارات',
-      descEn: 'Formal black belts, ties & cotton socks',
-      descAr: 'أحزمة جلدية وجوارب قطنية ناعمة',
-      image: '/images/cat-accessories.jpg',
-      link: '/uniforms?category=accessories',
-      count: 'Belts & Socks',
-      group: 'ACCESSORIES',
-      tag: 'Essentials'
-    },
-    {
-      id: 'books-stationery',
-      nameEn: 'Books & Stationery',
-      nameAr: 'الكتب والقرطاسية',
-      descEn: 'Cambridge curriculum, science & math textbooks',
-      descAr: 'مناهج كامبريدج وكتب العلوم والرياضيات واللغة',
-      image: '/images/cat-books.jpg',
-      link: '/uniforms?category=stationery-books',
-      count: 'Curriculum Books',
-      group: 'STUDY',
-      tag: 'Official Syllabus'
+      tag: 'Department 1'
     },
     {
       id: 'school-bags',
-      nameEn: 'School Bags & Backpacks',
-      nameAr: 'الحقائب المدرسية',
-      descEn: 'Ergonomic multi-compartment backpacks',
-      descAr: 'حقائب ظهر مريحة ومتعددة الجيوب',
-      image: '/images/cat-bags.jpg',
+      deptNumber: 2,
+      nameEn: 'School Bags & Accessories',
+      nameAr: 'الحقائب المدرسية والمستلزمات',
+      descEn: 'Ergonomic backpacks, laptop bags, pencil cases & rain covers',
+      descAr: 'حقائب ظهر مريحة، حقائب لابتوب، مقالم وحافظات المطر',
+      image: '/products/school-bags-accessories.jpg',
       link: '/uniforms?category=school-bags',
-      count: 'Water-Resistant',
+      count: 'Spine-Support Bags',
       group: 'ESSENTIALS',
-      tag: 'Ergonomic'
+      tag: 'Department 2'
+    },
+    {
+      id: 'stationery-books',
+      deptNumber: 3,
+      nameEn: 'Stationery & Books',
+      nameAr: 'الكتب والقرطاسية',
+      descEn: 'Cambridge curriculum, math & science textbooks, notebooks & geometry kits',
+      descAr: 'مناهج كامبريدج، كتب الرياضيات والعلوم، دفاتر وأطقم هندسية',
+      image: '/products/cambridge-english-book.jpg',
+      link: '/uniforms?category=stationery-books',
+      count: 'Cambridge Books',
+      group: 'STUDY',
+      tag: 'Department 3'
     },
     {
       id: 'lunch-boxes',
-      nameEn: 'Lunchware & Drinkware',
-      nameAr: 'علب الطعام ومطارات الماء',
-      descEn: 'BPA-free thermal lunch boxes & water bottles',
-      descAr: 'مطارات حافظة للحرارة وعلب طعام آمنة',
-      image: '/images/cat-lunchbox.jpg',
+      deptNumber: 4,
+      nameEn: 'Lunch Boxes & Drinkware',
+      nameAr: 'علب الطعام ومطارات المشروبات',
+      descEn: 'BPA-free thermal bento lunch boxes & stainless steel water bottles',
+      descAr: 'علب طعام حرارية صحية ومطارات ماء ستانلس ستيل مانعة للتسرب',
+      image: '/products/lunch-boxes-drinkware.jpg',
       link: '/uniforms?category=lunch-boxes',
-      count: 'BPA-Free',
+      count: 'BPA-Free Sets',
       group: 'ESSENTIALS',
-      tag: 'Thermal'
+      tag: 'Department 4'
     },
     {
-      id: 'electronics',
-      nameEn: 'Electronics & Gadgets',
-      nameAr: 'الإلكترونيات وملحقاتها',
-      descEn: 'Scientific calculators, chargers & cables',
-      descAr: 'آلات حاسبة علمية، شواحن وملحقات تقنية',
-      image: '/images/cat-electronics.jpg',
-      link: '/uniforms?category=electronics',
-      count: 'Accessories',
-      group: 'TECH',
-      tag: 'Approved Models'
+      id: 'healthcare',
+      deptNumber: 5,
+      nameEn: 'Healthcare & Personal Care',
+      nameAr: 'الرعاية الصحية والعناية الشخصية',
+      descEn: 'First-aid kits, digital thermometers, sanitizers, wet wipes & toiletries',
+      descAr: 'حقائب إسعافات أولية، موازين حرارة رقمية، معقمات ومستلزمات العناية',
+      image: '/products/healthcare-personal-care.jpg',
+      link: '/uniforms?category=healthcare',
+      count: 'Health & Hygiene',
+      group: 'HEALTH',
+      tag: 'Department 5'
     },
     {
       id: 'fitness-sports',
-      nameEn: 'Fitness & Sports Gear',
-      nameAr: 'اللياقة والرياضة',
-      descEn: 'Athletic wear, sport shoes & gym bags',
-      descAr: 'ملابس رياضية، أحذية للجري وحقائب رياضية',
-      image: '/images/cat-sports.jpg',
+      deptNumber: 6,
+      nameEn: 'Fitness & Sports Equipment',
+      nameAr: 'اللياقة والرياضة البدنية',
+      descEn: 'Dumbbells, resistance bands, jump ropes, sports balls & shaker bottles',
+      descAr: 'أثقال تدريب، حبال قفز، كرات رياضية ومطارات البروتين والرياضة',
+      image: '/products/fitness-sports-equipment.jpg',
       link: '/uniforms?category=fitness-sports',
-      count: 'Training Gear',
-      group: 'TECH',
-      tag: 'Athletics'
+      count: 'Athletics & Training',
+      group: 'TECH_SPORTS',
+      tag: 'Department 6'
+    },
+    {
+      id: 'electronics',
+      deptNumber: 7,
+      nameEn: 'Electronics & Mobile Accessories',
+      nameAr: 'الإلكترونيات وملحقات الهاتف',
+      descEn: 'Scientific calculators, fast chargers, braided USB cables & earphones',
+      descAr: 'آلات حاسبة علمية معتمدة، شواحن سريعة، كابلات وسماعات سلكية ولاسلكية',
+      image: '/products/electronics-mobile-accessories.jpg',
+      link: '/uniforms?category=electronics',
+      count: 'Exam-Approved Tech',
+      group: 'TECH_SPORTS',
+      tag: 'Department 7'
+    },
+    {
+      id: 'toys-educational',
+      deptNumber: 8,
+      nameEn: 'Toys & Educational Products',
+      nameAr: 'ألعاب الذكاء والتعليم',
+      descEn: 'STEM science experiment kits, building blocks, puzzles & board games',
+      descAr: 'أطقم تجارب علمية، مكعبات بناء خشبية وألعاب تفكير وذكاء للأطفال',
+      image: '/products/toys-educational-products.jpg',
+      link: '/uniforms?category=toys-educational',
+      count: 'Learning-Based Play',
+      group: 'STUDY',
+      tag: 'Department 8'
+    },
+    {
+      id: 'gifts-craft',
+      deptNumber: 9,
+      nameEn: 'Gifts, Art & Craft Supplies',
+      nameAr: 'الهدايا والأعمال الفنية والإبداع',
+      descEn: 'Greeting cards, gift wrapping, watercolor & acrylic paints, brushes & DIY kits',
+      descAr: 'بطاقات تهنئة وتغليف، ألوان مائية وزيتية، فراشي رسم وأطقم أشغال يدوية',
+      image: '/products/gifts-art-craft.jpg',
+      link: '/uniforms?category=gifts-craft',
+      count: 'Art & Creative Kits',
+      group: 'STUDY',
+      tag: 'Department 9'
+    },
+    {
+      id: 'household',
+      deptNumber: 10,
+      nameEn: 'Household & Daily Essentials',
+      nameAr: 'المستلزمات المنزلية واليومية',
+      descEn: 'Multipurpose storage organizer boxes, kitchen accessories & home care',
+      descAr: 'صناديق تنظيم وتخزين متعددة، منظمات منزلية ومستلزمات يومية',
+      image: '/products/household-daily-essentials.jpg',
+      link: '/uniforms?category=household',
+      count: 'Home Organization',
+      group: 'ESSENTIALS',
+      tag: 'Department 10'
     },
     {
       id: 'travel-outdoor',
-      nameEn: 'Travel & Outdoor',
-      nameAr: 'السفر والرحلات',
-      descEn: 'Luggage bags, organizers & travel accessories',
-      descAr: 'حقائب سفر مدمجة، منظمات ومستلزمات الرحلات',
-      image: '/images/cat-travel.jpg',
+      deptNumber: 11,
+      nameEn: 'Travel & Outdoor Accessories',
+      nameAr: 'السفر والرحلات الخارجية',
+      descEn: 'Duffel luggage bags, travel packing organizers, vacuum flasks & outdoor gear',
+      descAr: 'حقائب سفر متينة، منظمات حقائب السفر، حافظات ماء ومستلزمات الرحلات',
+      image: '/products/travel-outdoor-accessories.jpg',
       link: '/uniforms?category=travel-outdoor',
-      count: 'Travel Gear',
+      count: 'Luggage & Outdoor',
       group: 'ESSENTIALS',
-      tag: 'Lightweight'
+      tag: 'Department 11'
     }
   ];
 
-  const filteredCategories = useMemo(() => {
-    return categories.filter((cat) => {
-      if (selectedGroup !== 'ALL' && cat.group !== selectedGroup) return false;
+  const filteredDepartments = useMemo(() => {
+    return departments.filter((dept) => {
+      if (selectedGroup !== 'ALL' && dept.group !== selectedGroup) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         return (
-          cat.nameEn.toLowerCase().includes(q) ||
-          cat.nameAr.includes(q) ||
-          cat.descEn.toLowerCase().includes(q) ||
-          cat.descAr.includes(q)
+          dept.nameEn.toLowerCase().includes(q) ||
+          dept.nameAr.includes(q) ||
+          dept.descEn.toLowerCase().includes(q) ||
+          dept.descAr.includes(q)
         );
       }
       return true;
     });
-  }, [categories, selectedGroup, searchQuery]);
+  }, [departments, selectedGroup, searchQuery]);
 
   return (
     <section id="categories" style={{ padding: '2.5rem 1.25rem 4rem', backgroundColor: '#fcfcfc', minHeight: '80vh' }}>
@@ -167,7 +179,7 @@ export default function CategoryCards() {
         <div style={{
           backgroundColor: '#ffffff',
           borderRadius: '16px',
-          border: '1px solid #ebdada',
+          border: '1.5px solid #ebdada',
           padding: '2rem 1.75rem',
           marginBottom: '2rem',
           boxShadow: '0 4px 20px rgba(128, 0, 32, 0.04)',
@@ -185,7 +197,7 @@ export default function CategoryCards() {
             <div>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', color: '#800020', fontWeight: '800', fontSize: '0.84rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
                 <Sparkles size={16} color="#D4AF37" />
-                <span>{isRTL ? 'جميع الأقسام والفئات المتاحة' : 'Complete Store Catalog'}</span>
+                <span>{isRTL ? 'المتجر الشامل — 11 قسماً معتمداً' : 'Shop — 11 Official Departments'}</span>
               </div>
               <h1 style={{
                 fontSize: 'clamp(1.75rem, 3vw, 2.35rem)',
@@ -194,12 +206,12 @@ export default function CategoryCards() {
                 margin: 0,
                 letterSpacing: '-0.02em'
               }}>
-                {isRTL ? 'تسوق جميع الفئات والأقسام' : 'Browse All Categories'}
+                {isRTL ? 'تسوق حسب الفئات والأقسام' : 'Browse All 11 Shop Departments'}
               </h1>
               <p style={{ fontSize: '0.95rem', color: '#6b7280', margin: '0.4rem 0 0' }}>
                 {isRTL
-                  ? 'استعرض جميع الأقسام (11 قسماً) مع صور توضيحية ومنتجات متوفرة للشراء المباشر.'
-                  : 'Explore all 11 official departments with demo pictures and in-stock items ready for immediate order.'}
+                  ? 'جميع الأقسام الـ 11 مزودة بصور حقيقية عالية الجودة ومنتجات متوفرة للشراء المباشر.'
+                  : 'All 11 departments equipped with high-resolution photography and products ready for instant order.'}
               </p>
             </div>
 
@@ -208,7 +220,7 @@ export default function CategoryCards() {
               <Search size={18} style={{ position: 'absolute', [isRTL ? 'right' : 'left']: '14px', top: '50%', transform: 'translateY(-50%)', color: '#800020' }} />
               <input
                 type="text"
-                placeholder={isRTL ? 'ابحث عن فئة (أحذية، كتب، ملابس)...' : 'Filter categories (shoes, books, uniforms)...'}
+                placeholder={isRTL ? 'ابحث في الأقسام الـ 11...' : 'Search 11 departments (uniforms, tech, health)...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -231,15 +243,15 @@ export default function CategoryCards() {
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px solid #f3e8eb', paddingTop: '1rem', alignItems: 'center' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#800020', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginEnd: '0.5rem' }}>
               <Filter size={14} />
-              <span>{isRTL ? 'تصفية سريعة:' : 'Quick Filter:'}</span>
+              <span>{isRTL ? 'تصفية الأقسام:' : 'Filter Departments:'}</span>
             </span>
             {[
-              { id: 'ALL', labelEn: 'All Categories (11)', labelAr: 'جميع الفئات (11)' },
-              { id: 'CLOTHING', labelEn: 'Clothing & Uniforms', labelAr: 'الملابس والزي' },
-              { id: 'FOOTWEAR', labelEn: 'Shoes & Footwear', labelAr: 'الأحذية' },
-              { id: 'STUDY', labelEn: 'Books & Stationery', labelAr: 'الكتب والقرطاسية' },
-              { id: 'ESSENTIALS', labelEn: 'Bags & Daily Essentials', labelAr: 'الحقائب والمستلزمات' },
-              { id: 'TECH', labelEn: 'Electronics & Sports', labelAr: 'الإلكترونيات والرياضة' }
+              { id: 'ALL', labelEn: 'All 11 Departments', labelAr: 'جميع الأقسام الـ 11' },
+              { id: 'CLOTHING', labelEn: 'Uniforms & Clothing', labelAr: 'الزي والملابس' },
+              { id: 'STUDY', labelEn: 'Books, Toys & Art', labelAr: 'الكتب، الألعاب والفنون' },
+              { id: 'ESSENTIALS', labelEn: 'Bags, Food & Home', labelAr: 'الحقائب، الطعام والمنزل' },
+              { id: 'HEALTH', labelEn: 'Healthcare & Hygiene', labelAr: 'الرعاية الصحية' },
+              { id: 'TECH_SPORTS', labelEn: 'Tech & Fitness Equipment', labelAr: 'التقنية والرياضة' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -262,16 +274,16 @@ export default function CategoryCards() {
           </div>
         </div>
 
-        {/* Categories Grid - Displays ALL 11 Categories with Demo Pictures */}
+        {/* Categories Grid - Displays ALL 11 Departments with High-Resolution Photos */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '1.35rem'
+          gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))',
+          gap: '1.4rem'
         }}>
-          {filteredCategories.map((cat) => (
+          {filteredDepartments.map((dept) => (
             <Link
-              key={cat.id}
-              to={cat.link}
+              key={dept.id}
+              to={dept.link}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -285,8 +297,8 @@ export default function CategoryCards() {
                 position: 'relative'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow = '0 12px 28px rgba(128, 0, 32, 0.14)';
+                e.currentTarget.style.transform = 'translateY(-6px)';
+                e.currentTarget.style.boxShadow = '0 14px 30px rgba(128, 0, 32, 0.15)';
                 e.currentTarget.style.borderColor = '#800020';
               }}
               onMouseLeave={(e) => {
@@ -295,7 +307,7 @@ export default function CategoryCards() {
                 e.currentTarget.style.borderColor = '#ebdada';
               }}
             >
-              {/* Tag Badge */}
+              {/* Department Tag Badge */}
               <div style={{
                 position: 'absolute',
                 top: '12px',
@@ -307,33 +319,33 @@ export default function CategoryCards() {
                 fontWeight: '800',
                 padding: '0.22rem 0.65rem',
                 borderRadius: '9999px',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+                boxShadow: '0 2px 6px rgba(0,0,0,0.18)'
               }}>
-                {cat.tag}
+                {dept.tag}
               </div>
 
-              {/* Demo Product Picture Box */}
+              {/* High-Resolution Product Photo Box */}
               <div style={{
-                height: '190px',
-                backgroundColor: '#fbf9fa',
+                height: '200px',
+                backgroundColor: '#faf8f9',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '1rem',
+                padding: '0.5rem',
                 overflow: 'hidden',
                 position: 'relative',
                 borderBottom: '1px solid #f3e8eb'
               }}>
                 <img
-                  src={cat.image}
-                  alt={cat.nameEn}
+                  src={dept.image}
+                  alt={dept.nameEn}
                   style={{
                     maxHeight: '100%',
                     maxWidth: '100%',
                     objectFit: 'contain',
-                    transition: 'transform 0.3s ease'
+                    transition: 'transform 0.35s ease'
                   }}
-                  onMouseEnter={(e) => { e.target.style.transform = 'scale(1.06)'; }}
+                  onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; }}
                   onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; }}
                   onError={(e) => {
                     e.target.style.display = 'none';
@@ -341,33 +353,34 @@ export default function CategoryCards() {
                 />
               </div>
 
-              {/* Category Info Area */}
-              <div style={{ padding: '1.15rem 1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              {/* Department Info Area */}
+              <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem' }}>
                     <h3 style={{
-                      fontSize: '1.15rem',
+                      fontSize: '1.12rem',
                       fontWeight: '800',
                       color: '#111827',
                       margin: 0
                     }}>
-                      {isRTL ? cat.nameAr : cat.nameEn}
+                      {isRTL ? dept.nameAr : dept.nameEn}
                     </h3>
                     <span style={{
-                      fontSize: '0.74rem',
+                      fontSize: '0.72rem',
                       fontWeight: '700',
                       color: '#800020',
                       backgroundColor: '#fbf2f4',
                       padding: '0.2rem 0.55rem',
                       borderRadius: '6px',
-                      border: '1px solid #f0d5db'
+                      border: '1px solid #f0d5db',
+                      whiteSpace: 'nowrap'
                     }}>
-                      {cat.count}
+                      {dept.count}
                     </span>
                   </div>
 
-                  <p style={{ fontSize: '0.82rem', color: '#6b7280', margin: '0 0 1rem', lineHeight: '1.45' }}>
-                    {isRTL ? cat.descAr : cat.descEn}
+                  <p style={{ fontSize: '0.82rem', color: '#6b7280', margin: '0 0 1.15rem', lineHeight: '1.45' }}>
+                    {isRTL ? dept.descAr : dept.descEn}
                   </p>
                 </div>
 
@@ -384,7 +397,7 @@ export default function CategoryCards() {
                   fontSize: '0.86rem',
                   transition: 'background-color 0.2s ease'
                 }}>
-                  <span>{isRTL ? 'استعراض المنتجات' : 'Explore Category'}</span>
+                  <span>{isRTL ? 'تصفح منتجات القسم' : 'Explore Department'}</span>
                   <ArrowRight
                     size={16}
                     color="#ffffff"
@@ -399,10 +412,10 @@ export default function CategoryCards() {
           ))}
         </div>
 
-        {filteredCategories.length === 0 && (
+        {filteredDepartments.length === 0 && (
           <div style={{ textAlign: 'center', padding: '4rem 1rem', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #ebdada' }}>
             <p style={{ fontSize: '1.1rem', fontWeight: '700', color: '#111827' }}>
-              {isRTL ? 'لم يتم العثور على فئات مطابقة' : 'No matching categories found'}
+              {isRTL ? 'لم يتم العثور على أقسام مطابقة' : 'No matching departments found'}
             </p>
             <button
               onClick={() => { setSearchQuery(''); setSelectedGroup('ALL'); }}

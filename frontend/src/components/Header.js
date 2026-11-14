@@ -73,17 +73,21 @@ export default function Header() {
   };
 
   const allCategoryPoints = [
-    { id: 'uniforms', nameEn: 'Uniforms', nameAr: 'الزي المدرسي', link: '/uniforms?category=school-uniforms', icon: '👕', badge: 'Official' },
-    { id: 'trousers', nameEn: "Boys' Trousers", nameAr: 'بناطيل الأولاد', link: '/uniforms?category=boys-trousers', icon: '👖', badge: 'Fit' },
-    { id: 'skirts', nameEn: "Girls' Skirts", nameAr: 'تنانير البنات', link: '/uniforms?category=girls-skirts', icon: '👗', badge: 'Pleated' },
-    { id: 'shoes', nameEn: 'Shoes & Footwear', nameAr: 'الأحذية المدرسية', link: '/uniforms?category=shoes', icon: '👞', badge: 'Leather' },
-    { id: 'accessories', nameEn: 'Accessories', nameAr: 'الإكسسوارات', link: '/uniforms?category=accessories', icon: '🎗️', badge: 'Belts & Socks' },
-    { id: 'books', nameEn: 'Books & Stationery', nameAr: 'الكتب والقرطاسية', link: '/uniforms?category=stationery-books', icon: '📚', badge: 'Curriculum' },
-    { id: 'bags', nameEn: 'Bags & Backpacks', nameAr: 'الحقائب المدرسية', link: '/uniforms?category=school-bags', icon: '🎒', badge: 'Ergonomic' },
-    { id: 'lunchware', nameEn: 'Lunchware & Bottles', nameAr: 'علب ومطارات الطعام', link: '/uniforms?category=lunch-boxes', icon: '🍱', badge: 'BPA-Free' },
-    { id: 'electronics', nameEn: 'Electronics & Tech', nameAr: 'الإلكترونيات والتقنية', link: '/uniforms?category=electronics', icon: '⚡', badge: 'Calculators' },
-    { id: 'sports', nameEn: 'Sports & Fitness', nameAr: 'اللياقة والرياضة', link: '/uniforms?category=fitness-sports', icon: '🏃', badge: 'Athletic' },
-    { id: 'travel', nameEn: 'Travel & Outdoor', nameAr: 'السفر والرحلات', link: '/uniforms?category=travel-outdoor', icon: '🧳', badge: 'Gear' }
+    { id: 'uniforms', nameEn: '1. School Uniforms & Clothing', nameAr: '1. الزي المدرسي والملابس', link: '/uniforms?category=school-uniforms', icon: '👕', badge: 'Official' },
+    { id: 'trousers', nameEn: "• Boys' Trousers", nameAr: '• بناطيل الأولاد', link: '/uniforms?category=boys-trousers', icon: '👖', badge: 'Fit' },
+    { id: 'skirts', nameEn: "• Girls' Skirts", nameAr: '• تنانير البنات', link: '/uniforms?category=girls-skirts', icon: '👗', badge: 'Pleated' },
+    { id: 'shoes', nameEn: '• Shoes & Footwear', nameAr: '• الأحذية المدرسية', link: '/uniforms?category=shoes', icon: '👞', badge: 'Leather' },
+    { id: 'accessories', nameEn: '• Belts & Socks', nameAr: '• أحزمة وجوارب', link: '/uniforms?category=accessories', icon: '🎗️', badge: 'Accessories' },
+    { id: 'bags', nameEn: '2. School Bags & Accessories', nameAr: '2. الحقائب المدرسية والمستلزمات', link: '/uniforms?category=school-bags', icon: '🎒', badge: 'Ergonomic' },
+    { id: 'books', nameEn: '3. Stationery & Books', nameAr: '3. الكتب والقرطاسية', link: '/uniforms?category=stationery-books', icon: '📚', badge: 'Cambridge' },
+    { id: 'lunchware', nameEn: '4. Lunch Boxes & Drinkware', nameAr: '4. علب الطعام ومطارات المشروبات', link: '/uniforms?category=lunch-boxes', icon: '🍱', badge: 'BPA-Free' },
+    { id: 'healthcare', nameEn: '5. Healthcare & Personal Care', nameAr: '5. الرعاية الصحية والعناية', link: '/uniforms?category=healthcare', icon: '🩺', badge: 'First-Aid' },
+    { id: 'sports', nameEn: '6. Fitness & Sports Equipment', nameAr: '6. اللياقة والرياضة', link: '/uniforms?category=fitness-sports', icon: '🏃', badge: 'Athletic' },
+    { id: 'electronics', nameEn: '7. Electronics & Mobile', nameAr: '7. الإلكترونيات وملحقات الهاتف', link: '/uniforms?category=electronics', icon: '⚡', badge: 'Exam Tech' },
+    { id: 'toys', nameEn: '8. Toys & Educational', nameAr: '8. ألعاب الذكاء والتعليم', link: '/uniforms?category=toys-educational', icon: '🧩', badge: 'STEM' },
+    { id: 'craft', nameEn: '9. Gifts, Art & Craft', nameAr: '9. الهدايا والأعمال الفنية', link: '/uniforms?category=gifts-craft', icon: '🎨', badge: 'Creative' },
+    { id: 'household', nameEn: '10. Household & Daily', nameAr: '10. المستلزمات المنزلية', link: '/uniforms?category=household', icon: '🏠', badge: 'Storage' },
+    { id: 'travel', nameEn: '11. Travel & Outdoor', nameAr: '11. السفر والرحلات', link: '/uniforms?category=travel-outdoor', icon: '🧳', badge: 'Luggage' }
   ];
 
   return (
