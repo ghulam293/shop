@@ -132,7 +132,7 @@ export default function CartPage() {
           : `Cash on Delivery (Pay upon arrival)`,
         paymentStatus: paymentMethod === 'DEBIT_CARD' ? 'PAID' : 'PENDING_CASH',
         customerPhone: deliveryPhone || user?.phone || 'Provided at checkout',
-        customerAddress: deliveryAddress || 'Standard School Delivery',
+        customerAddress: deliveryAddress || 'Express Home Delivery',
         date: new Date().toLocaleDateString('en-GB')
       };
 
