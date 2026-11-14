@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage.js';
 import RegisterPage from './pages/RegisterPage.js';
 import AdminDashboardPage from './pages/AdminDashboardPage.js';
 import MyOrdersPage from './pages/MyOrdersPage.js';
+import TrackOrderPage from './pages/TrackOrderPage.js';
 import { AuthProvider } from './context/AuthContext.js';
 import { CartProvider } from './context/CartContext.js';
 
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/admin" element={<AdminDashboardPage />} />
               <Route path="/my-orders" element={<MyOrdersPage />} />
+              <Route path="/track-order" element={<TrackOrderPage />} />
               <Route path="*" element={<HomePage />} />
             </Routes>
           </main>

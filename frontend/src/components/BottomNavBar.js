@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Grid, ShoppingBag, ShoppingCart, User } from 'lucide-react';
+import { Home, Grid, ShoppingBag, ShoppingCart, User, Truck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.js';
 import { useCart } from '../context/CartContext.js';
 import { useAuth } from '../context/AuthContext.js';
@@ -37,6 +37,13 @@ export default function BottomNavBar() {
       labelAr: 'المتجر',
       path: '/uniforms',
       icon: ShoppingBag
+    },
+    {
+      id: 'track',
+      labelEn: 'Track',
+      labelAr: 'التتبع',
+      path: '/track-order',
+      icon: Truck
     },
     {
       id: 'cart',

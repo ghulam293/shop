@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Sparkles,
   Layers,
+  Truck,
   ArrowRight
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.js';
@@ -72,6 +73,7 @@ export default function Header() {
     return location.pathname === path || (path.includes('?') && `${location.pathname}${location.search}` === path);
   };
 
+  // The 11 official departments from Shop_Proposal.pdf
   const allCategoryPoints = [
     { id: 'uniforms', nameEn: '1. School Uniforms & Clothing', nameAr: '1. الزي المدرسي والملابس', link: '/uniforms?category=school-uniforms', icon: '👕', badge: 'Official' },
     { id: 'trousers', nameEn: "• Boys' Trousers", nameAr: '• بناطيل الأولاد', link: '/uniforms?category=boys-trousers', icon: '👖', badge: 'Fit' },
@@ -91,45 +93,39 @@ export default function Header() {
   ];
 
   return (
-    <header className="header-wrapper">
-      <div className="header-container">
-        {/* Mobile Hamburger Menu Toggle */}
-        <button
-          className="mobile-menu-toggle"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle navigation"
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+    <header className="header-wrapper" style={{ backgroundColor: '#ffffff', borderBottom: '1.5px solid #ebdada', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 2px 12px rgba(158, 42, 43, 0.04)' }}>
+      <div className="header-container" style={{ maxWidth: '1440px', margin: '0 auto', padding: '0.65rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+        
+        {/* Left: Hamburger & Clean Shop Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
+          <button
+            className="mobile-menu-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle navigation"
+            style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: '#1e293b' }}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
 
-        {/* Left: Only Shop Name - No Logo */}
-        <div className="header-left">
           <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
             <span style={{
-              fontSize: '1.45rem',
+              fontSize: '1.55rem',
               fontWeight: '900',
-              color: '#800020',
-              letterSpacing: '-0.02em',
+              color: '#9E2A2B',
+              letterSpacing: '-0.03em',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.45rem'
             }}>
-              <ShoppingCart size={24} color="#800020" />
+              <ShoppingCart size={26} color="#9E2A2B" />
               <span>{isRTL ? 'المتجر' : 'Shop'}</span>
             </span>
           </Link>
-
-          <div className="header-divider hide-mobile" />
-
-          <Link to="/uniforms" className="btn-school-shop-pill hide-mobile">
-            <Sparkles size={14} color="#ffd700" />
-            <span>{isRTL ? 'تسوق المنتجات' : 'All Products'}</span>
-          </Link>
         </div>
 
-        {/* Center: Desktop Navigation with Specific Points & Markdown Dropdown */}
-        <nav className="header-nav">
-          {/* Specific Point 1: Home */}
+        {/* Center: Clean, Fluid Navigation (No Overflow on Laptops) */}
+        <nav className="header-nav" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'nowrap' }}>
+          {/* Point 1: Home */}
           <Link
             to="/"
             className={`nav-link ${isActive('/') ? 'active-pill' : ''}`}
@@ -137,7 +133,7 @@ export default function Header() {
             {t('home')}
           </Link>
 
-          {/* Specific Point 2: Categories with Markdown Dropdown */}
+          {/* Point 2: Categories Dropdown */}
           <div style={{ position: 'relative' }} ref={categoriesRef}>
             <button
               onClick={() => setCategoriesMenuOpen(!categoriesMenuOpen)}
@@ -145,7 +141,7 @@ export default function Header() {
               className={`nav-link ${location.search.includes('category') ? 'active-pill' : ''}`}
               style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
             >
-              <Layers size={14} />
+              <Layers size={15} />
               <span>{isRTL ? 'الفئات والأقسام' : 'Categories'}</span>
               <ChevronDown
                 size={14}
@@ -161,16 +157,16 @@ export default function Header() {
               <div
                 className="dropdown-panel nav-dropdown"
                 onMouseLeave={() => setCategoriesMenuOpen(false)}
-                style={{ minWidth: '340px', maxHeight: '460px', overflowY: 'auto', padding: '0.6rem 0' }}
+                style={{ minWidth: '340px', maxHeight: '460px', overflowY: 'auto', padding: '0.6rem 0', borderRadius: '12px', border: '1.5px solid #ebdada' }}
               >
-                <div className="dropdown-header" style={{ padding: '0.6rem 1rem', borderBottom: '1.5px solid #f3e8eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.84rem', fontWeight: '800', color: '#800020' }}>
-                    {isRTL ? 'جميع الأقسام والفئات (11 قسماً)' : 'All 11 Categories & Departments'}
+                <div className="dropdown-header" style={{ padding: '0.65rem 1rem', borderBottom: '1.5px solid #f3e8eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.84rem', fontWeight: '800', color: '#9E2A2B' }}>
+                    {isRTL ? 'جميع الأقسام الـ 11' : 'All 11 Departments'}
                   </span>
                   <Link
                     to="/uniforms"
                     onClick={() => setCategoriesMenuOpen(false)}
-                    style={{ fontSize: '0.74rem', color: '#800020', fontWeight: '700', textDecoration: 'underline' }}
+                    style={{ fontSize: '0.74rem', color: '#9E2A2B', fontWeight: '700', textDecoration: 'underline' }}
                   >
                     {isRTL ? 'عرض الكل' : 'View All'}
                   </Link>
@@ -196,7 +192,7 @@ export default function Header() {
                         <span>{item.icon}</span>
                         <span>{isRTL ? item.nameAr : item.nameEn}</span>
                       </span>
-                      <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#800020', backgroundColor: '#fcf2f4', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>
+                      <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#9E2A2B', backgroundColor: '#fdf2f4', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>
                         {item.badge}
                       </span>
                     </Link>
@@ -206,47 +202,25 @@ export default function Header() {
             )}
           </div>
 
-          {/* Specific Point 3: Uniforms */}
+          {/* Point 3: Shop / Catalog */}
           <Link
-            to="/uniforms?category=school-uniforms"
-            className={`nav-link ${location.search.includes('school-uniforms') ? 'active-pill' : ''}`}
+            to="/uniforms"
+            className={`nav-link ${isActive('/uniforms') && !location.search.includes('category') ? 'active-pill' : ''}`}
           >
-            {isRTL ? 'الزي المدرسي' : 'Uniforms'}
+            {isRTL ? 'المتجر' : 'Shop'}
           </Link>
 
-          {/* Specific Point 4: Shoes */}
+          {/* Point 4: Track Order */}
           <Link
-            to="/uniforms?category=shoes"
-            className={`nav-link ${location.search.includes('shoes') ? 'active-pill' : ''}`}
+            to="/track-order"
+            className={`nav-link ${isActive('/track-order') ? 'active-pill' : ''}`}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
           >
-            {isRTL ? 'الأحذية' : 'Shoes'}
+            <Truck size={15} />
+            <span>{isRTL ? 'تتبع الطلب' : 'Track Order'}</span>
           </Link>
 
-          {/* Specific Point 5: Books & Stationery */}
-          <Link
-            to="/uniforms?category=stationery-books"
-            className={`nav-link ${location.search.includes('stationery-books') ? 'active-pill' : ''}`}
-          >
-            {isRTL ? 'الكتب والقرطاسية' : 'Books & Stationery'}
-          </Link>
-
-          {/* Specific Point 6: Electronics */}
-          <Link
-            to="/uniforms?category=electronics"
-            className={`nav-link ${location.search.includes('electronics') ? 'active-pill' : ''}`}
-          >
-            {isRTL ? 'الإلكترونيات' : 'Electronics'}
-          </Link>
-
-          {/* Specific Point 7: Sports */}
-          <Link
-            to="/uniforms?category=fitness-sports"
-            className={`nav-link ${location.search.includes('fitness-sports') ? 'active-pill' : ''}`}
-          >
-            {isRTL ? 'الرياضة' : 'Sports'}
-          </Link>
-
-          {/* Specific Point 8: My Orders */}
+          {/* Point 5: My Orders */}
           <Link
             to="/my-orders"
             className={`nav-link ${isActive('/my-orders') ? 'active-pill' : ''}`}
@@ -254,27 +228,28 @@ export default function Header() {
             {t('myOrders')}
           </Link>
 
-          {/* Specific Point 9: Admin Dashboard */}
+          {/* Point 6: Admin Dashboard */}
           <Link
             to="/admin"
             className={`nav-link ${isActive('/admin') ? 'active-pill' : ''}`}
-            style={{ color: '#800020', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            style={{ color: '#9E2A2B', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
           >
             <ShieldAlert size={15} />
             <span>{isRTL ? 'لوحة التحكم' : 'Admin'}</span>
           </Link>
         </nav>
 
-        {/* Right: Search, Notifications, Cart, Login & Language */}
-        <div className="header-right">
+        {/* Right Controls: Search, Notifications, Cart, User Login, Language */}
+        <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
+          
           {/* Search Input Pill */}
-          <form onSubmit={handleSearchSubmit} className="search-box-pill hide-mobile">
+          <form onSubmit={handleSearchSubmit} className="search-box-pill hide-mobile" style={{ position: 'relative' }}>
             <button
               type="submit"
               title="Search"
               style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
             >
-              <Search size={15} className="search-icon-inside" />
+              <Search size={15} className="search-icon-inside" style={{ color: '#94a3b8' }} />
             </button>
             <input
               type="text"
@@ -282,48 +257,50 @@ export default function Header() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input-pill"
+              style={{
+                width: '135px',
+                padding: isRTL ? '0.4rem 2rem 0.4rem 0.75rem' : '0.4rem 0.75rem 0.4rem 2rem',
+                borderRadius: '9999px',
+                border: '1px solid #d1d5db',
+                fontSize: '0.82rem',
+                outline: 'none',
+                backgroundColor: '#f8fafc'
+              }}
+              onFocus={(e) => { e.target.style.width = '180px'; e.target.style.borderColor = '#9E2A2B'; }}
+              onBlur={(e) => { e.target.style.width = '135px'; e.target.style.borderColor = '#d1d5db'; }}
             />
           </form>
 
-          {/* Store Notifications Dropdown */}
+          {/* Notifications Dropdown */}
           <div style={{ position: 'relative' }} ref={notifRef}>
             <button
               className="icon-btn-round"
               title="Notifications"
               onClick={() => setNotificationsOpen(!notificationsOpen)}
+              style={{ width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer', position: 'relative', color: '#334155' }}
             >
               <Bell size={18} />
-              {unreadNotifs > 0 && <span className="badge-count">{unreadNotifs}</span>}
+              {unreadNotifs > 0 && (
+                <span style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', backgroundColor: '#9E2A2B', borderRadius: '50%' }} />
+              )}
             </button>
 
             {notificationsOpen && (
-              <div className="dropdown-panel notif-dropdown">
-                <div className="dropdown-header">
-                  <h4 style={{ fontSize: '0.9rem', fontWeight: '700', color: '#800020', margin: 0 }}>
+              <div className="dropdown-panel notif-dropdown" style={{ right: 0, minWidth: '300px', borderRadius: '12px', border: '1.5px solid #ebdada' }}>
+                <div className="dropdown-header" style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #f1f5f9' }}>
+                  <h4 style={{ fontSize: '0.88rem', fontWeight: '800', color: '#9E2A2B', margin: 0 }}>
                     {isRTL ? 'إشعارات المتجر' : 'Store Notifications'}
                   </h4>
-                  {unreadNotifs > 0 ? (
-                    <button
-                      onClick={() => setUnreadNotifs(0)}
-                      style={{ fontSize: '0.74rem', color: '#800020', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600' }}
-                    >
-                      {isRTL ? 'تحديد كمقروء' : 'Mark as read'}
-                    </button>
-                  ) : (
-                    <span style={{ fontSize: '0.74rem', color: '#6b7280' }}>All read</span>
-                  )}
                 </div>
-                <div className="dropdown-body">
-                  <div className={`notif-item ${unreadNotifs > 0 ? 'unread' : ''}`}>
-                    <CheckCircle2 size={18} style={{ color: '#800020', flexShrink: 0 }} />
+                <div className="dropdown-body" style={{ padding: '0.75rem' }}>
+                  <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'flex-start' }}>
+                    <CheckCircle2 size={18} color="#9E2A2B" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div>
-                      <p style={{ fontSize: '0.82rem', fontWeight: '600', color: '#111827', margin: 0 }}>
-                        {isRTL ? 'جميع المنتجات والمقاسات متوفرة' : 'Store Collection in Stock'}
+                      <p style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>
+                        {isRTL ? 'تتبع الطلبات متاح الآن مباشرة' : 'Order Tracking Live'}
                       </p>
-                      <p style={{ fontSize: '0.74rem', color: '#6b7280', margin: '2px 0 0' }}>
-                        {isRTL
-                          ? 'تتوفر مقاسات الزي الرسمي، الأحذية، الحقائب والكتب والقرطاسية مع خياري الدفع بالبطاقة أو نقداً عند الاستلام.'
-                          : 'Uniforms, shoes, bags, books and accessories in stock with debit card & cash on delivery.'}
+                      <p style={{ fontSize: '0.74rem', color: '#64748b', margin: '2px 0 0' }}>
+                        {isRTL ? 'يمكنك الآن تتبع حالة وتوصيل شحنتك لحظة بلحظة.' : 'Track the live delivery route of your order anytime.'}
                       </p>
                     </div>
                   </div>
@@ -333,44 +310,108 @@ export default function Header() {
           </div>
 
           {/* Shopping Cart Pill */}
-          <Link to="/cart" className="icon-btn-round" title={t('cart')}>
+          <Link
+            to="/cart"
+            title={t('cart')}
+            style={{
+              position: 'relative',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#334155',
+              textDecoration: 'none'
+            }}
+          >
             <ShoppingCart size={18} />
-            {itemCount > 0 && <span className="badge-count">{itemCount}</span>}
+            {itemCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: '-2px',
+                right: '-2px',
+                backgroundColor: '#9E2A2B',
+                color: '#ffffff',
+                fontSize: '0.68rem',
+                fontWeight: '800',
+                padding: '1px 5px',
+                borderRadius: '9999px',
+                minWidth: '16px',
+                textAlign: 'center'
+              }}>
+                {itemCount}
+              </span>
+            )}
           </Link>
 
-          {/* User Account / Login Dropdown */}
+          {/* User Account / Login Pill — WHITE-SPACE NOWRAP ENSURES NO 'Lo...' TRUNCATION */}
           <div style={{ position: 'relative' }} ref={userMenuRef}>
             {isAuthenticated ? (
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="btn-parent-login"
-                style={{ backgroundColor: isAdmin ? '#D4AF37' : '#800020', color: isAdmin ? '#111' : '#fff' }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  backgroundColor: isAdmin ? '#D4AF37' : '#9E2A2B',
+                  color: isAdmin ? '#111' : '#fff',
+                  padding: '0.45rem 0.95rem',
+                  borderRadius: '9999px',
+                  fontWeight: '700',
+                  fontSize: '0.82rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
+                }}
               >
-                <User size={16} />
+                <User size={15} />
                 <span>{user.fullName ? user.fullName.split(' ')[0] : 'Account'}</span>
-                <ChevronDown size={14} />
+                <ChevronDown size={13} />
               </button>
             ) : (
-              <Link to="/login" className="btn-parent-login">
-                <User size={16} />
+              <Link
+                to="/login"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  backgroundColor: '#9E2A2B',
+                  color: '#ffffff',
+                  padding: '0.45rem 0.95rem',
+                  borderRadius: '9999px',
+                  fontWeight: '700',
+                  fontSize: '0.82rem',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  boxShadow: '0 2px 6px rgba(158, 42, 43, 0.2)'
+                }}
+              >
+                <User size={15} />
                 <span>{isRTL ? 'تسجيل الدخول' : 'Login'}</span>
               </Link>
             )}
 
             {userMenuOpen && isAuthenticated && (
-              <div className="dropdown-panel user-dropdown">
-                <div className="dropdown-header">
-                  <p style={{ fontSize: '0.85rem', fontWeight: '700', color: '#111827', margin: 0 }}>
+              <div className="dropdown-panel user-dropdown" style={{ right: 0, minWidth: '220px', borderRadius: '12px', border: '1.5px solid #ebdada' }}>
+                <div className="dropdown-header" style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #f1f5f9' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
                     {user.fullName}
                   </p>
-                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '2px 0 0' }}>
+                  <p style={{ fontSize: '0.72rem', color: '#64748b', margin: '2px 0 0' }}>
                     {user.email}
                   </p>
                 </div>
                 <div className="dropdown-body" style={{ padding: '0.4rem 0' }}>
-                  <Link to="/admin" className="dropdown-link" style={{ color: '#800020', fontWeight: '600' }}>
+                  <Link to="/admin" className="dropdown-link" style={{ color: '#9E2A2B', fontWeight: '700' }}>
                     <ShieldAlert size={16} />
-                    <span>{isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}</span>
+                    <span>Admin Dashboard</span>
+                  </Link>
+                  <Link to="/track-order" className="dropdown-link">
+                    <Truck size={16} />
+                    <span>{isRTL ? 'تتبع الطلب' : 'Track Order'}</span>
                   </Link>
                   <Link to="/my-orders" className="dropdown-link">
                     <Package size={16} />
@@ -402,13 +443,25 @@ export default function Header() {
             onClick={toggleLanguage}
             className="btn-lang-toggle"
             title="Switch Language"
+            style={{
+              padding: '0.35rem 0.65rem',
+              borderRadius: '9999px',
+              border: '1px solid #d1d5db',
+              fontSize: '0.78rem',
+              fontWeight: '700',
+              color: '#9E2A2B',
+              backgroundColor: '#fdf8f9',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}
           >
             {isRTL ? 'English' : 'عربي'}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer with Specific Points & Sub-points */}
+      {/* Mobile Drawer Navigation with Track Order & All Departments */}
       {mobileMenuOpen && (
         <div className="mobile-drawer-overlay" onClick={() => setMobileMenuOpen(false)}>
           <div
@@ -418,8 +471,8 @@ export default function Header() {
           >
             <div className="mobile-drawer-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '1.35rem', fontWeight: '900', color: '#800020', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <ShoppingCart size={22} color="#800020" />
+                <span style={{ fontSize: '1.35rem', fontWeight: '900', color: '#9E2A2B', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <ShoppingCart size={22} color="#9E2A2B" />
                   {isRTL ? 'المتجر' : 'Shop'}
                 </span>
               </div>
@@ -429,7 +482,7 @@ export default function Header() {
             </div>
 
             {/* Mobile Search */}
-            <form onSubmit={handleSearchSubmit} style={{ padding: '1rem', borderBottom: '1px solid #f3f4f6' }}>
+            <form onSubmit={handleSearchSubmit} style={{ padding: '0.85rem 1rem', borderBottom: '1px solid #f1f5f9' }}>
               <div style={{ position: 'relative' }}>
                 <Search size={16} style={{ position: 'absolute', [isRTL ? 'right' : 'left']: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
                 <input
@@ -453,31 +506,31 @@ export default function Header() {
                 🏠 {t('home')} (All Categories)
               </Link>
               <Link to="/uniforms" className={`mobile-nav-link ${isActive('/uniforms') ? 'active' : ''}`}>
-                🛍️ {isRTL ? 'جميع المنتجات (المتجر)' : 'All Products (Shop)'}
+                🛍️ {isRTL ? 'المتجر والمنتجات' : 'Shop All Products'}
+              </Link>
+              <Link to="/track-order" className={`mobile-nav-link ${isActive('/track-order') ? 'active' : ''}`}>
+                🚚 {isRTL ? 'تتبع الطلب المباشر' : 'Track Order Live'}
+              </Link>
+              <Link to="/my-orders" className={`mobile-nav-link ${isActive('/my-orders') ? 'active' : ''}`}>
+                📦 {t('myOrders')}
+              </Link>
+              <Link to="/admin" className="mobile-nav-link" style={{ color: '#9E2A2B', fontWeight: '700' }}>
+                🛡️ {isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}
               </Link>
 
-              <div style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: '800', color: '#800020', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {isRTL ? 'الأقسام والفئات:' : 'Departments & Categories:'}
+              <div style={{ padding: '0.65rem 1rem 0.35rem', fontSize: '0.75rem', fontWeight: '800', color: '#9E2A2B', textTransform: 'uppercase' }}>
+                {isRTL ? 'الأقسام الـ 11:' : 'The 11 Departments:'}
               </div>
 
               {allCategoryPoints.map((item) => (
                 <Link key={item.id} to={item.link} className="mobile-nav-link" style={{ paddingInlineStart: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span>{item.icon} {isRTL ? item.nameAr : item.nameEn}</span>
-                  <span style={{ fontSize: '0.7rem', color: '#800020', fontWeight: '700' }}>{item.badge}</span>
+                  <span style={{ fontSize: '0.7rem', color: '#9E2A2B', fontWeight: '700' }}>{item.badge}</span>
                 </Link>
               ))}
-
-              <div style={{ height: '1px', backgroundColor: '#e5e7eb', margin: '0.5rem 0' }} />
-
-              <Link to="/my-orders" className={`mobile-nav-link ${isActive('/my-orders') ? 'active' : ''}`}>
-                📦 {t('myOrders')}
-              </Link>
-              <Link to="/admin" className="mobile-nav-link" style={{ color: '#800020', fontWeight: '700' }}>
-                🛡️ {isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}
-              </Link>
             </div>
 
-            <div className="mobile-drawer-footer">
+            <div className="mobile-drawer-footer" style={{ padding: '1rem', borderTop: '1px solid #e2e8f0' }}>
               {isAuthenticated ? (
                 <button
                   onClick={() => {
@@ -495,7 +548,7 @@ export default function Header() {
                 <Link
                   to="/login"
                   className="btn-primary"
-                  style={{ width: '100%', textDecoration: 'none' }}
+                  style={{ width: '100%', textDecoration: 'none', backgroundColor: '#9E2A2B' }}
                 >
                   <User size={16} />
                   <span>{isRTL ? 'تسجيل الدخول' : 'Login'}</span>

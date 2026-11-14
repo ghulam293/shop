@@ -94,12 +94,32 @@ export default function MyOrdersPage() {
               ))}
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed #e5e7eb', paddingTop: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#16a34a' }}>
-                <CheckCircle size={16} />
-                <span>{isRTL ? 'طلب مؤكد وجارٍ التجهيز للتسليم' : 'Order confirmed & prepared for fulfillment'}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed #e5e7eb', paddingTop: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#16a34a' }}>
+                  <CheckCircle size={16} />
+                  <span>{isRTL ? 'طلب مؤكد وجارٍ التجهيز' : 'Confirmed'}</span>
+                </div>
+                <Link
+                  to={`/track-order?order=${ord.orderNumber}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    backgroundColor: '#fdf2f4',
+                    border: '1px solid #f8d3d8',
+                    color: '#9E2A2B',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: '800',
+                    textDecoration: 'none'
+                  }}
+                >
+                  🚚 {isRTL ? 'تتبع الشحنة' : 'Track Order'}
+                </Link>
               </div>
-              <div style={{ fontSize: '1.15rem', fontWeight: '800', color: '#800020' }}>
+              <div style={{ fontSize: '1.15rem', fontWeight: '800', color: '#9E2A2B' }}>
                 OMR {ord.total}
               </div>
             </div>

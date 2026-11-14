@@ -221,26 +221,41 @@ export default function CartPage() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.85rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link
+            to={`/track-order?order=${orderPlaced.orderNumber}`}
+            style={{
+              padding: '0.8rem 1.6rem',
+              backgroundColor: '#9E2A2B',
+              color: '#ffffff',
+              borderRadius: '8px',
+              fontWeight: '800',
+              textDecoration: 'none',
+              boxShadow: '0 4px 12px rgba(158, 42, 43, 0.25)'
+            }}
+          >
+            🚚 {isRTL ? 'تتبع مسار شحنتك مباشرة' : 'Track Order Live'}
+          </Link>
           <Link
             to="/my-orders"
             style={{
-              padding: '0.8rem 1.6rem',
-              backgroundColor: '#800020',
-              color: '#ffffff',
+              padding: '0.8rem 1.4rem',
+              backgroundColor: '#ffffff',
+              border: '1.5px solid #cbd5e1',
+              color: '#334155',
               borderRadius: '8px',
               fontWeight: '700',
               textDecoration: 'none'
             }}
           >
-            {isRTL ? 'عرض طلباتي' : 'View My Orders'}
+            {isRTL ? 'عرض جميع الطلبات' : 'All Orders'}
           </Link>
           <Link
             to="/uniforms"
             style={{
-              padding: '0.8rem 1.6rem',
-              backgroundColor: '#f3f4f6',
-              color: '#374151',
+              padding: '0.8rem 1.4rem',
+              backgroundColor: '#f1f5f9',
+              color: '#334155',
               borderRadius: '8px',
               fontWeight: '700',
               textDecoration: 'none'
