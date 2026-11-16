@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart, Filter, ChevronDown, Check, Lock, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext.js';
 import { useLanguage } from '../context/LanguageContext.js';
 import { useAuth } from '../context/AuthContext.js';
+import { getCatalogProducts } from '../services/productStore.js';
 
 export default function UniformsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,311 +18,16 @@ export default function UniformsPage() {
   const searchQuery = searchParams.get('search') || '';
   const [sortBy, setSortBy] = useState('featured');
 
-  // Complete catalog covering all 11 curated collections with high-resolution photos
-  const allProducts = [
-    {
-      id: 1,
-      category: 'school-uniforms',
-      sku: 'UNIF-POLO-MRN',
-      nameEn: 'Official Polo Shirt (Maroon)',
-      nameAr: 'قميص بولو مدرسي رسمي (عنابي)',
-      descEn: 'Breathable cotton pique polo shirt with contrast gold collar',
-      descAr: 'قميص بولو قطني مريح بياقة مذهبة أنيقة للمدرسة',
-      price: 6.000,
-      image: '/products/polo-shirt-front.jpg',
-      sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-      defaultSize: 'M',
-      collectionEn: 'Uniforms & Attire',
-      collectionAr: 'الأزياء المدرسية'
-    },
-    {
-      id: 2,
-      category: 'school-uniforms',
-      subCategory: 'boys-trousers',
-      sku: 'UNIF-TRSR-GRY',
-      nameEn: "Boys' Formal Trousers (Gray)",
-      nameAr: 'بنطال رمادي رسمي للأولاد',
-      descEn: 'Regular fit durable school trousers with adjustable waist',
-      descAr: 'بنطال مدرسي رمادي مريح للأولاد بخياطة متينة ومقاس مريح',
-      price: 8.500,
-      image: '/products/boys-gray-trousers.jpg',
-      sizes: ['26', '28', '30', '32', '34', '36'],
-      defaultSize: '30',
-      collectionEn: 'Formal Attire',
-      collectionAr: 'الأزياء المدرسية'
-    },
-    {
-      id: 3,
-      category: 'school-uniforms',
-      subCategory: 'girls-skirts',
-      sku: 'UNIF-SKRT-GRY',
-      nameEn: "Girls' Pleated Skirt (Gray)",
-      nameAr: 'تنورة رمادية بكسرات للبنات',
-      descEn: 'Comfortable classic pleated school skirt with wrinkle resistance',
-      descAr: 'تنورة مدرسية مريحة بكسرات أنيقة وقماش متين مقاوم للتجعد',
-      price: 8.000,
-      image: '/products/girls-gray-skirt.jpg',
-      sizes: ['26', '28', '30', '32', '34', '36'],
-      defaultSize: '28',
-      collectionEn: 'Classic Uniform',
-      collectionAr: 'الأزياء المدرسية'
-    },
-    {
-      id: 4,
-      category: 'shoes',
-      sku: 'SHOE-BOY-BLK',
-      nameEn: "Boys' Oxford Shoes (Black Leather)",
-      nameAr: 'حذاء جلدي رسمي أسود للأولاد',
-      descEn: 'Genuine scuff-resistant leather with non-marking rubber outsole',
-      descAr: 'حذاء جلدي متين ومريح للأولاد للمدرسة بنعل طبي مانع للانزلاق',
-      price: 12.500,
-      image: '/products/boys-black-shoes.jpg',
-      sizes: ['32', '34', '36', '38', '40', '42'],
-      defaultSize: '36',
-      collectionEn: 'Footwear Collection',
-      collectionAr: 'تشكيلة الأحذية'
-    },
-    {
-      id: 5,
-      category: 'shoes',
-      sku: 'SHOE-GRL-BLK',
-      nameEn: "Girls' Mary Jane Shoes (Black)",
-      nameAr: 'حذاء ماري جين أسود للبنات',
-      descEn: 'Classic Mary Jane leather shoe with supportive arch insole',
-      descAr: 'حذاء كلاسيكي أنيق ومريح للبنات للمدرسة بحزام مريح',
-      price: 12.500,
-      image: '/products/girls-black-shoes.jpg',
-      sizes: ['30', '32', '34', '36', '38', '40'],
-      defaultSize: '34',
-      collectionEn: 'Footwear Collection',
-      collectionAr: 'تشكيلة الأحذية'
-    },
-    {
-      id: 6,
-      category: 'accessories',
-      sku: 'ACCS-BELT-SET',
-      nameEn: 'Official Uniform Belt & Accessories',
-      nameAr: 'حزام مدرسي جلدي وإكسسوارات',
-      descEn: 'Sturdy black synthetic leather belt with polished silver buckle',
-      descAr: 'حزام جلدي أسود أنيق قابل للتعديل ومتين لجميع الأعمار',
-      price: 2.500,
-      image: '/products/school-accessories-set.jpg',
-      sizes: ['Standard'],
-      defaultSize: 'Standard',
-      collectionEn: 'Accessories',
-      collectionAr: 'إكسسوارات الزي'
-    },
-    {
-      id: 7,
-      category: 'accessories',
-      sku: 'ACCS-SOCK-WHT',
-      nameEn: 'Cotton School Socks (White Pair)',
-      nameAr: 'جوارب مدرسية بيضاء قطنية (زوج)',
-      descEn: 'Breathable combed cotton socks with reinforced heel and toe',
-      descAr: 'جوارب قطنية ناعمة ومتينة تدوم طويلاً مع الغسيل المتكرر',
-      price: 1.000,
-      image: '/products/school-socks-white.jpg',
-      sizes: ['S (28-33)', 'M (34-38)', 'L (39-44)'],
-      defaultSize: 'M (34-38)',
-      collectionEn: 'Accessories',
-      collectionAr: 'إكسسوارات الزي'
-    },
-    {
-      id: 8,
-      category: 'stationery-books',
-      sku: 'BOOK-ENG-P1',
-      nameEn: "Cambridge Primary English Learner's Book",
-      nameAr: 'كتاب كامبريدج للغة الإنجليزية (الابتدائي)',
-      descEn: 'Official Cambridge curriculum textbook for English learners',
-      descAr: 'كتاب الطالب المعتمد لمنهاج كامبريدج الدولي للغة الإنجليزية',
-      price: 7.500,
-      image: '/products/cambridge-english-book.jpg',
-      sizes: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5', 'Stage 6'],
-      defaultSize: 'Stage 3',
-      collectionEn: 'Academic & Books',
-      collectionAr: 'الكتب الأكاديمية'
-    },
-    {
-      id: 9,
-      category: 'stationery-books',
-      sku: 'BOOK-MTH-P1',
-      nameEn: "Cambridge Primary Mathematics Learner's Book",
-      nameAr: 'كتاب كامبريدج للرياضيات (الابتدائي)',
-      descEn: 'Official Cambridge curriculum textbook for Mathematics',
-      descAr: 'كتاب الرياضيات المعتمد لمنهاج كامبريدج للتعليم الأساسي',
-      price: 7.500,
-      image: '/products/cambridge-math-book.jpg',
-      sizes: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5', 'Stage 6'],
-      defaultSize: 'Stage 3',
-      collectionEn: 'Academic & Books',
-      collectionAr: 'الكتب الأكاديمية'
-    },
-    {
-      id: 10,
-      category: 'stationery-books',
-      sku: 'BOOK-ARB-P1',
-      nameEn: 'Arabic Language Curriculum Textbook',
-      nameAr: 'كتاب لغتي الجميلة — منهاج اللغة العربية',
-      descEn: 'Official curriculum Arabic textbook for grammar and reading',
-      descAr: 'كتاب اللغة العربية المعتمد للقراءة والنحو والإملاء',
-      price: 6.500,
-      image: '/products/arabic-language-book.jpg',
-      sizes: ['Grade 1-3', 'Grade 4-6', 'Grade 7-9'],
-      defaultSize: 'Grade 4-6',
-      collectionEn: 'Academic & Books',
-      collectionAr: 'الكتب الأكاديمية'
-    },
-    {
-      id: 11,
-      category: 'stationery-books',
-      sku: 'BOOK-SCI-P1',
-      nameEn: 'Cambridge Primary Science Textbook',
-      nameAr: 'كتاب كامبريدج للعلوم العامة والاكتشاف',
-      descEn: 'Official Science learner textbook with practical investigations',
-      descAr: 'كتاب العلوم والتجارب المعتمد لمنهاج كامبريدج الدولي',
-      price: 7.500,
-      image: '/products/cambridge-science-book.jpg',
-      sizes: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5', 'Stage 6'],
-      defaultSize: 'Stage 4',
-      collectionEn: 'Academic & Books',
-      collectionAr: 'الكتب الأكاديمية'
-    },
-    {
-      id: 12,
-      category: 'school-bags',
-      sku: 'BAG-SPINE-MRN',
-      nameEn: 'Ergonomic Spine-Support School Backpack',
-      nameAr: 'حقيبة مدرسية طبية مريحة مع مقلمة',
-      descEn: 'Multi-compartment water-resistant backpack with laptop sleeve',
-      descAr: 'حقيبة ظهر طبية مريحة مبطنة لدعم العمود الفقري ومقاومة للماء',
-      price: 14.500,
-      image: '/products/school-bags-accessories.jpg',
-      sizes: ['Junior (Grades 1-4)', 'Senior (Grades 5-12)'],
-      defaultSize: 'Senior (Grades 5-12)',
-      collectionEn: 'School Bags',
-      collectionAr: 'الحقائب المدرسية'
-    },
-    {
-      id: 13,
-      category: 'lunch-boxes',
-      sku: 'LUNCH-BENTO-SET',
-      nameEn: 'Thermal Bento Lunch Box & Water Bottle Set',
-      nameAr: 'طقم حافظة طعام ومطارة ماء عازلة للحرارة',
-      descEn: 'BPA-free leakproof lunch container with stainless steel bottle',
-      descAr: 'حافظة طعام مانعة للتسرب صحية مع مطارة ماء ستانلس ستيل عازلة',
-      price: 5.500,
-      image: '/products/lunch-boxes-drinkware.jpg',
-      sizes: ['Standard (750ml)', 'Large (1000ml)'],
-      defaultSize: 'Standard (750ml)',
-      collectionEn: 'Dining & Drinkware',
-      collectionAr: 'المستلزمات اليومية'
-    },
-    {
-      id: 14,
-      category: 'healthcare',
-      sku: 'HLTH-KIT-DIGI',
-      nameEn: 'Comprehensive First-Aid & Hygiene Care Kit',
-      nameAr: 'حقيبة الإسعافات الأولية ومستلزمات العناية',
-      descEn: 'Complete first-aid kit with infrared thermometer & sanitizers',
-      descAr: 'طقم متكامل للإسعافات الأولية، ميزان حرارة إلكتروني ومعقمات طبية',
-      price: 6.800,
-      image: '/products/healthcare-personal-care.jpg',
-      sizes: ['Standard Kit', 'Deluxe Family Pack'],
-      defaultSize: 'Standard Kit',
-      collectionEn: 'Wellness & Care',
-      collectionAr: 'العناية والصحة'
-    },
-    {
-      id: 15,
-      category: 'fitness-sports',
-      sku: 'SPRT-TRAIN-SET',
-      nameEn: 'Athletics Training Dumbbells & Sports Gear',
-      nameAr: 'أثقال تدريب رياضية ومستلزمات اللياقة',
-      descEn: 'Neoprene coated dumbbells, skipping rope & athletic ball',
-      descAr: 'أثقال تدريب مغلفة بالنيوبرين، حبل قفز سريع وكرة رياضية',
-      price: 11.500,
-      image: '/products/fitness-sports-equipment.jpg',
-      sizes: ['2kg Pair', '3kg Pair', '5kg Pair'],
-      defaultSize: '3kg Pair',
-      collectionEn: 'Athletics & Sports',
-      collectionAr: 'اللياقة والرياضة'
-    },
-    {
-      id: 16,
-      category: 'electronics',
-      sku: 'ELEC-CALC-FAST',
-      nameEn: 'Scientific Calculator & Fast Charging Tech Kit',
-      nameAr: 'آلة حاسبة علمية وطقم شحن سريع وكابلات',
-      descEn: 'Approved scientific calculator, USB-C braided cable & power bank',
-      descAr: 'آلة حاسبة علمية معتمدة للاختبارات وشاحن سريع وبطارية طوارئ',
-      price: 8.500,
-      image: '/products/electronics-mobile-accessories.jpg',
-      sizes: ['Exam Standard'],
-      defaultSize: 'Exam Standard',
-      collectionEn: 'Electronics & Tech',
-      collectionAr: 'الإلكترونيات والتقنية'
-    },
-    {
-      id: 17,
-      category: 'toys-educational',
-      sku: 'TOYS-STEM-BLKS',
-      nameEn: 'STEM Science Experiment Kit & Wooden Puzzles',
-      nameAr: 'طقم تجارب علمية STEM ومكعبات تعليمية',
-      descEn: 'Hands-on learning science kit with geometric puzzle blocks',
-      descAr: 'طقم أنشطة وتجارب علمية ممتعة مع مكعبات ذكاء للأطفال',
-      price: 9.500,
-      image: '/products/toys-educational-products.jpg',
-      sizes: ['Age 4-8', 'Age 8-14'],
-      defaultSize: 'Age 8-14',
-      collectionEn: 'Educational & STEM',
-      collectionAr: 'التعليم والذكاء'
-    },
-    {
-      id: 18,
-      category: 'gifts-craft',
-      sku: 'ART-PALET-KIT',
-      nameEn: 'Artist Acrylic Palette & Craft Painting Set',
-      nameAr: 'طقم ألوان وفراشي رسم وأشغال فنية يدوية',
-      descEn: 'Rich pigment paint tubes, wooden mixing palette & brushes',
-      descAr: 'ألوان رسم ناصعة مع باليتة خشبية ومجموعة فراشي احترافية',
-      price: 4.800,
-      image: '/products/gifts-art-craft.jpg',
-      sizes: ['12-Color Set', '24-Color Set'],
-      defaultSize: '24-Color Set',
-      collectionEn: 'Fine Arts & Gifts',
-      collectionAr: 'الفنون والهدايا'
-    },
-    {
-      id: 19,
-      category: 'household',
-      sku: 'HOME-STOR-ORGN',
-      nameEn: 'Multipurpose Home & Study Storage Organizers',
-      nameAr: 'صناديق تنظيم وترتيب منزلية ومكتبية',
-      descEn: 'Stackable transparent storage boxes with handle dispensers',
-      descAr: 'صناديق ترتيب أنيقة ومتينة للمنزل والمكتب بأحجام متعددة',
-      price: 5.200,
-      image: '/products/household-daily-essentials.jpg',
-      sizes: ['Medium 3-Pack', 'Large 2-Pack'],
-      defaultSize: 'Medium 3-Pack',
-      collectionEn: 'Home Essentials',
-      collectionAr: 'المستلزمات المنزلية'
-    },
-    {
-      id: 20,
-      category: 'travel-outdoor',
-      sku: 'TRVL-DUFF-BAG',
-      nameEn: 'Waterproof Travel Luggage Duffel & Outdoor Bag',
-      nameAr: 'حقيبة سفر ورحلات خارجية متينة مقاومة للماء',
-      descEn: 'Reinforced travel duffel with organizer pouches and strap',
-      descAr: 'حقيبة سفر ورحلات خارجية متينة مع منظمات مدمجة وحزام كتف مريح',
-      price: 13.000,
-      image: '/products/travel-outdoor-accessories.jpg',
-      sizes: ['Medium (35L)', 'Large (55L)'],
-      defaultSize: 'Medium (35L)',
-      collectionEn: 'Travel & Outdoor',
-      collectionAr: 'السفر والرحلات'
-    }
-  ];
+  // Unified reactive product catalog reading from persistent store
+  const [allProducts, setAllProducts] = useState(() => getCatalogProducts());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setAllProducts(getCatalogProducts());
+    };
+    window.addEventListener('ips-products-updated', handleUpdate);
+    return () => window.removeEventListener('ips-products-updated', handleUpdate);
+  }, []);
 
   // Filtering
   const filteredProducts = useMemo(() => {
@@ -334,8 +40,8 @@ export default function UniformsPage() {
           (selectedCategory === 'school-uniforms' && (product.category === 'school-uniforms' || product.subCategory === 'boys-trousers' || product.subCategory === 'girls-skirts')) ||
           (selectedCategory === 'boys-trousers' && product.subCategory === 'boys-trousers') ||
           (selectedCategory === 'girls-skirts' && product.subCategory === 'girls-skirts') ||
-          (selectedCategory === 'shoes' && product.category === 'shoes') ||
-          (selectedCategory === 'accessories' && product.category === 'accessories') ||
+          (selectedCategory === 'shoes' && (product.category === 'shoes' || product.subCategory === 'shoes')) ||
+          (selectedCategory === 'accessories' && (product.category === 'accessories' || product.subCategory === 'accessories')) ||
           (selectedCategory === 'stationery-books' && product.category === 'stationery-books') ||
           (selectedCategory === 'school-bags' && product.category === 'school-bags') ||
           (selectedCategory === 'lunch-boxes' && product.category === 'lunch-boxes') ||
@@ -353,10 +59,10 @@ export default function UniformsPage() {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         const matches =
-          product.nameEn.toLowerCase().includes(query) ||
-          product.nameAr.toLowerCase().includes(query) ||
-          product.sku.toLowerCase().includes(query) ||
-          product.descEn.toLowerCase().includes(query);
+          (product.nameEn && product.nameEn.toLowerCase().includes(query)) ||
+          (product.nameAr && product.nameAr.toLowerCase().includes(query)) ||
+          (product.sku && product.sku.toLowerCase().includes(query)) ||
+          (product.descEn && product.descEn.toLowerCase().includes(query));
         if (!matches) return false;
       }
 
@@ -366,7 +72,7 @@ export default function UniformsPage() {
       if (sortBy === 'price_desc') return b.price - a.price;
       return a.id - b.id;
     });
-  }, [selectedCategory, searchQuery, sortBy]);
+  }, [allProducts, selectedCategory, searchQuery, sortBy]);
 
   const handleAddToCart = (product) => {
     if (!isAuthenticated) {
@@ -383,25 +89,25 @@ export default function UniformsPage() {
     setTimeout(() => setAddedItem(null), 1800);
   };
 
-  // Complete curated collections list matching Shop_Proposal.pdf with high-resolution landscape images
-  const categoriesList = [
-    { id: 'all', label: isRTL ? 'جميع التشكيلات (20)' : 'All Collections (20)', count: 20, image: '/products/polo-shirt-front.jpg' },
-    { id: 'school-uniforms', label: isRTL ? '1. الزي المدرسي والملابس' : '1. School Uniforms & Attire', count: 3, image: '/products/polo-shirt-front.jpg' },
-    { id: 'boys-trousers', label: isRTL ? '• بناطيل الأولاد' : "• Boys' Trousers", count: 1, image: '/products/boys-gray-trousers.jpg' },
-    { id: 'girls-skirts', label: isRTL ? '• تنانير البنات' : "• Girls' Skirts", count: 1, image: '/products/girls-gray-skirt.jpg' },
-    { id: 'shoes', label: isRTL ? '• الأحذية المدرسية' : '• Footwear Collection', count: 2, image: '/products/boys-black-shoes.jpg' },
-    { id: 'accessories', label: isRTL ? '• الإكسسوارات (أحزمة وجوارب)' : '• Belts & Accessories', count: 2, image: '/products/school-accessories-set.jpg' },
-    { id: 'school-bags', label: isRTL ? '2. الحقائب المدرسية والمستلزمات' : '2. School Bags & Packs', count: 1, image: '/products/school-bags-accessories.jpg' },
-    { id: 'stationery-books', label: isRTL ? '3. الكتب والقرطاسية الأكاديمية' : '3. Academic Books & Stationery', count: 4, image: '/products/cambridge-english-book.jpg' },
-    { id: 'lunch-boxes', label: isRTL ? '4. علب الطعام ومطارات المشروبات' : '4. Dining & Drinkware', count: 1, image: '/products/lunch-boxes-drinkware.jpg' },
-    { id: 'healthcare', label: isRTL ? '5. الرعاية الصحية والعناية' : '5. Wellness & Personal Care', count: 1, image: '/products/healthcare-personal-care.jpg' },
-    { id: 'fitness-sports', label: isRTL ? '6. اللياقة والرياضة البدنية' : '6. Athletics & Sports Gear', count: 1, image: '/products/fitness-sports-equipment.jpg' },
-    { id: 'electronics', label: isRTL ? '7. الإلكترونيات وملحقات التقنية' : '7. Electronics & Tech Gear', count: 1, image: '/products/electronics-mobile-accessories.jpg' },
-    { id: 'toys-educational', label: isRTL ? '8. ألعاب الذكاء والتعليم' : '8. Educational & STEM Play', count: 1, image: '/products/toys-educational-products.jpg' },
-    { id: 'gifts-craft', label: isRTL ? '9. الهدايا والأعمال الفنية' : '9. Fine Arts, Crafts & Gifts', count: 1, image: '/products/gifts-art-craft.jpg' },
-    { id: 'household', label: isRTL ? '10. المستلزمات والمنظمات المنزلية' : '10. Household Essentials', count: 1, image: '/products/household-daily-essentials.jpg' },
-    { id: 'travel-outdoor', label: isRTL ? '11. السفر والرحلات الخارجية' : '11. Travel & Outdoor Luggage', count: 1, image: '/products/travel-outdoor-accessories.jpg' }
-  ];
+  // Complete curated collections list dynamically counted from store
+  const categoriesList = useMemo(() => [
+    { id: 'all', label: isRTL ? `جميع التشكيلات (${allProducts.length})` : `All Collections (${allProducts.length})`, count: allProducts.length, image: '/products/polo-shirt-front.jpg' },
+    { id: 'school-uniforms', label: isRTL ? '1. الزي المدرسي والملابس' : '1. School Uniforms & Attire', count: allProducts.filter(p => p.category === 'school-uniforms').length, image: '/products/polo-shirt-front.jpg' },
+    { id: 'boys-trousers', label: isRTL ? '• بناطيل الأولاد' : "• Boys' Trousers", count: allProducts.filter(p => p.subCategory === 'boys-trousers').length, image: '/products/boys-gray-trousers.jpg' },
+    { id: 'girls-skirts', label: isRTL ? '• تنانير البنات' : "• Girls' Skirts", count: allProducts.filter(p => p.subCategory === 'girls-skirts').length, image: '/products/girls-gray-skirt.jpg' },
+    { id: 'shoes', label: isRTL ? '• الأحذية المدرسية' : '• Footwear Collection', count: allProducts.filter(p => p.subCategory === 'shoes' || p.category === 'shoes').length, image: '/products/boys-black-shoes.jpg' },
+    { id: 'accessories', label: isRTL ? '• الإكسسوارات (أحزمة وجوارب)' : '• Belts & Accessories', count: allProducts.filter(p => p.subCategory === 'accessories' || p.category === 'accessories').length, image: '/products/school-accessories-set.jpg' },
+    { id: 'school-bags', label: isRTL ? '2. الحقائب المدرسية والمستلزمات' : '2. School Bags & Packs', count: allProducts.filter(p => p.category === 'school-bags').length, image: '/products/school-bags-accessories.jpg' },
+    { id: 'stationery-books', label: isRTL ? '3. الكتب والقرطاسية الأكاديمية' : '3. Academic Books & Stationery', count: allProducts.filter(p => p.category === 'stationery-books').length, image: '/products/cambridge-english-book.jpg' },
+    { id: 'lunch-boxes', label: isRTL ? '4. علب الطعام ومطارات المشروبات' : '4. Dining & Drinkware', count: allProducts.filter(p => p.category === 'lunch-boxes').length, image: '/products/lunch-boxes-drinkware.jpg' },
+    { id: 'healthcare', label: isRTL ? '5. الرعاية الصحية والعناية' : '5. Wellness & Personal Care', count: allProducts.filter(p => p.category === 'healthcare').length, image: '/products/healthcare-personal-care.jpg' },
+    { id: 'fitness-sports', label: isRTL ? '6. اللياقة والرياضة البدنية' : '6. Athletics & Sports Gear', count: allProducts.filter(p => p.category === 'fitness-sports').length, image: '/products/fitness-sports-equipment.jpg' },
+    { id: 'electronics', label: isRTL ? '7. الإلكترونيات وملحقات التقنية' : '7. Electronics & Tech Gear', count: allProducts.filter(p => p.category === 'electronics').length, image: '/products/electronics-mobile-accessories.jpg' },
+    { id: 'toys-educational', label: isRTL ? '8. ألعاب الذكاء والتعليم' : '8. Educational & STEM Play', count: allProducts.filter(p => p.category === 'toys-educational').length, image: '/products/toys-educational-products.jpg' },
+    { id: 'gifts-craft', label: isRTL ? '9. الهدايا والأعمال الفنية' : '9. Fine Arts, Crafts & Gifts', count: allProducts.filter(p => p.category === 'gifts-craft').length, image: '/products/gifts-art-craft.jpg' },
+    { id: 'household', label: isRTL ? '10. المستلزمات والمنظمات المنزلية' : '10. Household Essentials', count: allProducts.filter(p => p.category === 'household').length, image: '/products/household-daily-essentials.jpg' },
+    { id: 'travel-outdoor', label: isRTL ? '11. السفر والرحلات الخارجية' : '11. Travel & Outdoor Luggage', count: allProducts.filter(p => p.category === 'travel-outdoor').length, image: '/products/travel-outdoor-accessories.jpg' }
+  ], [allProducts, isRTL]);
 
   return (
     <div className="uniforms-page-container">

@@ -15,6 +15,7 @@ import {
 import { useCart } from '../context/CartContext.js';
 import { useLanguage } from '../context/LanguageContext.js';
 import { useAuth } from '../context/AuthContext.js';
+import { getCatalogProducts } from '../services/productStore.js';
 
 // All official school uniform products with their genuine size matrices
 export const officialProductsList = [
@@ -424,29 +425,41 @@ export default function ProductDetailPage() {
   const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
 
+  const [productsList, setProductsList] = useState(() => getCatalogProducts());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setProductsList(getCatalogProducts());
+    };
+    window.addEventListener('ips-products-updated', handleUpdate);
+    return () => window.removeEventListener('ips-products-updated', handleUpdate);
+  }, []);
+
   // Find the exact product clicked
   const productId = parseInt(id, 10) || 1;
   const product = useMemo(() => {
-    return officialProductsList.find(p => p.id === productId) || officialProductsList[0];
-  }, [productId]);
+    return productsList.find(p => p.id === productId) || productsList[0] || {};
+  }, [productsList, productId]);
 
-  const [selectedSize, setSelectedSize] = useState(product.defaultSize);
+  const [selectedSize, setSelectedSize] = useState(product?.defaultSize || (product?.sizes && product.sizes[0]) || 'Standard');
   const [quantity, setQuantity] = useState(1);
   const [activeThumb, setActiveThumb] = useState(0);
   const [added, setAdded] = useState(false);
 
   // Update selected size and reset thumbnail when navigating between products
   useEffect(() => {
-    setSelectedSize(product.defaultSize);
-    setActiveThumb(0);
-    setQuantity(1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (product) {
+      setSelectedSize(product.defaultSize || (product.sizes && product.sizes[0]) || 'Standard');
+      setActiveThumb(0);
+      setQuantity(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [product]);
 
   // Recommended items excluding current product
   const recommendedItems = useMemo(() => {
-    return officialProductsList.filter(p => p.id !== product.id).slice(0, 6);
-  }, [product.id]);
+    return productsList.filter(p => p.id !== product?.id).slice(0, 6);
+  }, [productsList, product?.id]);
 
   const handleAddCurrent = () => {
     addToCart(
