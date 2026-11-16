@@ -136,17 +136,32 @@ export default function Header() {
           {/* Point 2: Categories Dropdown */}
           <div style={{ position: 'relative' }} ref={categoriesRef}>
             <button
+              type="button"
               onClick={() => setCategoriesMenuOpen(!categoriesMenuOpen)}
               onMouseEnter={() => setCategoriesMenuOpen(true)}
-              className={`nav-link ${location.search.includes('category') ? 'active-pill' : ''}`}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+              className={`nav-link ${(location.search.includes('category') || categoriesMenuOpen) ? 'active-pill' : ''}`}
+              style={{
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                border: 'none',
+                fontFamily: 'inherit',
+                fontSize: 'inherit',
+                borderRadius: '6px',
+                padding: '0.38rem clamp(0.45rem, 0.65vw, 0.85rem)',
+                backgroundColor: (location.search.includes('category') || categoriesMenuOpen) ? '#800020' : 'transparent',
+                color: (location.search.includes('category') || categoriesMenuOpen) ? '#ffffff' : '#222222',
+                transition: 'all 0.15s ease'
+              }}
             >
-              <Layers size={15} />
+              <Layers size={15} color={(location.search.includes('category') || categoriesMenuOpen) ? '#ffffff' : 'currentColor'} />
               <span>{isRTL ? 'الفئات والأقسام' : 'Categories'}</span>
               <ChevronDown
                 size={14}
                 style={{
-                  opacity: 0.7,
+                  color: (location.search.includes('category') || categoriesMenuOpen) ? '#ffffff' : 'currentColor',
+                  opacity: 0.85,
                   transform: categoriesMenuOpen ? 'rotate(180deg)' : 'none',
                   transition: 'transform 0.2s'
                 }}
@@ -157,7 +172,15 @@ export default function Header() {
               <div
                 className="dropdown-panel nav-dropdown"
                 onMouseLeave={() => setCategoriesMenuOpen(false)}
-                style={{ minWidth: '340px', maxHeight: '460px', overflowY: 'auto', padding: '0.6rem 0', borderRadius: '12px', border: '1.5px solid #ebdada' }}
+                style={{
+                  minWidth: '340px',
+                  maxHeight: '460px',
+                  overflowY: 'auto',
+                  padding: '0.6rem 0',
+                  borderRadius: '12px',
+                  border: '1.5px solid #ebdada',
+                  zIndex: 1000
+                }}
               >
                 <div className="dropdown-header" style={{ padding: '0.65rem 1rem', borderBottom: '1.5px solid #f3e8eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.84rem', fontWeight: '800', color: '#9E2A2B' }}>
