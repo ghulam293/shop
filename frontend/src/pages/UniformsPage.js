@@ -351,35 +351,31 @@ export default function UniformsPage() {
                   />
                 </Link>
 
-                {/* Product Info */}
+                {/* Product Info - Clean layout without description or clutter */}
                 <div style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: '#800020', fontWeight: '800', textTransform: 'uppercase' }}>
-                      {prod.sku}
-                    </span>
                     <Link to={`/product/${prod.id}`} style={{ textDecoration: 'none' }}>
                       <h4 style={{
-                        fontSize: '0.98rem',
+                        fontSize: '0.96rem',
                         fontWeight: '800',
                         color: '#111827',
-                        margin: '0.25rem 0 0.4rem',
-                        lineHeight: '1.3'
+                        margin: '0.1rem 0 0.5rem',
+                        lineHeight: '1.35',
+                        minHeight: '2.6rem',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
                       }}>
                         {isRTL ? prod.nameAr : prod.nameEn}
                       </h4>
                     </Link>
-                    <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: '0 0 0.75rem', lineHeight: '1.4' }}>
-                      {isRTL ? prod.descAr : prod.descEn}
-                    </p>
                   </div>
 
                   {/* Price & Add to Cart */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f3e8eb', paddingTop: '0.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f3e8eb', paddingTop: '0.75rem', marginTop: '0.5rem' }}>
                     <div>
-                      <span style={{ fontSize: '0.7rem', color: '#6b7280', display: 'block' }}>
-                        {isRTL ? 'السعر' : 'Price'}
-                      </span>
-                      <span style={{ fontSize: '1.05rem', fontWeight: '900', color: '#800020' }}>
+                      <span style={{ fontSize: '1.08rem', fontWeight: '900', color: '#800020' }}>
                         OMR {prod.price.toFixed(3)}
                       </span>
                     </div>
