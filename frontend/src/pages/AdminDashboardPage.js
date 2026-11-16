@@ -43,6 +43,13 @@ import {
   resetCatalogToDefault,
   OFFICIAL_CATEGORIES
 } from '../services/productStore.js';
+import api from '../services/api.js';
+import {
+  getRegisteredCustomers,
+  addRegisteredCustomer,
+  updateCustomerStatus,
+  deleteCustomer
+} from '../services/customerStore.js';
 
 export default function AdminDashboardPage() {
   const { user, isAdmin, login, logout } = useAuth();
@@ -406,14 +413,108 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Sample customers
-  const sampleCustomers = [
-    { id: 1, name: 'Salim Al-Shanfari', email: 'salim.shanfari@gmail.com', phone: '+968 9123 4567', ordersCount: 4, totalSpend: '58.500', status: 'Active' },
-    { id: 2, name: 'Fatima Al-Kathiri', email: 'fatima.kathiri@hotmail.com', phone: '+968 9234 5678', ordersCount: 3, totalSpend: '42.000', status: 'Active' },
-    { id: 3, name: 'Mohammed Al-Rawas', email: 'm.rawas@omantel.net.om', phone: '+968 9345 6789', ordersCount: 5, totalSpend: '89.500', status: 'VIP' },
-    { id: 4, name: 'Aisha Al-Balushi', email: 'aisha.balushi@outlook.com', phone: '+968 9456 7890', ordersCount: 2, totalSpend: '24.000', status: 'Active' },
-    { id: 5, name: 'Khalid Al-Marhoon', email: 'khalid.marhoon@yahoo.com', phone: '+968 9567 8901', ordersCount: 3, totalSpend: '41.500', status: 'Active' }
-  ];
+  // Customer Directory State (reactive with persistent store)
+  const [customers, setCustomers] = useState(() => getRegisteredCustomers());
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    status: 'Active'
+  });
+
+  // Keep customers synced in real-time when a new customer registers anywhere
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail && Array.isArray(e.detail)) {
+        setCustomers(e.detail);
+      } else {
+        setCustomers(getRegisteredCustomers());
+      }
+    };
+    window.addEventListener('shop-customers-updated', handleUpdate);
+
+    // Try fetching from backend API
+    api.get('/admin/customers')
+      .then(res => {
+        if (res.data && res.data.success && Array.isArray(res.data.customers)) {
+          const local = getRegisteredCustomers();
+          const emailMap = new Map();
+          local.forEach(c => emailMap.set((c.email || '').toLowerCase().trim(), c));
+          res.data.customers.forEach(c => {
+            const clean = (c.email || '').toLowerCase().trim();
+            if (!emailMap.has(clean)) {
+              emailMap.set(clean, c);
+            }
+          });
+          const merged = Array.from(emailMap.values());
+          setCustomers(merged);
+        }
+      })
+      .catch(() => {});
+
+    return () => window.removeEventListener('shop-customers-updated', handleUpdate);
+  }, []);
+
+  const handleCreateCustomerSubmit = async (e) => {
+    e.preventDefault();
+    if (!newCustomer.name.trim() || !newCustomer.email.trim()) {
+      showFeedback('Customer name and email are required.', 'error');
+      return;
+    }
+
+    const createdList = addRegisteredCustomer({
+      name: newCustomer.name.trim(),
+      email: newCustomer.email.trim().toLowerCase(),
+      phone: newCustomer.phone.trim() || '+968 90 000000',
+      status: newCustomer.status || 'Active',
+      ordersCount: 0,
+      totalSpend: '0.000',
+      joinedDate: 'Just now'
+    });
+
+    setCustomers(createdList);
+
+    // Also notify backend API
+    try {
+      await api.post('/admin/customers', {
+        name: newCustomer.name.trim(),
+        email: newCustomer.email.trim().toLowerCase(),
+        phone: newCustomer.phone.trim() || '+968 90 000000',
+        status: newCustomer.status || 'Active'
+      });
+    } catch (_) {}
+
+    showFeedback(`Customer account for "${newCustomer.name}" created successfully!`);
+    setShowAddCustomerModal(false);
+    setNewCustomer({ name: '', email: '', phone: '', status: 'Active' });
+  };
+
+  const handleToggleCustomerStatus = (cust) => {
+    const nextStatus = cust.status === 'Active' ? 'Blocked' : 'Active';
+    const updated = updateCustomerStatus(cust.id, nextStatus);
+    setCustomers(updated);
+    showFeedback(`Customer "${cust.name}" status updated to ${nextStatus}.`);
+  };
+
+  const handleDeleteCustomer = (cust) => {
+    if (window.confirm(`Are you sure you want to delete customer account "${cust.name}"?`)) {
+      const updated = deleteCustomer(cust.id);
+      setCustomers(updated);
+      showFeedback(`Customer "${cust.name}" removed.`);
+    }
+  };
+
+  const filteredCustomers = useMemo(() => {
+    if (!customerSearch.trim()) return customers;
+    const q = customerSearch.toLowerCase().trim();
+    return customers.filter(c =>
+      (c.name || '').toLowerCase().includes(q) ||
+      (c.email || '').toLowerCase().includes(q) ||
+      (c.phone || '').includes(q)
+    );
+  }, [customers, customerSearch]);
 
   const [exportNotice, setExportNotice] = useState(false);
 
@@ -602,7 +703,7 @@ export default function AdminDashboardPage() {
             { id: 'inventory', label: `Products & Catalog (${catalogProducts.length})`, icon: Package },
             { id: 'categories', label: `Category Controls (${OFFICIAL_CATEGORIES.length})`, icon: Grid },
             { id: 'customer_carts', label: `Active Customer Carts (${customerCarts.length})`, icon: ShoppingBag },
-            { id: 'customers', label: `Customer Accounts (${sampleCustomers.length})`, icon: Users }
+            { id: 'customers', label: `Customer Accounts (${customers.length})`, icon: Users }
           ].map((tab) => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -1799,9 +1900,67 @@ export default function AdminDashboardPage() {
             padding: '1.5rem',
             boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
           }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#800020', margin: '0 0 1.25rem' }}>
-              Customer Accounts & Purchasing History
-            </h2>
+            {/* Header with Title, Search, and + Add Customer Button */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              marginBottom: '1.5rem'
+            }}>
+              <div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#800020', margin: 0 }}>
+                  Customer Accounts & Purchasing History
+                </h2>
+                <p style={{ fontSize: '0.82rem', color: '#6b7280', margin: '4px 0 0' }}>
+                  Live synchronized directory of all registered customers across web and mobile.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                {/* Search Customer */}
+                <div style={{ position: 'relative' }}>
+                  <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                  <input
+                    type="text"
+                    placeholder="Search customer name, email..."
+                    value={customerSearch}
+                    onChange={(e) => setCustomerSearch(e.target.value)}
+                    style={{
+                      padding: '0.5rem 0.85rem 0.5rem 2rem',
+                      borderRadius: '8px',
+                      border: '1px solid #d1d5db',
+                      fontSize: '0.84rem',
+                      width: '240px'
+                    }}
+                  />
+                </div>
+
+                {/* + Add New Customer Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowAddCustomerModal(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    backgroundColor: '#800020',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '0.55rem 1rem',
+                    fontWeight: '800',
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 6px rgba(128, 0, 32, 0.2)'
+                  }}
+                >
+                  <Plus size={16} />
+                  <span>+ Create New Customer</span>
+                </button>
+              </div>
+            </div>
 
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem', textAlign: 'left' }}>
@@ -1813,43 +1972,242 @@ export default function AdminDashboardPage() {
                     <th style={{ padding: '0.75rem 1rem' }}>Orders Completed</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Lifetime Spend</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Status</th>
+                    <th style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleCustomers.map((cust) => (
-                    <tr key={cust.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: '700', color: '#111827' }}>
-                        {cust.name}
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem', color: '#4b5563' }}>
-                        {cust.email}
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem', color: '#4b5563' }}>
-                        {cust.phone}
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: '700', color: '#800020' }}>
-                        {cust.ordersCount} Orders
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: '800', color: '#15803d' }}>
-                        OMR {cust.totalSpend}
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <span style={{
-                          fontSize: '0.74rem',
-                          fontWeight: '800',
-                          backgroundColor: cust.status === 'VIP' ? '#fef3c7' : '#dcfce7',
-                          color: cust.status === 'VIP' ? '#b45309' : '#15803d',
-                          padding: '0.2rem 0.55rem',
-                          borderRadius: '9999px'
-                        }}>
-                          {cust.status}
-                        </span>
+                  {filteredCustomers.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>
+                        No customers found matching "{customerSearch}".
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    filteredCustomers.map((cust) => (
+                      <tr key={cust.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '0.85rem 1rem', fontWeight: '700', color: '#111827' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                            <div style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              backgroundColor: '#f3e8ff',
+                              color: '#7e22ce',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontWeight: '800',
+                              fontSize: '0.82rem',
+                              flexShrink: 0
+                            }}>
+                              {(cust.name || 'C').charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <div>{cust.name}</div>
+                              {cust.joinedDate && (
+                                <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Joined: {cust.joinedDate}</div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', color: '#4b5563' }}>
+                          <span style={{ fontFamily: 'monospace', fontSize: '0.84rem' }}>{cust.email}</span>
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', color: '#4b5563' }}>
+                          {cust.phone}
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', fontWeight: '700', color: '#800020' }}>
+                          {cust.ordersCount || 0} Orders
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', fontWeight: '800', color: '#15803d' }}>
+                          OMR {cust.totalSpend || '0.000'}
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <span style={{
+                            fontSize: '0.74rem',
+                            fontWeight: '800',
+                            backgroundColor: cust.status === 'VIP' ? '#fef3c7' : cust.status === 'Blocked' ? '#fee2e2' : '#dcfce7',
+                            color: cust.status === 'VIP' ? '#b45309' : cust.status === 'Blocked' ? '#dc2626' : '#15803d',
+                            padding: '0.2rem 0.55rem',
+                            borderRadius: '9999px'
+                          }}>
+                            {cust.status}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>
+                          <div style={{ display: 'inline-flex', gap: '0.4rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleCustomerStatus(cust)}
+                              title={cust.status === 'Blocked' ? 'Unblock customer' : 'Block customer'}
+                              style={{
+                                padding: '0.3rem 0.6rem',
+                                fontSize: '0.75rem',
+                                fontWeight: '700',
+                                borderRadius: '6px',
+                                border: '1px solid #d1d5db',
+                                backgroundColor: '#ffffff',
+                                color: cust.status === 'Blocked' ? '#15803d' : '#b45309',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {cust.status === 'Blocked' ? 'Unblock' : 'Toggle Status'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteCustomer(cust)}
+                              title="Delete customer"
+                              style={{
+                                padding: '0.3rem 0.5rem',
+                                fontSize: '0.75rem',
+                                borderRadius: '6px',
+                                border: '1px solid #fee2e2',
+                                backgroundColor: '#fff5f5',
+                                color: '#dc2626',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
+
+            {/* Modal: Create New Customer */}
+            {showAddCustomerModal && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 99999,
+                padding: '1rem'
+              }}>
+                <div style={{
+                  backgroundColor: '#ffffff',
+                  borderRadius: '16px',
+                  maxWidth: '480px',
+                  width: '100%',
+                  padding: '1.75rem',
+                  boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: '900', color: '#800020', margin: 0 }}>
+                      + Create New Customer Account
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddCustomerModal(false)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleCreateCustomerSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
+                        Customer Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Hussain"
+                        value={newCustomer.name}
+                        onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="e.g. itshussain302@gmail.com"
+                        value={newCustomer.email}
+                        onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="e.g. +968 9123 4567"
+                        value={newCustomer.phone}
+                        onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
+                        Account Status
+                      </label>
+                      <select
+                        value={newCustomer.status}
+                        onChange={(e) => setNewCustomer({ ...newCustomer, status: e.target.value })}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', backgroundColor: '#fff' }}
+                      >
+                        <option value="Active">Active Customer</option>
+                        <option value="VIP">VIP Customer</option>
+                        <option value="Blocked">Blocked</option>
+                      </select>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowAddCustomerModal(false)}
+                        style={{
+                          padding: '0.6rem 1.15rem',
+                          borderRadius: '8px',
+                          border: '1px solid #d1d5db',
+                          backgroundColor: '#ffffff',
+                          fontWeight: '700',
+                          fontSize: '0.85rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        style={{
+                          padding: '0.6rem 1.25rem',
+                          borderRadius: '8px',
+                          border: 'none',
+                          backgroundColor: '#800020',
+                          color: '#ffffff',
+                          fontWeight: '800',
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 8px rgba(128, 0, 32, 0.25)'
+                        }}
+                      >
+                        Save & Create Customer
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

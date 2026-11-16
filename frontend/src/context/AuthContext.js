@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api.js';
+import { addRegisteredCustomer } from '../services/customerStore.js';
 
 const AuthContext = createContext();
 
@@ -183,6 +184,16 @@ export function AuthProvider({ children }) {
         setToken(authToken);
         localStorage.setItem('ips_user', JSON.stringify(newUser));
         localStorage.setItem('ips_token', authToken);
+
+        // Add to customer accounts directory
+        addRegisteredCustomer({
+          id: newUser.id,
+          name: newUser.fullName,
+          email: newUser.email,
+          phone: newUser.phoneNumber,
+          status: 'Active'
+        });
+
         setLoading(false);
         return { success: true, user: newUser };
       }
@@ -206,6 +217,16 @@ export function AuthProvider({ children }) {
     setToken(mockToken);
     localStorage.setItem('ips_user', JSON.stringify(newUser));
     localStorage.setItem('ips_token', mockToken);
+
+    // Add to customer accounts directory
+    addRegisteredCustomer({
+      id: newUser.id,
+      name: newUser.fullName,
+      email: newUser.email,
+      phone: newUser.phoneNumber,
+      status: 'Active'
+    });
+
     setLoading(false);
     return { success: true, user: newUser };
   };

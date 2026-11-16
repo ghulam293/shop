@@ -9,6 +9,7 @@ import {
   updateProduct,
   deleteProduct,
   getAllCustomers,
+  createCustomer,
   getCategoriesSummary
 } from '../controllers/adminController.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
@@ -43,6 +44,7 @@ router.delete('/products/:id', deleteProduct);
 
 // Customers & Categories
 router.get('/customers', getAllCustomers);
+router.post('/customers', createCustomer);
 router.get('/categories', getCategoriesSummary);
 
 export default router;

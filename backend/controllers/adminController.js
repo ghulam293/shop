@@ -291,9 +291,87 @@ export async function deleteProduct(req, res, next) {
  */
 export async function getAllCustomers(req, res, next) {
   try {
+    let dbCustomers = [];
+    try {
+      dbCustomers = await query(`
+        SELECT u.id, u.full_name AS name, u.email, u.phone_number AS phone,
+               u.is_active, u.created_at,
+               COUNT(o.id) AS ordersCount,
+               COALESCE(SUM(o.total_amount), 0) AS totalSpend
+        FROM users u
+        LEFT JOIN orders o ON u.id = o.user_id
+        WHERE u.email NOT LIKE 'admin%'
+        GROUP BY u.id
+        ORDER BY u.created_at DESC
+      `);
+    } catch (dbErr) {
+      console.warn('DB customers query fallback:', dbErr.message);
+    }
+
+    if (dbCustomers && dbCustomers.length > 0) {
+      const formatted = dbCustomers.map(c => ({
+        id: c.id,
+        name: c.name || 'Customer',
+        email: c.email,
+        phone: c.phone || '+968 90 000000',
+        ordersCount: parseInt(c.ordersCount || 0, 10),
+        totalSpend: parseFloat(c.totalSpend || 0).toFixed(3),
+        status: c.is_active === 0 ? 'Blocked' : 'Active'
+      }));
+      return res.json({ success: true, customers: formatted });
+    }
+
     res.json({
       success: true,
       customers: memoryStore.customers
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * 9b. Create New Customer Account (from Admin Dashboard)
+ */
+export async function createCustomer(req, res, next) {
+  try {
+    const { name, email, phone, status } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ success: false, message: 'Customer name and email are required.' });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    let insertId = Date.now();
+    try {
+      const result = await query(
+        'INSERT INTO users (full_name, email, phone_number, is_active) VALUES (?, ?, ?, ?)',
+        [name.trim(), cleanEmail, phone ? phone.trim() : '+968 90 000000', status === 'Blocked' ? 0 : 1]
+      );
+      if (result && result.insertId) {
+        insertId = result.insertId;
+      }
+    } catch (err) {
+      console.warn('DB create customer insert fallback:', err.message);
+    }
+
+    const created = {
+      id: insertId,
+      name: name.trim(),
+      email: cleanEmail,
+      phone: phone ? phone.trim() : '+968 90 000000',
+      ordersCount: 0,
+      totalSpend: '0.000',
+      status: status || 'Active'
+    };
+
+    if (Array.isArray(memoryStore.customers)) {
+      memoryStore.customers.unshift(created);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Customer account created successfully.',
+      customer: created
     });
   } catch (error) {
     next(error);
