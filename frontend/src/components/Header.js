@@ -24,7 +24,7 @@ import { useCart } from '../context/CartContext.js';
 export default function Header() {
   const { toggleLanguage, t, isRTL } = useLanguage();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
-  const { itemCount } = useCart();
+  const { itemCount, cartAlert } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -562,6 +562,36 @@ export default function Header() {
                 </Link>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Private Cart Notification Toast (Only notified when adding to cart, only for this person) */}
+      {cartAlert && cartAlert.show && (
+        <div style={{
+          position: 'fixed',
+          top: '75px',
+          right: isRTL ? 'auto' : '20px',
+          left: isRTL ? '20px' : 'auto',
+          zIndex: 9999,
+          backgroundColor: '#15803d',
+          color: '#ffffff',
+          borderRadius: '12px',
+          padding: '0.85rem 1.35rem',
+          boxShadow: '0 8px 24px rgba(21, 128, 61, 0.28)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          maxWidth: '380px'
+        }}>
+          <CheckCircle2 size={22} color="#ffffff" style={{ flexShrink: 0 }} />
+          <div>
+            <p style={{ margin: 0, fontWeight: '800', fontSize: '0.88rem' }}>
+              {isRTL ? 'تمت الإضافة إلى سلتك!' : 'Added to Your Cart!'}
+            </p>
+            <p style={{ margin: '2px 0 0', fontSize: '0.78rem', opacity: 0.95 }}>
+              {cartAlert.productName} ({isRTL ? 'المقاس:' : 'Size:'} {cartAlert.size}) × {cartAlert.quantity}
+            </p>
           </div>
         </div>
       )}

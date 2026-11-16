@@ -29,10 +29,12 @@ import {
   Grid,
   Layers,
   Sparkles,
-  Check
+  Check,
+  ShoppingBag
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { useLanguage } from '../context/LanguageContext.js';
+import { useCart } from '../context/CartContext.js';
 import {
   getCatalogProducts,
   addProduct,
@@ -178,7 +180,16 @@ export default function AdminDashboardPage() {
     );
   }
 
+  const { getAllCustomerCarts } = useCart();
   const [activeTab, setActiveTab] = useState('overview');
+  const [customerCarts, setCustomerCarts] = useState([]);
+
+  useEffect(() => {
+    if (isAdmin && getAllCustomerCarts) {
+      setCustomerCarts(getAllCustomerCarts());
+    }
+  }, [isAdmin, getAllCustomerCarts, activeTab]);
+
   const [orderFilter, setOrderFilter] = useState('ALL');
   const [orderSearch, setOrderSearch] = useState('');
   const [inventorySearch, setInventorySearch] = useState('');
@@ -590,6 +601,7 @@ export default function AdminDashboardPage() {
             { id: 'orders', label: `Manage Orders (${orders.length})`, icon: ShoppingCart },
             { id: 'inventory', label: `Products & Catalog (${catalogProducts.length})`, icon: Package },
             { id: 'categories', label: `Category Controls (${OFFICIAL_CATEGORIES.length})`, icon: Grid },
+            { id: 'customer_carts', label: `Active Customer Carts (${customerCarts.length})`, icon: ShoppingBag },
             { id: 'customers', label: `Customer Accounts (${sampleCustomers.length})`, icon: Users }
           ].map((tab) => {
             const Icon = tab.icon;
@@ -1620,6 +1632,159 @@ export default function AdminDashboardPage() {
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB: ACTIVE CUSTOMER CARTS (ADMIN EXCLUSIVE OVERSIGHT)         */}
+        {/* ============================================================== */}
+        {activeTab === 'customer_carts' && (
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '16px',
+            border: '1px solid #e5e7eb',
+            padding: '1.5rem',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#800020', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <ShoppingBag size={22} color="#800020" />
+                  <span>{isRTL ? 'سلات تسوق العملاء النشطة (كل العملاء)' : 'Active Customer Carts (All Users)'}</span>
+                </h2>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.84rem', color: '#6b7280' }}>
+                  {isRTL
+                    ? 'هذه الميزة حصرية للمسؤول فقط لمتابعة ما يضيفه كل عميل في سلته لحظياً.'
+                    : 'Exclusive Administrator View: Track every customer\'s real-time cart contents and item choices.'}
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{
+                  fontSize: '0.78rem',
+                  fontWeight: '800',
+                  color: '#15803d',
+                  backgroundColor: '#dcfce7',
+                  padding: '0.35rem 0.85rem',
+                  borderRadius: '9999px'
+                }}>
+                  ● {customerCarts.length} {isRTL ? 'سلات عملاء نشطة' : 'Active Customer Carts'}
+                </span>
+                <button
+                  onClick={() => {
+                    if (getAllCustomerCarts) {
+                      setCustomerCarts(getAllCustomerCarts());
+                    }
+                  }}
+                  title="Refresh Carts"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.35rem 0.75rem',
+                    backgroundColor: '#f3f4f6',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    fontSize: '0.78rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    color: '#374151'
+                  }}
+                >
+                  <RefreshCw size={13} />
+                  <span>{isRTL ? 'تحديث' : 'Refresh'}</span>
+                </button>
+              </div>
+            </div>
+
+            {customerCarts.length === 0 ? (
+              <div style={{ padding: '3.5rem 1rem', textAlign: 'center', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
+                <ShoppingBag size={48} color="#9ca3af" style={{ margin: '0 auto 1rem' }} />
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#374151', margin: 0 }}>
+                  {isRTL ? 'لا توجد سلات نشطة حالياً' : 'No Active Customer Carts'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: '0.35rem 0 0' }}>
+                  {isRTL ? 'عندما يضيف أي شخص منتجاً إلى سلته ستظهر هنا للمسؤول فقط.' : 'When any person adds products to their cart, their cart contents will appear here for the admin.'}
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {customerCarts.map((cart, idx) => (
+                  <div key={cart.userId || idx} style={{
+                    border: '1.5px solid #e5e7eb',
+                    borderRadius: '12px',
+                    padding: '1.25rem',
+                    backgroundColor: '#fafafa'
+                  }}>
+                    {/* Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.75rem', marginBottom: '0.85rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                        <div style={{ width: '38px', height: '38px', borderRadius: '50%', backgroundColor: '#fdf2f4', color: '#9E2A2B', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800' }}>
+                          {cart.customerName ? cart.customerName[0].toUpperCase() : 'C'}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: '800', color: '#111827', fontSize: '0.95rem' }}>
+                            {cart.customerName}
+                          </div>
+                          <div style={{ fontSize: '0.78rem', color: '#6b7280' }}>
+                            {cart.customerEmail} {cart.customerPhone ? `• ${cart.customerPhone}` : ''} • Updated {cart.updatedAt || 'Recently'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                        <div style={{ textAlign: isRTL ? 'left' : 'right' }}>
+                          <span style={{ fontSize: '0.75rem', color: '#6b7280', display: 'block' }}>{isRTL ? 'إجمالي السلة' : 'Cart Subtotal'}</span>
+                          <span style={{ fontSize: '1.1rem', fontWeight: '900', color: '#800020' }}>OMR {cart.subtotal}</span>
+                        </div>
+                        <span style={{ backgroundColor: '#e0f2fe', color: '#0369a1', fontSize: '0.76rem', fontWeight: '800', padding: '0.25rem 0.65rem', borderRadius: '6px' }}>
+                          {cart.itemCount} {isRTL ? 'منتج' : 'Items'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Items table */}
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
+                        <thead>
+                          <tr style={{ color: '#6b7280', borderBottom: '1px solid #f0f0f0' }}>
+                            <th style={{ padding: '0.5rem' }}>{isRTL ? 'المنتج' : 'Product'}</th>
+                            <th style={{ padding: '0.5rem' }}>{isRTL ? 'المقاس' : 'Size'}</th>
+                            <th style={{ padding: '0.5rem' }}>{isRTL ? 'الكمية' : 'Qty'}</th>
+                            <th style={{ padding: '0.5rem' }}>{isRTL ? 'سعر الوحدة' : 'Unit Price'}</th>
+                            <th style={{ padding: '0.5rem' }}>{isRTL ? 'الإجمالي' : 'Subtotal'}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(cart.items || []).map((it, iIdx) => (
+                            <tr key={it.id || iIdx} style={{ borderBottom: '1px solid #f5f5f5' }}>
+                              <td style={{ padding: '0.5rem', fontWeight: '700', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <img src={it.image} alt={it.nameEn} style={{ width: '32px', height: '32px', borderRadius: '4px', objectFit: 'cover' }} onError={(e) => { e.target.src = '/products/polo-shirt-front.jpg'; }} />
+                                <span>{isRTL && it.nameAr ? it.nameAr : it.nameEn}</span>
+                              </td>
+                              <td style={{ padding: '0.5rem', color: '#4b5563' }}>
+                                <span style={{ backgroundColor: '#f3f4f6', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: '600' }}>
+                                  {it.size}
+                                </span>
+                              </td>
+                              <td style={{ padding: '0.5rem', fontWeight: '800', color: '#111827' }}>
+                                × {it.quantity}
+                              </td>
+                              <td style={{ padding: '0.5rem', color: '#4b5563' }}>
+                                OMR {parseFloat(it.price).toFixed(3)}
+                              </td>
+                              <td style={{ padding: '0.5rem', fontWeight: '800', color: '#15803d' }}>
+                                OMR {(parseFloat(it.price) * it.quantity).toFixed(3)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
