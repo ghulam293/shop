@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Search, Sparkles, Filter, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Search, Sparkles, Filter } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.js';
 
 export default function CategoryCards() {
@@ -8,7 +8,6 @@ export default function CategoryCards() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('ALL');
 
-  // The 11 official curated shop collections defined in Shop_Proposal.pdf
   const departments = [
     {
       id: 'school-uniforms',
@@ -19,11 +18,8 @@ export default function CategoryCards() {
       descAr: 'قمصان البولو، البناطيل، التنانير، الأحذية الرسمية والجوارب',
       image: '/products/polo-shirt-front.jpg',
       link: '/uniforms?category=school-uniforms',
-      count: 'Apparel Collection',
-      group: 'CLOTHING',
-      tag: 'Collection 01',
-      tagEn: 'Collection 01',
-      tagAr: 'التشكيلة 01'
+      count: 'Apparel',
+      group: 'CLOTHING'
     },
     {
       id: 'school-bags',
@@ -34,11 +30,8 @@ export default function CategoryCards() {
       descAr: 'حقائب ظهر مريحة، حقائب لابتوب، وحافظات السفر اليومية',
       image: '/products/school-bags-accessories.jpg',
       link: '/uniforms?category=school-bags',
-      count: 'Ergonomic Bags',
-      group: 'ESSENTIALS',
-      tag: 'Collection 02',
-      tagEn: 'Collection 02',
-      tagAr: 'التشكيلة 02'
+      count: 'Bags',
+      group: 'ESSENTIALS'
     },
     {
       id: 'stationery-books',
@@ -49,11 +42,8 @@ export default function CategoryCards() {
       descAr: 'مناهج كامبريدج، كتب الرياضيات والعلوم، دفاتر وأطقم هندسية',
       image: '/products/cambridge-english-book.jpg',
       link: '/uniforms?category=stationery-books',
-      count: 'Cambridge Books',
-      group: 'STUDY',
-      tag: 'Collection 03',
-      tagEn: 'Collection 03',
-      tagAr: 'التشكيلة 03'
+      count: 'Books',
+      group: 'STUDY'
     },
     {
       id: 'lunch-boxes',
@@ -64,11 +54,8 @@ export default function CategoryCards() {
       descAr: 'علب طعام حرارية صحية ومطارات ماء ستانلس ستيل مانعة للتسرب',
       image: '/products/lunch-boxes-drinkware.jpg',
       link: '/uniforms?category=lunch-boxes',
-      count: 'BPA-Free Sets',
-      group: 'ESSENTIALS',
-      tag: 'Collection 04',
-      tagEn: 'Collection 04',
-      tagAr: 'التشكيلة 04'
+      count: 'Drinkware',
+      group: 'ESSENTIALS'
     },
     {
       id: 'healthcare',
@@ -79,11 +66,8 @@ export default function CategoryCards() {
       descAr: 'حقائب إسعافات أولية، موازين حرارة رقمية، معقمات ومستلزمات العناية',
       image: '/products/healthcare-personal-care.jpg',
       link: '/uniforms?category=healthcare',
-      count: 'Health & Hygiene',
-      group: 'HEALTH',
-      tag: 'Collection 05',
-      tagEn: 'Collection 05',
-      tagAr: 'التشكيلة 05'
+      count: 'Healthcare',
+      group: 'HEALTH'
     },
     {
       id: 'fitness-sports',
@@ -94,11 +78,8 @@ export default function CategoryCards() {
       descAr: 'أثقال تدريب، حبال قفز، كرات رياضية ومطارات البروتين والرياضة',
       image: '/products/fitness-sports-equipment.jpg',
       link: '/uniforms?category=fitness-sports',
-      count: 'Athletics & Training',
-      group: 'TECH_SPORTS',
-      tag: 'Collection 06',
-      tagEn: 'Collection 06',
-      tagAr: 'التشكيلة 06'
+      count: 'Fitness',
+      group: 'TECH_SPORTS'
     },
     {
       id: 'electronics',
@@ -109,11 +90,8 @@ export default function CategoryCards() {
       descAr: 'آلات حاسبة علمية معتمدة، شواحن سريعة، كابلات وسماعات سلكية ولاسلكية',
       image: '/products/electronics-mobile-accessories.jpg',
       link: '/uniforms?category=electronics',
-      count: 'Exam-Approved Tech',
-      group: 'TECH_SPORTS',
-      tag: 'Collection 07',
-      tagEn: 'Collection 07',
-      tagAr: 'التشكيلة 07'
+      count: 'Electronics',
+      group: 'TECH_SPORTS'
     },
     {
       id: 'toys-educational',
@@ -124,11 +102,8 @@ export default function CategoryCards() {
       descAr: 'أطقم تجارب علمية، مكعبات بناء خشبية وألعاب تفكير وذكاء للأطفال',
       image: '/products/toys-educational-products.jpg',
       link: '/uniforms?category=toys-educational',
-      count: 'Learning-Based Play',
-      group: 'STUDY',
-      tag: 'Collection 08',
-      tagEn: 'Collection 08',
-      tagAr: 'التشكيلة 08'
+      count: 'Educational',
+      group: 'STUDY'
     },
     {
       id: 'gifts-craft',
@@ -139,11 +114,8 @@ export default function CategoryCards() {
       descAr: 'بطاقات تهنئة وتغليف، ألوان مائية وزيتية، فراشي رسم وأطقم أشغال يدوية',
       image: '/products/gifts-art-craft.jpg',
       link: '/uniforms?category=gifts-craft',
-      count: 'Art & Creative Kits',
-      group: 'STUDY',
-      tag: 'Collection 09',
-      tagEn: 'Collection 09',
-      tagAr: 'التشكيلة 09'
+      count: 'Art & Crafts',
+      group: 'STUDY'
     },
     {
       id: 'household',
@@ -154,11 +126,8 @@ export default function CategoryCards() {
       descAr: 'صناديق تنظيم وتخزين متعددة، منظمات منزلية ومستلزمات يومية',
       image: '/products/household-daily-essentials.jpg',
       link: '/uniforms?category=household',
-      count: 'Home Organization',
-      group: 'ESSENTIALS',
-      tag: 'Collection 10',
-      tagEn: 'Collection 10',
-      tagAr: 'التشكيلة 10'
+      count: 'Home Essentials',
+      group: 'ESSENTIALS'
     },
     {
       id: 'travel-outdoor',
@@ -169,11 +138,8 @@ export default function CategoryCards() {
       descAr: 'حقائب سفر متينة، منظمات حقائب السفر، حافظات ماء ومستلزمات الرحلات',
       image: '/products/travel-outdoor-accessories.jpg',
       link: '/uniforms?category=travel-outdoor',
-      count: 'Luggage & Outdoor',
-      group: 'ESSENTIALS',
-      tag: 'Collection 11',
-      tagEn: 'Collection 11',
-      tagAr: 'التشكيلة 11'
+      count: 'Travel',
+      group: 'ESSENTIALS'
     }
   ];
 
@@ -219,7 +185,7 @@ export default function CategoryCards() {
             <div>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', color: '#9E2A2B', fontWeight: '800', fontSize: '0.84rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
                 <Sparkles size={16} color="#D4AF37" />
-                <span>{isRTL ? 'المتجر الشامل — 11 تشكيلة مختارة' : 'Shop — 11 Curated Collections'}</span>
+                <span>{isRTL ? 'المتجر الرسمي — فئات المنتجات' : 'Shop Categories'}</span>
               </div>
               <h1 style={{
                 fontSize: 'clamp(1.75rem, 3vw, 2.35rem)',
@@ -228,12 +194,12 @@ export default function CategoryCards() {
                 margin: 0,
                 letterSpacing: '-0.02em'
               }}>
-                {isRTL ? 'استكشف التشكيلات والمجموعات الراقية' : 'Explore All 11 Curated Collections'}
+                {isRTL ? 'تصفح جميع الفئات' : 'Shop by Category'}
               </h1>
               <p style={{ fontSize: '0.95rem', color: '#6b7280', margin: '0.4rem 0 0' }}>
                 {isRTL
-                  ? 'جميع التشكيلات الـ 11 مزودة بصور حقيقية عالية الجودة ومنتجات متوفرة للشراء المباشر.'
-                  : 'All 11 collections equipped with high-resolution photography and products ready for instant order.'}
+                  ? 'تسوق الملابس، الكتب، الحقائب، الإلكترونيات والمستلزمات اليومية.'
+                  : 'Browse quality apparel, textbooks, backpacks, electronics, and daily essentials.'}
               </p>
             </div>
 
@@ -242,7 +208,7 @@ export default function CategoryCards() {
               <Search size={18} style={{ position: 'absolute', [isRTL ? 'right' : 'left']: '14px', top: '50%', transform: 'translateY(-50%)', color: '#9E2A2B' }} />
               <input
                 type="text"
-                placeholder={isRTL ? 'ابحث في التشكيلات الـ 11...' : 'Search collections (uniforms, tech, health)...'}
+                placeholder={isRTL ? 'ابحث في الفئات والمنتجات...' : 'Search categories and products...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -265,15 +231,15 @@ export default function CategoryCards() {
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px solid #f3e8eb', paddingTop: '1rem', alignItems: 'center' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#9E2A2B', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginEnd: '0.5rem' }}>
               <Filter size={14} />
-              <span>{isRTL ? 'تصفية التشكيلات:' : 'Filter Collections:'}</span>
+              <span>{isRTL ? 'تصفية الفئات:' : 'Categories:'}</span>
             </span>
             {[
-              { id: 'ALL', labelEn: 'All 11 Collections', labelAr: 'جميع التشكيلات الـ 11' },
-              { id: 'CLOTHING', labelEn: 'Uniforms & Attire', labelAr: 'الزي والملابس' },
-              { id: 'STUDY', labelEn: 'Books, STEM & Art', labelAr: 'الكتب، العلوم والفنون' },
-              { id: 'ESSENTIALS', labelEn: 'Bags, Food & Home', labelAr: 'الحقائب، الطعام والمنزل' },
-              { id: 'HEALTH', labelEn: 'Wellness & Care', labelAr: 'الرعاية الصحية' },
-              { id: 'TECH_SPORTS', labelEn: 'Tech & Athletics', labelAr: 'التقنية والرياضة' }
+              { id: 'ALL', labelEn: 'All Categories', labelAr: 'جميع الفئات' },
+              { id: 'CLOTHING', labelEn: 'Apparel & Uniforms', labelAr: 'الملابس والزي' },
+              { id: 'STUDY', labelEn: 'Books & Stationery', labelAr: 'الكتب والقرطاسية' },
+              { id: 'ESSENTIALS', labelEn: 'Bags & Daily Essentials', labelAr: 'الحقائب والمستلزمات' },
+              { id: 'HEALTH', labelEn: 'Healthcare & Wellness', labelAr: 'العناية والرعاية' },
+              { id: 'TECH_SPORTS', labelEn: 'Tech & Fitness', labelAr: 'التقنية والرياضة' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -296,7 +262,7 @@ export default function CategoryCards() {
           </div>
         </div>
 
-        {/* Categories Grid - Displays ALL 11 Departments with High-Resolution Photos */}
+        {/* Categories Grid - Clean, Modern Cards Without Clutter Badges */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))',
@@ -329,32 +295,14 @@ export default function CategoryCards() {
                 e.currentTarget.style.borderColor = '#ebdada';
               }}
             >
-              {/* Curated Collection Tag Badge */}
+              {/* Product Photo Box - Clean and focused */}
               <div style={{
-                position: 'absolute',
-                top: '12px',
-                [isRTL ? 'right' : 'left']: '12px',
-                zIndex: 2,
-                backgroundColor: '#9E2A2B',
-                color: '#ffffff',
-                fontSize: '0.72rem',
-                fontWeight: '800',
-                padding: '0.22rem 0.65rem',
-                borderRadius: '9999px',
-                boxShadow: '0 2px 6px rgba(158, 42, 43, 0.25)',
-                letterSpacing: '0.02em'
-              }}>
-                {isRTL ? (dept.tagAr || dept.tag) : (dept.tagEn || dept.tag)}
-              </div>
-
-              {/* High-Resolution Product Photo Box */}
-              <div style={{
-                height: '200px',
+                height: '210px',
                 backgroundColor: '#faf8f9',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '0.5rem',
+                padding: '1rem',
                 overflow: 'hidden',
                 position: 'relative',
                 borderBottom: '1px solid #f3e8eb'
@@ -389,7 +337,7 @@ export default function CategoryCards() {
                       {isRTL ? dept.nameAr : dept.nameEn}
                     </h3>
                     <span style={{
-                      fontSize: '0.72rem',
+                      fontSize: '0.74rem',
                       fontWeight: '700',
                       color: '#800020',
                       backgroundColor: '#fbf2f4',
@@ -407,7 +355,7 @@ export default function CategoryCards() {
                   </p>
                 </div>
 
-                {/* Bottom Action Pill */}
+                {/* Bottom Action Button */}
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -418,17 +366,10 @@ export default function CategoryCards() {
                   borderRadius: '10px',
                   fontWeight: '700',
                   fontSize: '0.86rem',
-                  transition: 'background-color 0.2s ease'
+                  boxShadow: '0 2px 8px rgba(158, 42, 43, 0.2)'
                 }}>
-                  <span>{isRTL ? 'استكشف التشكيلة' : 'Explore Collection'}</span>
-                  <ArrowRight
-                    size={16}
-                    color="#ffffff"
-                    style={{
-                      transform: isRTL ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 0.2s ease'
-                    }}
-                  />
+                  <span>{isRTL ? 'عرض المنتجات' : 'View Products'}</span>
+                  <ArrowRight size={16} style={{ transform: isRTL ? 'rotate(180deg)' : 'none' }} />
                 </div>
               </div>
             </Link>
@@ -436,25 +377,10 @@ export default function CategoryCards() {
         </div>
 
         {filteredDepartments.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '4rem 1rem', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #ebdada' }}>
-            <p style={{ fontSize: '1.1rem', fontWeight: '700', color: '#111827' }}>
-              {isRTL ? 'لم يتم العثور على تشكيلات مطابقة' : 'No matching collections found'}
+          <div style={{ textAlign: 'center', padding: '3rem 1rem', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #ebdada' }}>
+            <p style={{ color: '#6b7280', fontSize: '0.95rem' }}>
+              {isRTL ? 'لم يتم العثور على فئات مطابقة' : 'No matching categories found'}
             </p>
-            <button
-              onClick={() => { setSearchQuery(''); setSelectedGroup('ALL'); }}
-              style={{
-                marginTop: '1rem',
-                padding: '0.65rem 1.25rem',
-                backgroundColor: '#9E2A2B',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '8px',
-                fontWeight: '700',
-                cursor: 'pointer'
-              }}
-            >
-              {isRTL ? 'إعادة ضبط البحث' : 'Reset Search'}
-            </button>
           </div>
         )}
 

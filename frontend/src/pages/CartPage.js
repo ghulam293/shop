@@ -294,7 +294,7 @@ export default function CartPage() {
         <p style={{ fontSize: '0.92rem', color: '#6b7280', marginBottom: '2rem' }}>
           {isRTL
             ? 'تصفح تشكيلة الزي المدرسي والكتب والمستلزمات وأضف المقاسات المطلوبة إلى سلتك.'
-            : 'Browse the store collection, choose your items and sizes to get started.'}
+            : 'Browse our catalog and choose your items to get started.'}
         </p>
         <Link
           to="/uniforms"

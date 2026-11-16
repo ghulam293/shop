@@ -161,7 +161,7 @@ export default function Header() {
               >
                 <div className="dropdown-header" style={{ padding: '0.65rem 1rem', borderBottom: '1.5px solid #f3e8eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.84rem', fontWeight: '800', color: '#9E2A2B' }}>
-                    {isRTL ? 'جميع التشكيلات الـ 11' : 'All 11 Curated Collections'}
+                    {isRTL ? 'جميع الفئات' : 'All Categories'}
                   </span>
                   <Link
                     to="/uniforms"
@@ -526,7 +526,7 @@ export default function Header() {
               )}
 
               <div style={{ padding: '0.65rem 1rem 0.35rem', fontSize: '0.75rem', fontWeight: '800', color: '#9E2A2B', textTransform: 'uppercase' }}>
-                {isRTL ? 'التشكيلات الـ 11:' : 'The 11 Collections:'}
+                {isRTL ? 'فئات المنتجات:' : 'Product Categories:'}
               </div>
 
               {allCategoryPoints.map((item) => (

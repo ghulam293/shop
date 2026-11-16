@@ -91,11 +91,11 @@ export default function UniformsPage() {
 
   // Complete curated collections list dynamically counted from store
   const categoriesList = useMemo(() => [
-    { id: 'all', label: isRTL ? `جميع التشكيلات (${allProducts.length})` : `All Collections (${allProducts.length})`, count: allProducts.length, image: '/products/polo-shirt-front.jpg' },
+    { id: 'all', label: isRTL ? `جميع المنتجات (${allProducts.length})` : `All Products (${allProducts.length})`, count: allProducts.length, image: '/products/polo-shirt-front.jpg' },
     { id: 'school-uniforms', label: isRTL ? '1. الملابس والأزياء' : '1. Apparel & Clothing', count: allProducts.filter(p => p.category === 'school-uniforms').length, image: '/products/polo-shirt-front.jpg' },
     { id: 'boys-trousers', label: isRTL ? '• بناطيل الأولاد' : "• Boys' Trousers", count: allProducts.filter(p => p.subCategory === 'boys-trousers').length, image: '/products/boys-gray-trousers.jpg' },
     { id: 'girls-skirts', label: isRTL ? '• تنانير البنات' : "• Girls' Skirts", count: allProducts.filter(p => p.subCategory === 'girls-skirts').length, image: '/products/girls-gray-skirt.jpg' },
-    { id: 'shoes', label: isRTL ? '• الأحذية الرسمية والجلدية' : '• Footwear Collection', count: allProducts.filter(p => p.subCategory === 'shoes' || p.category === 'shoes').length, image: '/products/boys-black-shoes.jpg' },
+    { id: 'shoes', label: isRTL ? '• الأحذية الرسمية والجلدية' : '• Footwear', count: allProducts.filter(p => p.subCategory === 'shoes' || p.category === 'shoes').length, image: '/products/boys-black-shoes.jpg' },
     { id: 'accessories', label: isRTL ? '• الإكسسوارات (أحزمة وجوارب)' : '• Belts & Accessories', count: allProducts.filter(p => p.subCategory === 'accessories' || p.category === 'accessories').length, image: '/products/school-accessories-set.jpg' },
     { id: 'school-bags', label: isRTL ? '2. الحقائب وحقائب الظهر' : '2. Bags & Backpacks', count: allProducts.filter(p => p.category === 'school-bags').length, image: '/products/school-bags-accessories.jpg' },
     { id: 'stationery-books', label: isRTL ? '3. الكتب والقرطاسية الأكاديمية' : '3. Academic Books & Stationery', count: allProducts.filter(p => p.category === 'stationery-books').length, image: '/products/cambridge-english-book.jpg' },
@@ -117,13 +117,13 @@ export default function UniformsPage() {
           <div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', color: '#9E2A2B', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.2rem' }}>
               <Sparkles size={15} color="#D4AF37" />
-              <span>{isRTL ? 'كتالوج المتجر الراقي' : 'Curated Store Catalog'}</span>
+              <span>{isRTL ? 'كتالوج المتجر' : 'Store Catalog'}</span>
             </div>
             <h1 style={{ fontSize: '1.65rem', fontWeight: '900', color: '#111827', margin: 0 }}>
-              {isRTL ? 'جميع المنتجات والتشكيلات الراقية' : 'All Products & Curated Collections'}
+              {isRTL ? 'جميع المنتجات والأقسام' : 'All Products & Categories'}
             </h1>
             <p style={{ fontSize: '0.84rem', color: '#6b7280', margin: '3px 0 0' }}>
-              {filteredProducts.length} {isRTL ? 'منتجات مختارة بجودة عالية ومتوفرة للطلب' : 'curated high-quality products in stock'}
+              {filteredProducts.length} {isRTL ? 'منتجات متوفرة للطلب الفوري' : 'products available for instant order'}
             </p>
           </div>
 
@@ -179,7 +179,7 @@ export default function UniformsPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid #f3e8eb' }}>
             <Filter size={18} color="#9E2A2B" />
             <h3 style={{ fontSize: '0.98rem', fontWeight: '800', color: '#111827', margin: 0 }}>
-              {isRTL ? 'التشكيلات المختارة' : 'Curated Collections'}
+              {isRTL ? 'فئات المنتجات' : 'Categories'}
             </h3>
           </div>
 
@@ -297,24 +297,6 @@ export default function UniformsPage() {
                   position: 'relative'
                 }}
               >
-                {/* Curated Collection Chip Badge */}
-                <div style={{
-                  position: 'absolute',
-                  top: '10px',
-                  [isRTL ? 'right' : 'left']: '10px',
-                  zIndex: 2,
-                  backgroundColor: '#9E2A2B',
-                  color: '#ffffff',
-                  fontSize: '0.68rem',
-                  fontWeight: '800',
-                  padding: '0.22rem 0.65rem',
-                  borderRadius: '9999px',
-                  boxShadow: '0 2px 6px rgba(158, 42, 43, 0.25)',
-                  letterSpacing: '0.02em'
-                }}>
-                  {isRTL ? (prod.collectionAr || 'تشكيلة راقية') : (prod.collectionEn || 'Curated Collection')}
-                </div>
-
                 {/* Wishlist Button */}
                 <button
                   onClick={() => toggleWishlist(prod)}

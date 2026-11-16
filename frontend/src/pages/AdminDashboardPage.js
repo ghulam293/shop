@@ -1324,7 +1324,7 @@ export default function AdminDashboardPage() {
                   <tr style={{ backgroundColor: '#faf9f6', borderBottom: '2px solid #ebdada', color: '#475569' }}>
                     <th style={{ padding: '0.75rem 0.85rem', width: '50px' }}>Photo</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Product Details</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Category / Collection</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Category</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Base Price</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Size Variants</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Stock</th>
@@ -1576,7 +1576,7 @@ export default function AdminDashboardPage() {
             <div style={{ marginBottom: '1.5rem', borderBottom: '1.5px solid #f3e8eb', paddingBottom: '1rem' }}>
               <h2 style={{ fontSize: '1.35rem', fontWeight: '900', color: '#9E2A2B', margin: 0, display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Grid size={22} color="#9E2A2B" />
-                <span>All 11 Curated Collections & Categories</span>
+                <span>All 11 Store Product Categories</span>
               </h2>
               <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '4px 0 0' }}>
                 Manage category permissions, monitor items per department, and inspect stock distributions.
@@ -2278,7 +2278,7 @@ export default function AdminDashboardPage() {
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '800', color: '#334155', marginBottom: '0.35rem' }}>
-                      Category / Collection *
+                      Category *
                     </label>
                     <select
                       value={editingProduct.category}

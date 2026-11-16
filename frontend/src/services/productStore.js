@@ -2,17 +2,17 @@
 // Supports Admin Price Editing, Size Management, Category Controls, Product Addition & Deletion.
 
 export const OFFICIAL_CATEGORIES = [
-  { id: 'school-uniforms', number: 1, nameEn: 'Apparel & Clothing', nameAr: 'الملابس والأزياء', group: 'CLOTHING', icon: '👕', tagEn: 'Collection 01', tagAr: 'التشكيلة 01' },
-  { id: 'school-bags', number: 2, nameEn: 'Bags & Packs', nameAr: 'الحقائب والمستلزمات', group: 'ESSENTIALS', icon: '🎒', tagEn: 'Collection 02', tagAr: 'التشكيلة 02' },
-  { id: 'stationery-books', number: 3, nameEn: 'Academic Books & Stationery', nameAr: 'الكتب والقرطاسية الأكاديمية', group: 'STUDY', icon: '📚', tagEn: 'Collection 03', tagAr: 'التشكيلة 03' },
-  { id: 'lunch-boxes', number: 4, nameEn: 'Dining & Drinkware', nameAr: 'علب الطعام ومطارات المشروبات', group: 'ESSENTIALS', icon: '🍱', tagEn: 'Collection 04', tagAr: 'التشكيلة 04' },
-  { id: 'healthcare', number: 5, nameEn: 'Wellness & Personal Care', nameAr: 'الرعاية الصحية والعناية', group: 'HEALTH', icon: '🩺', tagEn: 'Collection 05', tagAr: 'التشكيلة 05' },
-  { id: 'fitness-sports', number: 6, nameEn: 'Athletics & Sports Gear', nameAr: 'اللياقة والرياضة البدنية', group: 'TECH_SPORTS', icon: '🏃', tagEn: 'Collection 06', tagAr: 'التشكيلة 06' },
-  { id: 'electronics', number: 7, nameEn: 'Electronics & Tech Gear', nameAr: 'الإلكترونيات وملحقات التقنية', group: 'TECH_SPORTS', icon: '⚡', tagEn: 'Collection 07', tagAr: 'التشكيلة 07' },
-  { id: 'toys-educational', number: 8, nameEn: 'Educational & STEM Play', nameAr: 'ألعاب الذكاء والتعليم', group: 'STUDY', icon: '🧩', tagEn: 'Collection 08', tagAr: 'التشكيلة 08' },
-  { id: 'gifts-craft', number: 9, nameEn: 'Fine Arts, Crafts & Gifts', nameAr: 'الهدايا والأعمال الفنية', group: 'STUDY', icon: '🎨', tagEn: 'Collection 09', tagAr: 'التشكيلة 09' },
-  { id: 'household', number: 10, nameEn: 'Household Essentials', nameAr: 'المستلزمات والمنظمات المنزلية', group: 'ESSENTIALS', icon: '🏠', tagEn: 'Collection 10', tagAr: 'التشكيلة 10' },
-  { id: 'travel-outdoor', number: 11, nameEn: 'Travel & Outdoor Luggage', nameAr: 'السفر والرحلات الخارجية', group: 'ESSENTIALS', icon: '🧳', tagEn: 'Collection 11', tagAr: 'التشكيلة 11' }
+  { id: 'school-uniforms', number: 1, nameEn: 'Apparel & Clothing', nameAr: 'الملابس والأزياء', group: 'CLOTHING', icon: '👕', tagEn: 'Apparel', tagAr: 'الملابس' },
+  { id: 'school-bags', number: 2, nameEn: 'Bags & Packs', nameAr: 'الحقائب والمستلزمات', group: 'ESSENTIALS', icon: '🎒', tagEn: 'Bags', tagAr: 'الحقائب' },
+  { id: 'stationery-books', number: 3, nameEn: 'Academic Books & Stationery', nameAr: 'الكتب والقرطاسية الأكاديمية', group: 'STUDY', icon: '📚', tagEn: 'Books', tagAr: 'الكتب' },
+  { id: 'lunch-boxes', number: 4, nameEn: 'Dining & Drinkware', nameAr: 'علب الطعام ومطارات المشروبات', group: 'ESSENTIALS', icon: '🍱', tagEn: 'Dining', tagAr: 'المطارات والعلب' },
+  { id: 'healthcare', number: 5, nameEn: 'Wellness & Personal Care', nameAr: 'الرعاية الصحية والعناية', group: 'HEALTH', icon: '🩺', tagEn: 'Wellness', tagAr: 'العناية' },
+  { id: 'fitness-sports', number: 6, nameEn: 'Athletics & Sports Gear', nameAr: 'اللياقة والرياضة البدنية', group: 'TECH_SPORTS', icon: '🏃', tagEn: 'Sports', tagAr: 'الرياضة' },
+  { id: 'electronics', number: 7, nameEn: 'Electronics & Tech Gear', nameAr: 'الإلكترونيات وملحقات التقنية', group: 'TECH_SPORTS', icon: '⚡', tagEn: 'Tech', tagAr: 'التقنية' },
+  { id: 'toys-educational', number: 8, nameEn: 'Educational & STEM Play', nameAr: 'ألعاب الذكاء والتعليم', group: 'STUDY', icon: '🧩', tagEn: 'STEM', tagAr: 'التعليم' },
+  { id: 'gifts-craft', number: 9, nameEn: 'Fine Arts, Crafts & Gifts', nameAr: 'الهدايا والأعمال الفنية', group: 'STUDY', icon: '🎨', tagEn: 'Arts', tagAr: 'الفنون' },
+  { id: 'household', number: 10, nameEn: 'Household Essentials', nameAr: 'المستلزمات والمنظمات المنزلية', group: 'ESSENTIALS', icon: '🏠', tagEn: 'Home', tagAr: 'المنزل' },
+  { id: 'travel-outdoor', number: 11, nameEn: 'Travel & Outdoor Luggage', nameAr: 'السفر والرحلات الخارجية', group: 'ESSENTIALS', icon: '🧳', tagEn: 'Travel', tagAr: 'السفر' }
 ];
 
 export const INITIAL_PRODUCTS = [
@@ -98,8 +98,8 @@ export const INITIAL_PRODUCTS = [
     subtitleAr: 'حذاء جلدي برباط للأولاد بنعل طبي',
     category: 'school-uniforms',
     subCategory: 'shoes',
-    collectionEn: 'Footwear Collection',
-    collectionAr: 'تشكيلة الأحذية',
+    collectionEn: 'Footwear',
+    collectionAr: 'الأحذية',
     price: 12.500,
     stock: 35,
     threshold: 8,
@@ -121,8 +121,8 @@ export const INITIAL_PRODUCTS = [
     subtitleAr: 'حذاء ماري جين كلاسيكي للبنات بحزام مريح',
     category: 'school-uniforms',
     subCategory: 'shoes',
-    collectionEn: 'Footwear Collection',
-    collectionAr: 'تشكيلة الأحذية',
+    collectionEn: 'Footwear',
+    collectionAr: 'الأحذية',
     price: 12.500,
     stock: 28,
     threshold: 6,
