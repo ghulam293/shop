@@ -20,7 +20,7 @@ const adminAuth = (req, res, next) => {
   // If authorization header is present, authenticate with JWT
   if (req.headers.authorization) {
     return authenticate(req, res, () => {
-      requireRole(['ADMIN', 'STAFF'])(req, res, next);
+      requireRole(['ADMIN', 'STORE_MANAGER'])(req, res, next);
     });
   }
   // Allow direct call in developer mode

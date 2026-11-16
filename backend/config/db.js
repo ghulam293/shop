@@ -14,7 +14,7 @@ try {
     port: parseInt(process.env.DB_PORT, 10) || 3307,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'ips_school_shop',
+    database: process.env.DB_NAME || 'shop',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,

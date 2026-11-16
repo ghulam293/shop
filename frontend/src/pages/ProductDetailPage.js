@@ -185,7 +185,7 @@ export const officialProductsList = [
     sizeLabel: 'Curriculum Stage',
     defaultSize: 'Stage 3',
     images: ['/products/cambridge-english-book.jpg'],
-    descEn: 'Official Cambridge Primary English Learner Book approved for student curriculum.',
+    descEn: 'Official Cambridge Primary English Learner Book approved for academic curriculum.',
     descAr: 'كتاب الطالب المعتمد لمنهاج كامبريدج للغة الإنجليزية.'
   },
   {
@@ -204,7 +204,7 @@ export const officialProductsList = [
     sizeLabel: 'Curriculum Stage',
     defaultSize: 'Stage 3',
     images: ['/products/cambridge-math-book.jpg'],
-    descEn: 'Official Cambridge Primary Mathematics Learner Book for students.',
+    descEn: 'Official Cambridge Primary Mathematics Learner Book for learners.',
     descAr: 'كتاب كامبريدج المعتمد للرياضيات للمرحلة الابتدائية.'
   },
   {

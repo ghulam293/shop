@@ -37,7 +37,7 @@ export async function authenticate(req, res, next) {
     if (!user.is_active) {
       return res.status(403).json({
         success: false,
-        message: 'Account has been deactivated. Please contact school administration.'
+        message: 'Account has been deactivated. Please contact store administration.'
       });
     }
 
@@ -46,7 +46,7 @@ export async function authenticate(req, res, next) {
       fullName: user.full_name,
       email: user.email,
       phoneNumber: user.phone_number,
-      roles: user.roles ? user.roles.split(',') : ['PARENT']
+      roles: user.roles ? user.roles.split(',') : ['CUSTOMER']
     };
 
     next();

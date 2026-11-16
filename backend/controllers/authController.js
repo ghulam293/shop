@@ -9,9 +9,7 @@ export async function register(req, res, next) {
       email,
       phoneNumber,
       password,
-      confirmPassword,
-      studentName,
-      grade
+      confirmPassword
     } = req.body;
 
     if (!fullName || !email || !phoneNumber || !password) {
@@ -44,7 +42,7 @@ export async function register(req, res, next) {
         fullName: fullName.trim(),
         email: cleanEmail,
         phoneNumber: phoneNumber.trim(),
-        roles: ['CUSTOMER', 'PARENT']
+        roles: ['CUSTOMER']
       }
     });
   } catch (error) {
@@ -102,7 +100,7 @@ export async function login(req, res, next) {
           fullName: 'Salim Al-Shanfari',
           email: cleanEmail,
           phoneNumber: '+968 91 234567',
-          roles: ['CUSTOMER', 'PARENT']
+          roles: ['CUSTOMER']
         }
       });
     }
@@ -137,7 +135,7 @@ export async function getMe(req, res, next) {
       fullName: 'Salim Al-Shanfari',
       email: 'demo@shop.com',
       phoneNumber: '+968 91 234567',
-      roles: ['CUSTOMER', 'PARENT']
+      roles: ['CUSTOMER']
     };
 
     res.json({

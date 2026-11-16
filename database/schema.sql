@@ -1,14 +1,14 @@
 -- ==============================================================================
--- DATABASE: ips_school_shop
--- SYSTEM: Modern School Shopping & Catalog System
+-- DATABASE: shop
+-- SYSTEM: Modern Online Shopping & Catalog System
 -- CHARACTER SET: utf8mb4 (Full Unicode for English & Arabic text)
 -- ==============================================================================
 
-CREATE DATABASE IF NOT EXISTS `ips_school_shop`
+CREATE DATABASE IF NOT EXISTS `shop`
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE `ips_school_shop`;
+USE `shop`;
 
 -- Disable foreign key checks for clean drop and create
 SET FOREIGN_KEY_CHECKS = 0;

@@ -268,6 +268,104 @@ export default function CartPage() {
     );
   }
 
+  // 1. Authentication Gate: Cart cannot open without login
+  if (!isAuthenticated) {
+    return (
+      <div style={{ maxWidth: '520px', margin: '4.5rem auto', padding: '2.5rem 1.5rem', textAlign: 'center' }}>
+        <div style={{
+          width: '80px',
+          height: '80px',
+          backgroundColor: '#fdf2f4',
+          color: '#9E2A2B',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 1.5rem',
+          boxShadow: '0 4px 16px rgba(158, 42, 43, 0.12)'
+        }}>
+          <Lock size={40} />
+        </div>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#111827', marginBottom: '0.65rem' }}>
+          {isRTL ? 'تسجيل الدخول مطلوب لفتح السلة' : 'Login Required to Access Cart'}
+        </h2>
+        <p style={{ fontSize: '0.92rem', color: '#6b7280', lineHeight: '1.6', marginBottom: '2rem' }}>
+          {isRTL
+            ? 'لا يمكن فتح سلة التسوق بدون تسجيل الدخول. يرجى تسجيل الدخول إلى حسابك أو إنشاء حساب جديد للوصول إلى السلة وإتمام طلبك.'
+            : 'You cannot open or access the shopping cart without logging in. Please sign in to your account or create a new account to view your cart items and proceed.'}
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', maxWidth: '360px', margin: '0 auto' }}>
+          <Link
+            to="/login"
+            state={{ from: { pathname: '/cart' }, message: isRTL ? 'يرجى تسجيل الدخول للوصول إلى سلة التسوق.' : 'Please log in to open your shopping cart.' }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              padding: '0.85rem 1.75rem',
+              backgroundColor: '#9E2A2B',
+              color: '#ffffff',
+              borderRadius: '8px',
+              fontWeight: '800',
+              textDecoration: 'none',
+              boxShadow: '0 4px 12px rgba(158, 42, 43, 0.25)',
+              fontSize: '0.95rem'
+            }}
+          >
+            <User size={18} />
+            <span>{isRTL ? 'تسجيل الدخول إلى حسابك' : 'Sign In to Access Cart'}</span>
+          </Link>
+
+          <Link
+            to="/register"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              padding: '0.8rem 1.75rem',
+              backgroundColor: '#ffffff',
+              border: '1.5px solid #d1d5db',
+              color: '#374151',
+              borderRadius: '8px',
+              fontWeight: '700',
+              textDecoration: 'none',
+              fontSize: '0.92rem'
+            }}
+          >
+            <span>{isRTL ? 'إنشاء حساب جديد' : 'Create New Account'}</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={async () => {
+              await login('customer@shop.com', 'password123');
+            }}
+            style={{
+              marginTop: '0.5rem',
+              padding: '0.75rem 1rem',
+              backgroundColor: '#fef3c7',
+              border: '1px dashed #d97706',
+              color: '#92400e',
+              borderRadius: '8px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.4rem'
+            }}
+          >
+            ⚡ {isRTL ? 'دخول فوري كعميل تجريبي' : '1-Click Customer Demo Login'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div style={{ maxWidth: '600px', margin: '5rem auto', padding: '2rem', textAlign: 'center' }}>
@@ -463,64 +561,6 @@ export default function CartPage() {
               <span>OMR {total}</span>
             </div>
           </div>
-
-          {/* Login Required Notice if not logged in */}
-          {!isAuthenticated && (
-            <div style={{
-              backgroundColor: '#fffbeb',
-              border: '1.5px solid #fde68a',
-              borderRadius: '12px',
-              padding: '1rem',
-              marginBottom: '1.25rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.65rem'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#92400e', fontWeight: '800', fontSize: '0.9rem' }}>
-                <Lock size={18} color="#b45309" />
-                <span>{isRTL ? 'تسجيل الدخول مطلوب لإتمام الشراء' : 'Login Required to Complete Purchase'}</span>
-              </div>
-              <p style={{ margin: 0, fontSize: '0.8rem', color: '#78350f', lineHeight: '1.4' }}>
-                {isRTL
-                  ? 'يجب تسجيل الدخول قبل إتمام الطلب والدفع. يمكنك تسجيل الدخول بنقرة واحدة كعميل تجريبي والمتابعة فوراً:'
-                  : 'You must be logged in before placing your order. You can use 1-click instant login below to proceed immediately:'}
-              </p>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
-                <button
-                  type="button"
-                  onClick={() => login('demo@shop.com', 'customer123')}
-                  style={{
-                    backgroundColor: '#800020',
-                    color: '#ffffff',
-                    border: 'none',
-                    padding: '0.5rem 0.85rem',
-                    borderRadius: '6px',
-                    fontSize: '0.78rem',
-                    fontWeight: '700',
-                    cursor: 'pointer'
-                  }}
-                >
-                  ⚡ {isRTL ? 'دخول فوري كعميل تجريبي' : '1-Click Customer Demo Login'}
-                </button>
-                <Link
-                  to="/login"
-                  state={{ from: { pathname: '/cart' } }}
-                  style={{
-                    backgroundColor: '#ffffff',
-                    color: '#800020',
-                    border: '1px solid #800020',
-                    padding: '0.5rem 0.85rem',
-                    borderRadius: '6px',
-                    fontSize: '0.78rem',
-                    fontWeight: '700',
-                    textDecoration: 'none'
-                  }}
-                >
-                  {isRTL ? 'صفحة تسجيل الدخول' : 'Go to Login Page'}
-                </Link>
-              </div>
-            </div>
-          )}
 
           {/* PAYMENT METHOD SELECTION (DEBIT CARD & CASH ON DELIVERY ONLY) */}
           <div style={{ marginBottom: '1.5rem' }}>

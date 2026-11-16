@@ -33,7 +33,7 @@ export function CartProvider({ children }) {
     localStorage.setItem('ips_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
-  const addToCart = (product, selectedSize = 'M', quantity = 1, studentId = null) => {
+  const addToCart = (product, selectedSize = 'M', quantity = 1) => {
     const qty = parseInt(quantity, 10) || 1;
     const price = parseFloat(product.base_price || product.price || 6.500);
 
@@ -58,8 +58,7 @@ export function CartProvider({ children }) {
             size: selectedSize,
             price: price,
             image: product.primary_image || product.image || (product.images && product.images[0]?.image_url) || '/products/polo-shirt-front.jpg',
-            quantity: qty,
-            studentId
+            quantity: qty
           }
         ];
       }

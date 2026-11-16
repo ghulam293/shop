@@ -1,14 +1,14 @@
 -- ==============================================================================
--- DATABASE: ips_school_shop (Complete Schema + Official Seeds)
--- SYSTEM: Modern School Shopping & Catalog System
+-- DATABASE: shop (Complete Schema + Official Seeds)
+-- SYSTEM: Modern Online Shopping & Catalog System
 -- CHARACTER SET: utf8mb4 (Full Unicode for English & Arabic text)
 -- ==============================================================================
 
-CREATE DATABASE IF NOT EXISTS `ips_school_shop`
+CREATE DATABASE IF NOT EXISTS `shop`
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE `ips_school_shop`;
+USE `shop`;
 
 -- Disable foreign key checks for clean drop and create
 SET FOREIGN_KEY_CHECKS = 0;
@@ -273,9 +273,8 @@ CREATE TABLE `audit_logs` (
 -- Roles
 INSERT INTO `roles` (`id`, `name`, `description`) VALUES
 (1, 'ADMIN', 'Store administrator with full catalog, inventory, price, and order controls'),
-(2, 'STAFF', 'Store clerk for counter pickup verification and stock handling'),
-(3, 'CUSTOMER', 'Registered online store customer'),
-(4, 'PARENT', 'Customer account with student associations');
+(2, 'STORE_MANAGER', 'Store manager for counter pickup verification and stock handling'),
+(3, 'CUSTOMER', 'Registered online store customer');
 
 -- Users
 INSERT INTO `users` (`id`, `full_name`, `email`, `phone_number`, `password_hash`, `is_active`, `email_verified`) VALUES
@@ -287,7 +286,6 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `phone_number`, `password_hash`
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (1, 1),
 (2, 3),
-(2, 4),
 (3, 3),
 (4, 3);
 

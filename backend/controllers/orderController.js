@@ -34,7 +34,7 @@ export async function createOrder(req, res, next) {
       const cartId = cartRows[0].id;
 
       const [cartItems] = await conn.execute(
-        `SELECT ci.id, ci.variant_id, ci.quantity, ci.student_id,
+        `SELECT ci.id, ci.variant_id, ci.quantity,
                 pv.size, COALESCE(pv.price_override, p.base_price) AS unit_price,
                 p.id AS product_id, p.name_en, p.name_ar,
                 inv.stock_quantity, inv.reserved_quantity
@@ -65,20 +65,33 @@ export async function createOrder(req, res, next) {
         subtotal += parseFloat(item.unit_price) * item.quantity;
       }
 
-      const shippingFee = fulfillmentMethod === 'DELIVERY' ? 2.000 : 0.000;
+      const shippingFee = fulfillmentMethod === 'DELIVERY' || fulfillmentMethod === 'HOME_DELIVERY' ? 2.000 : 0.000;
       const totalAmount = subtotal + shippingFee;
 
       // 3. Generate unique order number
       const randomSuffix = Math.floor(10000 + Math.random() * 90000);
-      const orderNumber = `IPS-2026-${randomSuffix}`;
+      const orderNumber = `SHOP-2026-${randomSuffix}`;
 
       // 4. Create order record
       const [orderRes] = await conn.execute(
         `INSERT INTO orders (
-          order_number, user_id, fulfillment_method, shipping_address_id,
-          pickup_campus, status, subtotal, discount_amount, shipping_fee, total_amount, notes
-        ) VALUES (?, ?, ?, ?, 'Store Main Collection', 'PENDING', ?, 0.000, ?, ?, ?)`,
-        [orderNumber, userId, fulfillmentMethod, shippingAddressId, subtotal, shippingFee, totalAmount, notes]
+          order_number, user_id, customer_name, customer_phone, customer_email,
+          fulfillment_method, delivery_address, pickup_counter, status,
+          subtotal, shipping_fee, total_amount, payment_method, payment_status, notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Main Store Collection Counter (Salalah)', 'PROCESSING', ?, ?, ?, 'CARD', 'PAID', ?)`,
+        [
+          orderNumber,
+          userId,
+          req.user.fullName || 'Valued Customer',
+          req.user.phoneNumber || '+968 90 000000',
+          req.user.email || 'customer@shop.com',
+          fulfillmentMethod === 'DELIVERY' ? 'HOME_DELIVERY' : 'STORE_PICKUP',
+          shippingAddressId || null,
+          subtotal,
+          shippingFee,
+          totalAmount,
+          notes
+        ]
       );
       const orderId = orderRes.insertId;
 
@@ -87,11 +100,11 @@ export async function createOrder(req, res, next) {
         const itemSubtotal = parseFloat(item.unit_price) * item.quantity;
         await conn.execute(
           `INSERT INTO order_items (
-            order_id, variant_id, student_id, product_name_en, product_name_ar, size, unit_price, quantity, subtotal
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            order_id, variant_id, product_name, size, quantity, unit_price, subtotal
+          ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
           [
-            orderId, item.variant_id, item.student_id, item.name_en, item.name_ar,
-            item.size, item.unit_price, item.quantity, itemSubtotal
+            orderId, item.variant_id, item.name_en,
+            item.size, item.quantity, item.unit_price, itemSubtotal
           ]
         );
 
@@ -104,18 +117,10 @@ export async function createOrder(req, res, next) {
         );
       }
 
-      // 6. Record initial payment record
-      await conn.execute(
-        `INSERT INTO payments (
-          order_id, payment_method, amount, currency, status
-        ) VALUES (?, ?, ?, 'OMR', ?)`,
-        [orderId, paymentMethod, totalAmount, paymentMethod === 'SCHOOL_COUNTER_CASH' ? 'PENDING' : 'PENDING']
-      );
-
-      // 7. Clear user cart
+      // 6. Clear user cart
       await conn.execute('DELETE FROM cart_items WHERE cart_id = ?', [cartId]);
 
-      // 8. Create parent notification
+      // 7. Create customer notification
       await conn.execute(
         `INSERT INTO notifications (user_id, title_en, title_ar, message_en, message_ar, action_url)
          VALUES (?, 'Order Placed Successfully', 'تم استلام طلبكم بنجاح',
@@ -128,7 +133,7 @@ export async function createOrder(req, res, next) {
         ]
       );
 
-      // 9. Audit log
+      // 8. Audit log
       await conn.execute(
         `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, details, ip_address)
          VALUES (?, 'ORDER_CREATED', 'ORDER', ?, ?, ?)`,
@@ -140,7 +145,7 @@ export async function createOrder(req, res, next) {
 
     res.status(201).json({
       success: true,
-      message: 'Order placed successfully! We will prepare your school uniform essentials.',
+      message: 'Order placed successfully! We will prepare your order for fulfillment.',
       order: orderResult
     });
   } catch (error) {
@@ -186,7 +191,7 @@ export async function getOrderById(req, res, next) {
     const { id } = req.params;
 
     // Check ownership or admin role
-    const isAdmin = req.user.roles.includes('ADMIN') || req.user.roles.includes('STAFF');
+    const isAdmin = req.user.roles.includes('ADMIN') || req.user.roles.includes('STORE_MANAGER');
     let orderSql = 'SELECT * FROM orders WHERE id = ?';
     const params = [id];
 
@@ -240,4 +245,47 @@ export async function getOrderById(req, res, next) {
     next(error);
   }
 }
+
+/**
+ * Public Live Order Tracking (Lookup by order number or tracking number)
+ */
+export async function trackOrderByNumber(req, res, next) {
+  try {
+    const { reference } = req.params;
+    const cleanRef = (reference || '').trim().toUpperCase();
+
+    const orders = await query('SELECT * FROM orders');
+    const order = orders.find(o => 
+      (o.order_number && o.order_number.toUpperCase() === cleanRef) ||
+      (o.tracking_number && o.tracking_number.toUpperCase() === cleanRef) ||
+      o.id.toString() === cleanRef
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: `No order found matching reference "${reference}". Please check and try again.`
+      });
+    }
+
+    res.json({
+      success: true,
+      order: {
+        ...order,
+        total_amount: parseFloat(order.total_amount || 0).toFixed(3),
+        subtotal: parseFloat(order.subtotal || 0).toFixed(3),
+        currency: 'OMR',
+        trackingSteps: [
+          { step: 1, label: 'Order Placed', status: 'completed' },
+          { step: 2, label: 'Order Confirmed', status: 'completed' },
+          { step: 3, label: 'Packing & Quality Check', status: order.status === 'PROCESSING' || order.status === 'READY_FOR_PICKUP' || order.status === 'COMPLETED' ? 'completed' : 'pending' },
+          { step: 4, label: order.fulfillment_method === 'HOME_DELIVERY' ? 'Out for Delivery' : 'Ready for Counter Pickup', status: order.status === 'READY_FOR_PICKUP' || order.status === 'COMPLETED' ? 'completed' : 'pending' }
+        ]
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 

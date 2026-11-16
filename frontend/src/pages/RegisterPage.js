@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, Mail, Phone, Lock, GraduationCap, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
-import { useAuth } from '../context/AuthContext.js';
+import { ShoppingCart, User, Mail, Phone, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.js';
+import { useAuth } from '../context/AuthContext.js';
 
 export default function RegisterPage() {
+  const { isRTL } = useLanguage();
   const { register, loading } = useAuth();
-  const { t, isRTL } = useLanguage();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    phoneNumber: '+968 ',
+    phoneNumber: '',
     password: '',
-    confirmPassword: '',
-    studentName: '',
-    grade: 'Grade 3',
-    classSection: 'A'
+    confirmPassword: ''
   });
 
   const [error, setError] = useState('');
@@ -71,7 +68,7 @@ export default function RegisterPage() {
             {isRTL ? 'المتجر' : 'Shop'}
           </h2>
           <p style={{ fontSize: '0.85rem', color: '#6b7280', marginTop: '0.35rem' }}>
-            {isRTL ? 'إنشاء حساب جديد' : 'Create an Account'}
+            {isRTL ? 'إنشاء حساب جديد للتسوق' : 'Create an Account to Shop & Order'}
           </p>
         </div>
 
@@ -84,10 +81,10 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           
-          {/* Parent Details */}
+          {/* Customer Full Name */}
           <div>
             <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#374151', marginBottom: '0.3rem' }}>
-              Parent / Guardian Full Name *
+              Full Name *
             </label>
             <div style={{ position: 'relative' }}>
               <User size={16} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
@@ -116,7 +113,7 @@ export default function RegisterPage() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="parent@example.com"
+                  placeholder="customer@example.com"
                   style={{ width: '100%', padding: '0.65rem 0.85rem 0.65rem 2.4rem', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '0.85rem' }}
                 />
               </div>
@@ -179,65 +176,13 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Optional Student Association Card */}
-          <div style={{ backgroundColor: '#fdf8f9', border: '1px solid #f7e4e8', borderRadius: '10px', padding: '1rem', marginTop: '0.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#800020', fontWeight: '700', fontSize: '0.82rem', marginBottom: '0.65rem' }}>
-              <GraduationCap size={16} />
-              <span>Link Student for Size & Uniform Recommendations (Optional)</span>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              <input
-                type="text"
-                name="studentName"
-                value={formData.studentName}
-                onChange={handleChange}
-                placeholder="Student Name (e.g. Ahmed Al-Shanfari)"
-                style={{ width: '100%', padding: '0.55rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.82rem' }}
-              />
-
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '0.5rem' }}>
-                <select
-                  name="grade"
-                  value={formData.grade}
-                  onChange={handleChange}
-                  style={{ padding: '0.55rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.82rem', backgroundColor: '#fff' }}
-                >
-                  <option value="KG 1">KG 1</option>
-                  <option value="KG 2">KG 2</option>
-                  <option value="Grade 1">Grade 1</option>
-                  <option value="Grade 2">Grade 2</option>
-                  <option value="Grade 3">Grade 3</option>
-                  <option value="Grade 4">Grade 4</option>
-                  <option value="Grade 5">Grade 5</option>
-                  <option value="Grade 6">Grade 6</option>
-                  <option value="Grade 7">Grade 7</option>
-                  <option value="Grade 8">Grade 8</option>
-                  <option value="Grade 9">Grade 9</option>
-                  <option value="Grade 10">Grade 10</option>
-                  <option value="Grade 11">Grade 11</option>
-                  <option value="Grade 12">Grade 12</option>
-                </select>
-
-                <input
-                  type="text"
-                  name="classSection"
-                  value={formData.classSection}
-                  onChange={handleChange}
-                  placeholder="Class (A)"
-                  style={{ padding: '0.55rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.82rem' }}
-                />
-              </div>
-            </div>
-          </div>
-
           <button
             type="submit"
             disabled={loading}
             className="btn-primary"
             style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', fontSize: '0.95rem', marginTop: '0.5rem' }}
           >
-            <span>{loading ? 'Registering Account...' : 'Create Parent Account'}</span>
+            <span>{loading ? 'Registering Account...' : 'Create Account'}</span>
             <ArrowRight size={16} />
           </button>
         </form>
@@ -253,4 +198,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-

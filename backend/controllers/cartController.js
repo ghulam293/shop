@@ -16,18 +16,16 @@ export async function getCart(req, res, next) {
     const cartId = await getUserCartId(userId);
 
     const items = await query(
-      `SELECT ci.id, ci.cart_id, ci.variant_id, ci.quantity, ci.student_id,
+      `SELECT ci.id, ci.cart_id, ci.variant_id, ci.quantity,
               pv.sku AS variant_sku, pv.size, COALESCE(pv.price_override, p.base_price) AS unit_price,
               p.id AS product_id, p.name_en, p.name_ar, p.sku AS product_sku,
               pi.image_url,
-              COALESCE(inv.stock_quantity - inv.reserved_quantity, 0) AS available_stock,
-              s.full_name AS student_name, s.grade AS student_grade
+              COALESCE(inv.stock_quantity - inv.reserved_quantity, 0) AS available_stock
        FROM cart_items ci
        JOIN product_variants pv ON ci.variant_id = pv.id
        JOIN products p ON pv.product_id = p.id
        LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = 1
        LEFT JOIN inventory inv ON pv.id = inv.variant_id
-       LEFT JOIN students s ON ci.student_id = s.id
        WHERE ci.cart_id = ?
        ORDER BY ci.created_at ASC`,
       [cartId]
@@ -46,7 +44,7 @@ export async function getCart(req, res, next) {
       };
     });
 
-    const shippingFee = 0.000; // Free school pickup standard
+    const shippingFee = 0.000; // Free store pickup standard
     const total = subtotal + shippingFee;
 
     res.json({
@@ -69,7 +67,7 @@ export async function getCart(req, res, next) {
 export async function addToCart(req, res, next) {
   try {
     const userId = req.user.id;
-    const { variantId, quantity = 1, studentId = null } = req.body;
+    const { variantId, quantity = 1 } = req.body;
 
     if (!variantId) {
       return res.status(400).json({
@@ -108,8 +106,8 @@ export async function addToCart(req, res, next) {
     // Check if item already in cart
     const existing = await query(
       `SELECT id, quantity FROM cart_items
-       WHERE cart_id = ? AND variant_id = ? AND (student_id = ? OR (student_id IS NULL AND ? IS NULL))`,
-      [cartId, variantId, studentId, studentId]
+       WHERE cart_id = ? AND variant_id = ?`,
+      [cartId, variantId]
     );
 
     const currentQtyInCart = existing.length > 0 ? existing[0].quantity : 0;
@@ -129,8 +127,8 @@ export async function addToCart(req, res, next) {
       );
     } else {
       await query(
-        'INSERT INTO cart_items (cart_id, variant_id, quantity, student_id) VALUES (?, ?, ?, ?)',
-        [cartId, variantId, qty, studentId]
+        'INSERT INTO cart_items (cart_id, variant_id, quantity) VALUES (?, ?, ?)',
+        [cartId, variantId, qty]
       );
     }
 

@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
           : cleanEmail.split('@')[0].replace(/[._-]/g, ' ').toUpperCase(),
         email: cleanEmail,
         phoneNumber: '+968 91 234567',
-        roles: ['CUSTOMER', 'PARENT']
+        roles: ['CUSTOMER']
       };
       const mockToken = 'mock-customer-token-' + Date.now();
       setUser(customerData);
@@ -90,7 +90,7 @@ export function AuthProvider({ children }) {
       fullName: formData.fullName || 'New Customer',
       email: formData.email.toLowerCase(),
       phoneNumber: formData.phoneNumber || '+968 90 000000',
-      roles: ['CUSTOMER', 'PARENT']
+      roles: ['CUSTOMER']
     };
     const mockToken = 'mock-user-token-' + Date.now();
     setUser(newUser);

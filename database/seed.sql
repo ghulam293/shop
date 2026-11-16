@@ -1,4 +1,4 @@
-USE `ips_school_shop`;
+USE `shop`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -23,9 +23,8 @@ DELETE FROM `roles`;
 -- ------------------------------------------------------------------------------
 INSERT INTO `roles` (`id`, `name`, `description`) VALUES
 (1, 'ADMIN', 'Store administrator with full catalog, inventory, price, and order controls'),
-(2, 'STAFF', 'Store clerk for counter pickup verification and stock handling'),
-(3, 'CUSTOMER', 'Registered online store customer'),
-(4, 'PARENT', 'Customer account with student associations');
+(2, 'STORE_MANAGER', 'Store manager for counter pickup verification and stock handling'),
+(3, 'CUSTOMER', 'Registered online store customer');
 
 -- ------------------------------------------------------------------------------
 -- 2. SEED USERS & ROLES
@@ -39,7 +38,6 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `phone_number`, `password_hash`
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (1, 1),
 (2, 3),
-(2, 4),
 (3, 3),
 (4, 3);
 

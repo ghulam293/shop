@@ -311,9 +311,10 @@ export default function Header() {
             )}
           </div>
 
-          {/* Shopping Cart Pill */}
+          {/* Shopping Cart Pill - Cannot open cart without login */}
           <Link
-            to="/cart"
+            to={isAuthenticated ? '/cart' : '/login'}
+            state={!isAuthenticated ? { from: { pathname: '/cart' }, message: isRTL ? 'يرجى تسجيل الدخول أولاً للوصول إلى سلة التسوق.' : 'Please log in to open your shopping cart.' } : undefined}
             title={t('cart')}
             style={{
               position: 'relative',

@@ -49,7 +49,7 @@ export default function BottomNavBar() {
       id: 'cart',
       labelEn: 'Cart',
       labelAr: 'السلة',
-      path: '/cart',
+      path: isAuthenticated ? '/cart' : '/login',
       icon: ShoppingCart,
       badge: itemCount
     },
