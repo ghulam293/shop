@@ -18,6 +18,7 @@ import {
 import { useCart } from '../context/CartContext.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useLanguage } from '../context/LanguageContext.js';
+import { addNewCustomerOrder } from '../services/orderStore.js';
 
 export default function CartPage() {
   const { items, itemCount, subtotal, shippingFee, total, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -124,13 +125,14 @@ export default function CartPage() {
         date: new Date().toLocaleDateString('en-GB')
       };
 
-      // Save to localStorage for MyOrdersPage
-      try {
-        const existing = JSON.parse(localStorage.getItem('ips_orders') || '[]');
-        localStorage.setItem('ips_orders', JSON.stringify([newOrder, ...existing]));
-      } catch (err) {
-        console.warn('Could not save to ips_orders', err);
-      }
+      // Save order to synchronized order store so Admin Dashboard updates instantly
+      addNewCustomerOrder({
+        ...newOrder,
+        customerName: user?.fullName || 'Customer',
+        customerEmail: user?.email || 'customer@shop.com',
+        customerPhone: deliveryPhone || user?.phone || user?.phoneNumber || '+968 91 234567',
+        status: 'PENDING'
+      });
 
       setIsProcessing(false);
       setOrderPlaced(newOrder);

@@ -50,6 +50,12 @@ import {
   updateCustomerStatus,
   deleteCustomer
 } from '../services/customerStore.js';
+import {
+  getAllStoreOrders,
+  addNewCustomerOrder,
+  updateOrderStatusInStore,
+  deleteOrderFromStore
+} from '../services/orderStore.js';
 
 export default function AdminDashboardPage() {
   const { user, isAdmin, login, logout } = useAuth();
@@ -203,99 +209,39 @@ export default function AdminDashboardPage() {
   const [inventoryFilter, setInventoryFilter] = useState('ALL');
   const [dateRange, setDateRange] = useState('7d');
 
-  // Realistic sample orders
-  const [orders, setOrders] = useState([
-    {
-      id: 1,
-      orderNumber: 'ORD-2026-92810',
-      customerName: 'Salim Al-Shanfari',
-      customerPhone: '+968 9123 4567',
-      customerEmail: 'salim.shanfari@gmail.com',
-      itemsCount: 3,
-      itemsSummary: 'Polo Shirt (M), Boys Trousers (30), Belt',
-      totalAmount: '16.500',
-      paymentMethod: 'Debit Card',
-      paymentStatus: 'PAID',
-      status: 'PENDING',
-      fulfillment: 'Store Pickup',
-      createdAt: 'Today, 11:40 AM'
-    },
-    {
-      id: 2,
-      orderNumber: 'ORD-2026-84192',
-      customerName: 'Fatima Al-Kathiri',
-      customerPhone: '+968 9234 5678',
-      customerEmail: 'fatima.kathiri@hotmail.com',
-      itemsCount: 2,
-      itemsSummary: 'Girls Skirt (28), White Socks (M)',
-      totalAmount: '9.000',
-      paymentMethod: 'Cash on Delivery',
-      paymentStatus: 'PENDING_CASH',
-      status: 'PROCESSING',
-      fulfillment: 'Home Delivery',
-      createdAt: 'Today, 09:15 AM'
-    },
-    {
-      id: 3,
-      orderNumber: 'ORD-2026-71049',
-      customerName: 'Mohammed Al-Rawas',
-      customerPhone: '+968 9345 6789',
-      customerEmail: 'm.rawas@omantel.net.om',
-      itemsCount: 4,
-      itemsSummary: 'School Backpack, Scientific Calculator, Geometry Set',
-      totalAmount: '25.500',
-      paymentMethod: 'Debit Card',
-      paymentStatus: 'PAID',
-      status: 'READY_FOR_PICKUP',
-      fulfillment: 'Store Pickup',
-      createdAt: 'Yesterday, 04:20 PM'
-    },
-    {
-      id: 4,
-      orderNumber: 'ORD-2026-65412',
-      customerName: 'Aisha Al-Balushi',
-      customerPhone: '+968 9456 7890',
-      customerEmail: 'aisha.balushi@outlook.com',
-      itemsCount: 2,
-      itemsSummary: 'Insulated Lunch Box Set, Water Bottle',
-      totalAmount: '5.500',
-      paymentMethod: 'Cash on Delivery',
-      paymentStatus: 'PENDING_CASH',
-      status: 'COMPLETED',
-      fulfillment: 'Home Delivery',
-      createdAt: 'Yesterday, 01:10 PM'
-    },
-    {
-      id: 5,
-      orderNumber: 'ORD-2026-54321',
-      customerName: 'Khalid Al-Marhoon',
-      customerPhone: '+968 9567 8901',
-      customerEmail: 'khalid.marhoon@yahoo.com',
-      itemsCount: 3,
-      itemsSummary: 'Athletics Training Shoes (38), Gym Bag, Socks',
-      totalAmount: '12.500',
-      paymentMethod: 'Debit Card',
-      paymentStatus: 'PAID',
-      status: 'COMPLETED',
-      fulfillment: 'Store Pickup',
-      createdAt: '11 Nov 2026'
-    },
-    {
-      id: 6,
-      orderNumber: 'ORD-2026-43219',
-      customerName: 'Noura Al-Amri',
-      customerPhone: '+968 9678 9012',
-      customerEmail: 'noura.amri@gmail.com',
-      itemsCount: 1,
-      itemsSummary: 'Multi-Pocket Travel Duffel (35L)',
-      totalAmount: '13.000',
-      paymentMethod: 'Debit Card',
-      paymentStatus: 'PAID',
-      status: 'COMPLETED',
-      fulfillment: 'Home Delivery',
-      createdAt: '10 Nov 2026'
-    }
-  ]);
+  // Persistent, reactive order store integration
+  const [orders, setOrders] = useState(() => getAllStoreOrders());
+
+  useEffect(() => {
+    const handleOrdersUpdate = (e) => {
+      if (e.detail && Array.isArray(e.detail)) {
+        setOrders(e.detail);
+      } else {
+        setOrders(getAllStoreOrders());
+      }
+    };
+    window.addEventListener('shop-orders-updated', handleOrdersUpdate);
+
+    // Also fetch from backend API if connected
+    api.get('/admin/orders')
+      .then(res => {
+        if (res.data && res.data.success && Array.isArray(res.data.orders)) {
+          const local = getAllStoreOrders();
+          const map = new Map();
+          local.forEach(o => map.set(o.orderNumber, o));
+          res.data.orders.forEach(o => {
+            const num = o.orderNumber || o.order_number;
+            if (!map.has(num)) {
+              map.set(num, o);
+            }
+          });
+          setOrders(Array.from(map.values()));
+        }
+      })
+      .catch(() => {});
+
+    return () => window.removeEventListener('shop-orders-updated', handleOrdersUpdate);
+  }, []);
 
   // Persistent catalog store integration
   const [catalogProducts, setCatalogProducts] = useState(() => getCatalogProducts());
@@ -519,7 +465,12 @@ export default function AdminDashboardPage() {
   const [exportNotice, setExportNotice] = useState(false);
 
   const handleUpdateStatus = (orderId, newStatus) => {
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+    const updated = updateOrderStatusInStore(orderId, newStatus);
+    setOrders(updated);
+    showFeedback(`Order status updated to ${newStatus}.`);
+    try {
+      api.put(`/admin/orders/${orderId}/status`, { status: newStatus }).catch(() => {});
+    } catch (_) {}
   };
 
   const handleExport = () => {
