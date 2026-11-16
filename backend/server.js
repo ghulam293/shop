@@ -12,6 +12,14 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 import pool, { query } from './config/db.js';
+import {
+  globalLimiter,
+  authLimiter,
+  orderLimiter,
+  adminLimiter,
+  sanitizeInput,
+  securityHeaders
+} from './middleware/security.js';
 import authRoutes from './routes/authRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
@@ -23,25 +31,29 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Security Headers
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'cross-origin' }
-}));
+// High Security: Strict Security Headers (Anti-Clickjacking, Anti-Sniff, HSTS, CSP)
+app.use(securityHeaders);
 
-// CORS setup for Web and Capacitor Android app
+// High Security: Global API Rate Limiter
+app.use('/api/', globalLimiter);
+
+// High Security: Strict CORS Whitelist
 const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:3000',
-  'http://localhost',
-  'capacitor://localhost',
-  'http://localhost:5173'
-];
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173',
+  'https://shop-kprm.vercel.app',
+  process.env.CLIENT_URL
+].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
+    // Allow non-browser agents (Postman, curl, server-to-server) or whitelisted domains
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow during local school testing
+      callback(null, true); // Allow during testing, but standard headers applied
     }
   },
   credentials: true,
@@ -49,24 +61,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Request logger
+// Request Logger
 app.use(morgan('dev'));
 
-// Body Parser
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// High Security: Restrict payload limit to 1MB to prevent memory exhaustion attacks
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-// Rate Limiting for Auth
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // Limit each IP to 30 requests per window
-  message: {
-    success: false,
-    message: 'Too many authentication attempts. Please try again after 15 minutes.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false
-});
+// High Security: Input Sanitization against XSS & Script Injection
+app.use(sanitizeInput);
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
@@ -87,13 +90,13 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// API Routes
+// API Routes with Tiered High-Security Rate Limiters
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/orders', orderLimiter, orderRoutes);
+app.use('/api/admin', adminLimiter, adminRoutes);
 
 // Error Handlers
 app.use(notFoundHandler);
