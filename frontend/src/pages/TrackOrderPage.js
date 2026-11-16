@@ -17,8 +17,10 @@ import {
   Printer
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.js';
+import { useAuth } from '../context/AuthContext.js';
 
 export default function TrackOrderPage() {
+  const { isAuthenticated } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const { isRTL } = useLanguage();
 
@@ -198,6 +200,23 @@ export default function TrackOrderPage() {
     { step: 3, titleEn: 'Out for Delivery', titleAr: 'في الطريق للتسليم', descEn: 'Handed to dispatch courier driver', descAr: 'الطلب بحوزة مندوب التوصيل' },
     { step: 4, titleEn: 'Delivered', titleAr: 'تم التسليم بنجاح', descEn: 'Received by customer', descAr: 'تم تسليم الطلب إلى العميل' }
   ];
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ maxWidth: '520px', margin: '4rem auto', textAlign: 'center', padding: '2.5rem 1.5rem', backgroundColor: '#ffffff', borderRadius: '16px', border: '1.5px solid #ebdada', boxShadow: '0 4px 20px rgba(128,0,32,0.06)' }}>
+        <Truck size={48} style={{ color: '#800020', margin: '0 auto 1rem' }} />
+        <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>
+          {isRTL ? 'تسجيل الدخول مطلوب' : 'Authentication Required'}
+        </h2>
+        <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '1.75rem', lineHeight: 1.5 }}>
+          {isRTL ? 'يرجى تسجيل الدخول إلى حسابك لتتبع حالة طلباتك ومتابعة الشحن.' : 'Please sign in to your account to track orders and live delivery status.'}
+        </p>
+        <Link to="/login" className="btn-primary" style={{ display: 'inline-block', padding: '0.75rem 2rem', textDecoration: 'none' }}>
+          {isRTL ? 'تسجيل الدخول' : 'Sign In to Track Orders'}
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div style={{ backgroundColor: '#faf9f6', minHeight: 'calc(100vh - 120px)', padding: '2.5rem 1rem 4rem' }}>

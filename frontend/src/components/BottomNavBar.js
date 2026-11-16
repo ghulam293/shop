@@ -42,7 +42,7 @@ export default function BottomNavBar() {
       id: 'track',
       labelEn: 'Track',
       labelAr: 'التتبع',
-      path: '/track-order',
+      path: isAuthenticated ? '/track-order' : '/login',
       icon: Truck
     },
     {

@@ -15,8 +15,8 @@ import TrackOrderPage from './pages/TrackOrderPage.js';
 import { AuthProvider, useAuth } from './context/AuthContext.js';
 import { CartProvider } from './context/CartContext.js';
 
-// Route Guard: Shopping Cart CANNOT be opened or viewed without login
-function RequireAuthCart({ children }) {
+// Route Guard: Protected routes requiring user authentication
+function RequireAuth({ children, message = 'Please log in to continue.' }) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
 
@@ -26,7 +26,7 @@ function RequireAuthCart({ children }) {
         to="/login"
         state={{
           from: location,
-          message: 'Please log in to open your shopping cart.'
+          message
         }}
         replace
       />
@@ -53,20 +53,34 @@ export default function App() {
               <Route path="/shop" element={<UniformsPage />} />
               <Route path="/product" element={<ProductDetailPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
-              {/* Cart cannot open without login */}
+              {/* Protected Routes: Cart, Orders, Tracking strictly require login */}
               <Route
                 path="/cart"
                 element={
-                  <RequireAuthCart>
+                  <RequireAuth message="Please log in to open your shopping cart.">
                     <CartPage />
-                  </RequireAuthCart>
+                  </RequireAuth>
                 }
               />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/admin" element={<AdminDashboardPage />} />
-              <Route path="/my-orders" element={<MyOrdersPage />} />
-              <Route path="/track-order" element={<TrackOrderPage />} />
+              <Route
+                path="/my-orders"
+                element={
+                  <RequireAuth message="Please log in to view your orders.">
+                    <MyOrdersPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/track-order"
+                element={
+                  <RequireAuth message="Please log in to track your orders.">
+                    <TrackOrderPage />
+                  </RequireAuth>
+                }
+              />
               <Route path="*" element={<HomePage />} />
             </Routes>
           </main>

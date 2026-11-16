@@ -210,23 +210,26 @@ export default function Header() {
             {isRTL ? 'المتجر' : 'Shop'}
           </Link>
 
-          {/* Point 4: Track Order */}
-          <Link
-            to="/track-order"
-            className={`nav-link ${isActive('/track-order') ? 'active-pill' : ''}`}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-          >
-            <Truck size={15} />
-            <span>{isRTL ? 'تتبع الطلب' : 'Track Order'}</span>
-          </Link>
+          {/* Point 4 & 5: Track Order & My Orders - ONLY SHOWN WHEN LOGGED IN */}
+          {isAuthenticated && (
+            <>
+              <Link
+                to="/track-order"
+                className={`nav-link ${isActive('/track-order') ? 'active-pill' : ''}`}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                <Truck size={15} />
+                <span>{isRTL ? 'تتبع الطلب' : 'Track Order'}</span>
+              </Link>
 
-          {/* Point 5: My Orders */}
-          <Link
-            to="/my-orders"
-            className={`nav-link ${isActive('/my-orders') ? 'active-pill' : ''}`}
-          >
-            {t('myOrders')}
-          </Link>
+              <Link
+                to="/my-orders"
+                className={`nav-link ${isActive('/my-orders') ? 'active-pill' : ''}`}
+              >
+                {t('myOrders')}
+              </Link>
+            </>
+          )}
 
           {/* Point 6: Admin Dashboard - EXCLUSIVELY SHOWN TO ADMINISTRATORS */}
           {isAdmin && (
@@ -513,12 +516,16 @@ export default function Header() {
               <Link to="/uniforms" className={`mobile-nav-link ${isActive('/uniforms') ? 'active' : ''}`}>
                 🛍️ {isRTL ? 'المتجر والمنتجات' : 'Shop All Products'}
               </Link>
-              <Link to="/track-order" className={`mobile-nav-link ${isActive('/track-order') ? 'active' : ''}`}>
-                🚚 {isRTL ? 'تتبع الطلب المباشر' : 'Track Order Live'}
-              </Link>
-              <Link to="/my-orders" className={`mobile-nav-link ${isActive('/my-orders') ? 'active' : ''}`}>
-                📦 {t('myOrders')}
-              </Link>
+              {isAuthenticated && (
+                <>
+                  <Link to="/track-order" className={`mobile-nav-link ${isActive('/track-order') ? 'active' : ''}`}>
+                    🚚 {isRTL ? 'تتبع الطلب المباشر' : 'Track Order Live'}
+                  </Link>
+                  <Link to="/my-orders" className={`mobile-nav-link ${isActive('/my-orders') ? 'active' : ''}`}>
+                    📦 {t('myOrders')}
+                  </Link>
+                </>
+              )}
               {isAdmin && (
                 <Link to="/admin" className="mobile-nav-link" style={{ color: '#9E2A2B', fontWeight: '700' }}>
                   🛡️ {isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}
