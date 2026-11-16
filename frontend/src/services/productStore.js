@@ -605,3 +605,4 @@ export function resetCatalogToDefault() {
   saveCatalogProducts(INITIAL_PRODUCTS);
   return INITIAL_PRODUCTS;
 }
+

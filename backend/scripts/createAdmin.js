@@ -3,8 +3,8 @@ import pool, { query } from '../config/db.js';
 
 async function seedAdmin() {
   try {
-    const adminEmail = 'admin@ipsoman.com';
-    const adminPassword = process.env.ADMIN_INITIAL_PASSWORD || 'Admin@IPS2026!';
+    const adminEmail = 'admin@shop.com';
+    const adminPassword = process.env.ADMIN_INITIAL_PASSWORD || 'admin123';
     const adminPhone = '+968 23 234567';
 
     console.log(`Checking existing admin user for ${adminEmail}...`);
@@ -31,7 +31,7 @@ async function seedAdmin() {
     } else {
       const [res] = await pool.execute(
         `INSERT INTO users (full_name, email, phone_number, password_hash, is_active, email_verified)
-         VALUES ('IPS School Administrator', ?, ?, ?, 1, 1)`,
+         VALUES ('Store Administrator', ?, ?, ?, 1, 1)`,
         [adminEmail, adminPhone, passwordHash]
       );
       adminUserId = res.insertId;
@@ -50,9 +50,9 @@ async function seedAdmin() {
     }
 
     console.log(`====================================================`);
-    console.log(` Admin account ready:`);
-    console.log(` Email: ${adminEmail}`);
-    console.log(` Password: ${adminPassword}`);
+    console.log(` Store Accounts Ready:`);
+    console.log(` Admin Portal: ${adminEmail} / ${adminPassword}`);
+    console.log(` Demo Customer: demo@shop.com / customer123`);
     console.log(`====================================================`);
     process.exit(0);
   } catch (error) {
@@ -62,4 +62,3 @@ async function seedAdmin() {
 }
 
 seedAdmin();
-

@@ -1,7 +1,6 @@
 -- ==============================================================================
 -- DATABASE: ips_school_shop
--- SYSTEM: IPS Oman School Shopping System
--- SCHOOL: International Pioneers School (Salalah), Oman
+-- SYSTEM: Modern School Shopping & Catalog System
 -- CHARACTER SET: utf8mb4 (Full Unicode for English & Arabic text)
 -- ==============================================================================
 
@@ -28,7 +27,7 @@ CREATE TABLE `roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 2. USERS TABLE (Parents, Staff, Administrators)
+-- 2. USERS TABLE
 -- ------------------------------------------------------------------------------
 DROP TABLE IF EXISTS `parent_students`;
 DROP TABLE IF EXISTS `cart_items`;
@@ -48,7 +47,7 @@ CREATE TABLE `users` (
   `phone_number` VARCHAR(30) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
   `is_active` TINYINT(1) DEFAULT 1,
-  `email_verified` TINYINT(1) DEFAULT 0,
+  `email_verified` TINYINT(1) DEFAULT 1,
   `mfa_secret` VARCHAR(100) NULL,
   `mfa_enabled` TINYINT(1) DEFAULT 0,
   `last_login_at` TIMESTAMP NULL,
@@ -71,36 +70,7 @@ CREATE TABLE `user_roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 4. STUDENTS TABLE (Associated students for uniform sizing and grades)
--- ------------------------------------------------------------------------------
-DROP TABLE IF EXISTS `students`;
-CREATE TABLE `students` (
-  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `student_id_number` VARCHAR(50) NOT NULL UNIQUE,
-  `full_name` VARCHAR(150) NOT NULL,
-  `grade` VARCHAR(20) NOT NULL,
-  `class_section` VARCHAR(20) NOT NULL,
-  `gender` ENUM('MALE', 'FEMALE') NOT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  INDEX `idx_students_grade` (`grade`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ------------------------------------------------------------------------------
--- 5. PARENT_STUDENTS JUNCTION TABLE
--- ------------------------------------------------------------------------------
-CREATE TABLE `parent_students` (
-  `parent_id` INT UNSIGNED NOT NULL,
-  `student_id` INT UNSIGNED NOT NULL,
-  `relationship` VARCHAR(50) DEFAULT 'Parent',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`parent_id`, `student_id`),
-  CONSTRAINT `fk_parent_students_parent` FOREIGN KEY (`parent_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_parent_students_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ------------------------------------------------------------------------------
--- 6. CATEGORIES TABLE (Supports English & Arabic)
+-- 4. CATEGORIES TABLE (The 11 Curated Collections)
 -- ------------------------------------------------------------------------------
 DROP TABLE IF EXISTS `product_variants`;
 DROP TABLE IF EXISTS `product_images`;
@@ -109,40 +79,52 @@ DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `name_en` VARCHAR(100) NOT NULL,
-  `name_ar` VARCHAR(100) NOT NULL,
+  `number` INT NOT NULL DEFAULT 1,
+  `name_en` VARCHAR(150) NOT NULL,
+  `name_ar` VARCHAR(150) NOT NULL,
   `slug` VARCHAR(100) NOT NULL UNIQUE,
+  `group_name` VARCHAR(50) DEFAULT 'ESSENTIALS',
   `icon_name` VARCHAR(50) DEFAULT 'Package',
+  `tag_en` VARCHAR(100) DEFAULT NULL,
+  `tag_ar` VARCHAR(100) DEFAULT NULL,
   `display_order` INT DEFAULT 0,
   `is_active` TINYINT(1) DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  INDEX `idx_categories_slug` (`slug`)
+  INDEX `idx_categories_slug` (`slug`),
+  INDEX `idx_categories_display_order` (`display_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 7. PRODUCTS TABLE
+-- 5. PRODUCTS TABLE
 -- ------------------------------------------------------------------------------
 CREATE TABLE `products` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `category_id` INT UNSIGNED NOT NULL,
-  `sku` VARCHAR(50) NOT NULL UNIQUE,
+  `sku` VARCHAR(60) NOT NULL UNIQUE,
   `name_en` VARCHAR(200) NOT NULL,
   `name_ar` VARCHAR(200) NOT NULL,
+  `subtitle_en` VARCHAR(255) NULL,
+  `subtitle_ar` VARCHAR(255) NULL,
+  `collection_en` VARCHAR(100) NULL,
+  `collection_ar` VARCHAR(100) NULL,
   `description_en` TEXT NOT NULL,
   `description_ar` TEXT NOT NULL,
-  `base_price` DECIMAL(10,3) NOT NULL, -- OMR with 3 decimals (e.g. 6.500 OMR)
+  `base_price` DECIMAL(10,3) NOT NULL, -- Omani Rial (OMR) with 3 decimal precision
+  `size_label` VARCHAR(80) DEFAULT 'Size',
+  `default_size` VARCHAR(50) DEFAULT 'Standard',
   `featured` TINYINT(1) DEFAULT 0,
   `is_active` TINYINT(1) DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT `fk_products_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE RESTRICT,
   INDEX `idx_products_sku` (`sku`),
-  INDEX `idx_products_featured` (`featured`)
+  INDEX `idx_products_featured` (`featured`),
+  INDEX `idx_products_is_active` (`is_active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 8. PRODUCT_IMAGES TABLE (Individual photos on white background)
+-- 6. PRODUCT_IMAGES TABLE
 -- ------------------------------------------------------------------------------
 CREATE TABLE `product_images` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -157,14 +139,14 @@ CREATE TABLE `product_images` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 9. PRODUCT_VARIANTS TABLE (Sizes, cuts, colors)
+-- 7. PRODUCT_VARIANTS TABLE (Size Matrix)
 -- ------------------------------------------------------------------------------
 CREATE TABLE `product_variants` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `product_id` INT UNSIGNED NOT NULL,
-  `sku` VARCHAR(60) NOT NULL UNIQUE,
-  `size` VARCHAR(30) NOT NULL, -- e.g. 'XS', 'S', 'M', 'L', 'XL', 'XXL', '34', '36'
-  `price_override` DECIMAL(10,3) NULL, -- Optional size-specific price
+  `sku` VARCHAR(70) NOT NULL UNIQUE,
+  `size` VARCHAR(50) NOT NULL,
+  `price_override` DECIMAL(10,3) NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT `fk_product_variants_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
@@ -172,7 +154,7 @@ CREATE TABLE `product_variants` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 10. INVENTORY TABLE (Atomic stock tracking per variant)
+-- 8. INVENTORY TABLE (Atomic Stock & Threshold Controls)
 -- ------------------------------------------------------------------------------
 CREATE TABLE `inventory` (
   `variant_id` INT UNSIGNED PRIMARY KEY,
@@ -187,7 +169,7 @@ CREATE TABLE `inventory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 11. CARTS TABLE
+-- 9. CARTS & CART_ITEMS
 -- ------------------------------------------------------------------------------
 CREATE TABLE `carts` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -197,120 +179,63 @@ CREATE TABLE `carts` (
   CONSTRAINT `fk_carts_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ------------------------------------------------------------------------------
--- 12. CART_ITEMS TABLE
--- ------------------------------------------------------------------------------
 CREATE TABLE `cart_items` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `cart_id` INT UNSIGNED NOT NULL,
   `variant_id` INT UNSIGNED NOT NULL,
   `quantity` INT UNSIGNED NOT NULL DEFAULT 1,
-  `student_id` INT UNSIGNED NULL, -- Optional student association
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY `uk_cart_variant_student` (`cart_id`, `variant_id`, `student_id`),
+  UNIQUE KEY `uk_cart_variant` (`cart_id`, `variant_id`),
   CONSTRAINT `fk_cart_items_cart` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_cart_items_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_cart_items_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE SET NULL
+  CONSTRAINT `fk_cart_items_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 13. WISHLISTS TABLE
--- ------------------------------------------------------------------------------
-CREATE TABLE `wishlists` (
-  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `user_id` INT UNSIGNED NOT NULL,
-  `product_id` INT UNSIGNED NOT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY `uk_wishlist_user_product` (`user_id`, `product_id`),
-  CONSTRAINT `fk_wishlists_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_wishlists_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ------------------------------------------------------------------------------
--- 14. ADDRESSES TABLE (Salalah / Oman delivery locations)
--- ------------------------------------------------------------------------------
-CREATE TABLE `addresses` (
-  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `user_id` INT UNSIGNED NOT NULL,
-  `recipient_name` VARCHAR(150) NOT NULL,
-  `phone_number` VARCHAR(30) NOT NULL,
-  `governorate` VARCHAR(100) NOT NULL DEFAULT 'Dhofar',
-  `city` VARCHAR(100) NOT NULL DEFAULT 'Salalah',
-  `way_or_street` VARCHAR(200) NOT NULL,
-  `building_or_villa` VARCHAR(100) NOT NULL,
-  `notes` VARCHAR(255) NULL,
-  `is_default` TINYINT(1) DEFAULT 0,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_addresses_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ------------------------------------------------------------------------------
--- 15. ORDERS TABLE
+-- 10. ORDERS & ORDER_ITEMS
 -- ------------------------------------------------------------------------------
 CREATE TABLE `orders` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `order_number` VARCHAR(50) NOT NULL UNIQUE, -- e.g. 'IPS-2026-87421'
+  `order_number` VARCHAR(50) NOT NULL UNIQUE,
   `user_id` INT UNSIGNED NOT NULL,
-  `fulfillment_method` ENUM('SCHOOL_PICKUP', 'DELIVERY') NOT NULL DEFAULT 'SCHOOL_PICKUP',
-  `shipping_address_id` INT UNSIGNED NULL,
-  `pickup_campus` VARCHAR(100) DEFAULT 'International Pioneers School, Salalah',
-  `status` ENUM('PENDING', 'CONFIRMED', 'PROCESSING', 'READY_FOR_PICKUP', 'OUT_FOR_DELIVERY', 'COMPLETED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+  `customer_name` VARCHAR(150) NOT NULL,
+  `customer_phone` VARCHAR(50) NOT NULL,
+  `customer_email` VARCHAR(150) NOT NULL,
+  `fulfillment_method` ENUM('STORE_PICKUP', 'HOME_DELIVERY') NOT NULL DEFAULT 'STORE_PICKUP',
+  `delivery_address` VARCHAR(255) NULL,
+  `pickup_counter` VARCHAR(100) DEFAULT 'Main Store Collection Counter (Salalah)',
+  `status` ENUM('PENDING', 'CONFIRMED', 'PROCESSING', 'READY_FOR_PICKUP', 'OUT_FOR_DELIVERY', 'COMPLETED', 'CANCELLED') NOT NULL DEFAULT 'PROCESSING',
   `subtotal` DECIMAL(10,3) NOT NULL,
-  `discount_amount` DECIMAL(10,3) NOT NULL DEFAULT 0.000,
   `shipping_fee` DECIMAL(10,3) NOT NULL DEFAULT 0.000,
   `total_amount` DECIMAL(10,3) NOT NULL,
-  `notes` TEXT NULL,
+  `payment_method` ENUM('CARD', 'CASH_ON_DELIVERY') NOT NULL DEFAULT 'CARD',
+  `payment_status` ENUM('PAID', 'PENDING', 'FAILED', 'REFUNDED') NOT NULL DEFAULT 'PAID',
+  `tracking_number` VARCHAR(60) NULL,
+  `estimated_delivery` VARCHAR(100) NULL,
+  `notes` VARCHAR(255) NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_orders_address` FOREIGN KEY (`shipping_address_id`) REFERENCES `addresses` (`id`) ON DELETE SET NULL,
-  INDEX `idx_orders_user` (`user_id`),
+  CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   INDEX `idx_orders_status` (`status`),
   INDEX `idx_orders_number` (`order_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ------------------------------------------------------------------------------
--- 16. ORDER_ITEMS TABLE
--- ------------------------------------------------------------------------------
 CREATE TABLE `order_items` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `order_id` INT UNSIGNED NOT NULL,
   `variant_id` INT UNSIGNED NOT NULL,
-  `student_id` INT UNSIGNED NULL,
-  `product_name_en` VARCHAR(200) NOT NULL,
-  `product_name_ar` VARCHAR(200) NOT NULL,
-  `size` VARCHAR(30) NOT NULL,
-  `unit_price` DECIMAL(10,3) NOT NULL,
+  `product_name` VARCHAR(200) NOT NULL,
+  `size` VARCHAR(50) NOT NULL,
   `quantity` INT UNSIGNED NOT NULL,
+  `unit_price` DECIMAL(10,3) NOT NULL,
   `subtotal` DECIMAL(10,3) NOT NULL,
-  CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_order_items_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_order_items_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ------------------------------------------------------------------------------
--- 17. PAYMENTS TABLE
--- ------------------------------------------------------------------------------
-CREATE TABLE `payments` (
-  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `order_id` INT UNSIGNED NOT NULL,
-  `payment_method` ENUM('CREDIT_CARD', 'DEBIT_CARD', 'SCHOOL_COUNTER_CASH', 'ONLINE_GATEWAY') NOT NULL,
-  `transaction_reference` VARCHAR(100) NULL,
-  `amount` DECIMAL(10,3) NOT NULL,
-  `currency` VARCHAR(10) NOT NULL DEFAULT 'OMR',
-  `status` ENUM('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED') NOT NULL DEFAULT 'PENDING',
-  `gateway_response` TEXT NULL,
-  `verified_at` TIMESTAMP NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_payments_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
-  INDEX `idx_payments_order` (`order_id`),
-  INDEX `idx_payments_status` (`status`)
+  CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_order_items_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
--- 18. NOTIFICATIONS TABLE
+-- 11. AUDIT LOGS & NOTIFICATIONS
 -- ------------------------------------------------------------------------------
 CREATE TABLE `notifications` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -322,13 +247,9 @@ CREATE TABLE `notifications` (
   `is_read` TINYINT(1) DEFAULT 0,
   `action_url` VARCHAR(255) NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_notifications_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  INDEX `idx_notifications_user_read` (`user_id`, `is_read`)
+  CONSTRAINT `fk_notifications_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ------------------------------------------------------------------------------
--- 19. AUDIT_LOGS TABLE (Security and administrative tracking)
--- ------------------------------------------------------------------------------
 CREATE TABLE `audit_logs` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `user_id` INT UNSIGNED NULL,
@@ -336,13 +257,9 @@ CREATE TABLE `audit_logs` (
   `entity_type` VARCHAR(50) NOT NULL,
   `entity_id` VARCHAR(50) NULL,
   `details` JSON NULL,
-  `ip_address` VARCHAR(50) NULL,
-  `user_agent` VARCHAR(255) NULL,
+  `ip_address` VARCHAR(45) NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_audit_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  INDEX `idx_audit_logs_action` (`action`),
-  INDEX `idx_audit_logs_created` (`created_at`)
+  CONSTRAINT `fk_audit_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;
-

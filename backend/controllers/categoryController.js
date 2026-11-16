@@ -1,23 +1,23 @@
-import { query } from '../config/db.js';
+import { memoryStore } from '../config/db.js';
 
 export async function getAllCategories(req, res, next) {
   try {
-    const categories = await query(
-      `SELECT c.id, c.name_en, c.name_ar, c.slug, c.icon_name, c.display_order,
-              COUNT(p.id) AS product_count
-       FROM categories c
-       LEFT JOIN products p ON c.id = p.category_id AND p.is_active = 1
-       WHERE c.is_active = 1
-       GROUP BY c.id
-       ORDER BY c.display_order ASC, c.name_en ASC`
-    );
+    const categories = memoryStore.categories.map(c => {
+      const prods = memoryStore.products.filter(p => p.category_slug === c.slug && p.is_active);
+      const stock = prods.reduce((sum, p) => sum + (p.total_available_stock || 0), 0);
+      return {
+        ...c,
+        product_count: prods.length,
+        total_stock: stock
+      };
+    });
 
     res.json({
       success: true,
+      count: categories.length,
       categories
     });
   } catch (error) {
     next(error);
   }
 }
-
