@@ -20,7 +20,7 @@ export default function App() {
     <AuthProvider>
       <CartProvider>
         <div className="app-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-          {/* Main School Header */}
+          {/* Main Header */}
           <Header />
 
           {/* Router Content */}
@@ -29,6 +29,7 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/home" element={<Navigate to="/" replace />} />
               <Route path="/uniforms" element={<UniformsPage />} />
+              <Route path="/shop" element={<UniformsPage />} />
               <Route path="/product" element={<ProductDetailPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/cart" element={<CartPage />} />

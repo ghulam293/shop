@@ -279,35 +279,14 @@ export default function TrackOrderPage() {
             </button>
           </form>
 
-          {/* Quick Order Sample Pills */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid #f1f5f9' }}>
-            <span style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: '600' }}>
-              {isRTL ? 'نماذج للطلب السريع:' : 'Demo Orders:'}
+          {/* Helpful tracking guidance tip */}
+          <div style={{ marginTop: '0.85rem', paddingTop: '0.65rem', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
+              {isRTL ? 'مثال على رقم التتبع: ORD-2026-92810' : 'Example order reference: ORD-2026-92810'}
             </span>
-            {sampleOrders.map((s) => (
-              <button
-                key={s.orderNumber}
-                type="button"
-                onClick={() => {
-                  setInputQuery(s.orderNumber);
-                  setActiveOrder(s);
-                  setNotFound(false);
-                  setSearchParams({ order: s.orderNumber });
-                }}
-                style={{
-                  backgroundColor: activeOrder?.orderNumber === s.orderNumber ? '#9E2A2B' : '#f8fafc',
-                  color: activeOrder?.orderNumber === s.orderNumber ? '#ffffff' : '#475569',
-                  border: '1px solid #e2e8f0',
-                  padding: '0.25rem 0.65rem',
-                  borderRadius: '6px',
-                  fontSize: '0.75rem',
-                  fontWeight: '700',
-                  cursor: 'pointer'
-                }}
-              >
-                {s.orderNumber}
-              </button>
-            ))}
+            <span style={{ fontSize: '0.78rem', color: '#16a34a', fontWeight: '700' }}>
+              ● {isRTL ? 'تحديثات الحالة مباشرة' : 'Live Status Updates'}
+            </span>
           </div>
         </div>
 

@@ -1341,7 +1341,7 @@
   min-height: 48px;
 }
 
-.dept-sample-strip {
+.dept-highlight-strip {
   background: #f8f6f4;
   border: 1px dashed #ded4cb;
   border-radius: 8px;
@@ -1349,7 +1349,7 @@
   margin-bottom: 1.25rem;
 }
 
-.sample-label {
+.highlight-label {
   display: block;
   font-size: 0.68rem;
   font-weight: 700;
@@ -1359,7 +1359,7 @@
   margin-bottom: 0.2rem;
 }
 
-.sample-text {
+.highlight-text {
   display: block;
   font-size: 0.78rem;
   color: #333333;

@@ -147,7 +147,7 @@ export default function LoginPage() {
             letterSpacing: '0.04em'
           }}>
             <Sparkles size={16} color="#D4AF37" />
-            <span>{isRTL ? 'تسجيل دخول تجريبي فوري بنقرة واحدة:' : '1-Click Instant Demo Login:'}</span>
+            <span>{isRTL ? 'تسجيل الدخول السريع:' : 'Quick Sign-In Access:'}</span>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>

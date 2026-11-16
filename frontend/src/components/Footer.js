@@ -21,8 +21,8 @@ export default function Footer() {
             </div>
             <p style={{ color: '#9ca3af', fontSize: '0.85rem', lineHeight: '1.65', marginBottom: '1.25rem' }}>
               {isRTL
-                ? 'متجر إلكتروني متكامل يوفر أزياء المدارس، الأحذية، الحقائب، الكتب، القرطاسية وكافة المستلزمات اليومية بجودة مضمونة.'
-                : 'Your comprehensive shopping destination for school uniforms, footwear, backpacks, books, stationery, and daily essentials.'}
+                ? 'متجر إلكتروني متكامل يوفر أرقى الأزياء، الأحذية، الحقائب، الكتب، القرطاسية وكافة المستلزمات اليومية بجودة مضمونة.'
+                : 'Your comprehensive shopping destination for quality apparel, footwear, bags, stationery, and daily essentials.'}
             </p>
             {/* Accepted Payments */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -61,10 +61,10 @@ export default function Footer() {
               {isRTL ? 'الفئات الرئيسية' : 'Popular Categories'}
             </h4>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.45rem', fontSize: '0.82rem' }}>
-              <Link to="/uniforms?category=school-uniforms" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Uniforms & Shirts</Link>
+              <Link to="/uniforms?category=school-uniforms" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Apparel & Shirts</Link>
               <Link to="/uniforms?category=boys-trousers" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Boys' Trousers</Link>
               <Link to="/uniforms?category=girls-skirts" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Girls' Pleated Skirts</Link>
-              <Link to="/uniforms?category=shoes" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Leather School Shoes</Link>
+              <Link to="/uniforms?category=shoes" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Leather Footwear & Shoes</Link>
               <Link to="/uniforms?category=accessories" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Belts, Ties & Socks</Link>
               <Link to="/uniforms?category=stationery-books" style={{ color: '#9ca3af', textDecoration: 'none' }}>• Books & Stationery</Link>
             </div>

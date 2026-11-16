@@ -92,12 +92,12 @@ export default function UniformsPage() {
   // Complete curated collections list dynamically counted from store
   const categoriesList = useMemo(() => [
     { id: 'all', label: isRTL ? `جميع التشكيلات (${allProducts.length})` : `All Collections (${allProducts.length})`, count: allProducts.length, image: '/products/polo-shirt-front.jpg' },
-    { id: 'school-uniforms', label: isRTL ? '1. الزي المدرسي والملابس' : '1. School Uniforms & Attire', count: allProducts.filter(p => p.category === 'school-uniforms').length, image: '/products/polo-shirt-front.jpg' },
+    { id: 'school-uniforms', label: isRTL ? '1. الملابس والأزياء' : '1. Apparel & Clothing', count: allProducts.filter(p => p.category === 'school-uniforms').length, image: '/products/polo-shirt-front.jpg' },
     { id: 'boys-trousers', label: isRTL ? '• بناطيل الأولاد' : "• Boys' Trousers", count: allProducts.filter(p => p.subCategory === 'boys-trousers').length, image: '/products/boys-gray-trousers.jpg' },
     { id: 'girls-skirts', label: isRTL ? '• تنانير البنات' : "• Girls' Skirts", count: allProducts.filter(p => p.subCategory === 'girls-skirts').length, image: '/products/girls-gray-skirt.jpg' },
-    { id: 'shoes', label: isRTL ? '• الأحذية المدرسية' : '• Footwear Collection', count: allProducts.filter(p => p.subCategory === 'shoes' || p.category === 'shoes').length, image: '/products/boys-black-shoes.jpg' },
+    { id: 'shoes', label: isRTL ? '• الأحذية الرسمية والجلدية' : '• Footwear Collection', count: allProducts.filter(p => p.subCategory === 'shoes' || p.category === 'shoes').length, image: '/products/boys-black-shoes.jpg' },
     { id: 'accessories', label: isRTL ? '• الإكسسوارات (أحزمة وجوارب)' : '• Belts & Accessories', count: allProducts.filter(p => p.subCategory === 'accessories' || p.category === 'accessories').length, image: '/products/school-accessories-set.jpg' },
-    { id: 'school-bags', label: isRTL ? '2. الحقائب المدرسية والمستلزمات' : '2. School Bags & Packs', count: allProducts.filter(p => p.category === 'school-bags').length, image: '/products/school-bags-accessories.jpg' },
+    { id: 'school-bags', label: isRTL ? '2. الحقائب وحقائب الظهر' : '2. Bags & Backpacks', count: allProducts.filter(p => p.category === 'school-bags').length, image: '/products/school-bags-accessories.jpg' },
     { id: 'stationery-books', label: isRTL ? '3. الكتب والقرطاسية الأكاديمية' : '3. Academic Books & Stationery', count: allProducts.filter(p => p.category === 'stationery-books').length, image: '/products/cambridge-english-book.jpg' },
     { id: 'lunch-boxes', label: isRTL ? '4. علب الطعام ومطارات المشروبات' : '4. Dining & Drinkware', count: allProducts.filter(p => p.category === 'lunch-boxes').length, image: '/products/lunch-boxes-drinkware.jpg' },
     { id: 'healthcare', label: isRTL ? '5. الرعاية الصحية والعناية' : '5. Wellness & Personal Care', count: allProducts.filter(p => p.category === 'healthcare').length, image: '/products/healthcare-personal-care.jpg' },

@@ -831,11 +831,11 @@ export default function AdminDashboardPage() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.95rem' }}>
                   {[
-                    { name: 'School Uniforms & Clothing', pct: 44, color: '#800020' },
-                    { name: 'School Shoes & Footwear', pct: 22, color: '#b8860b' },
+                    { name: 'Apparel & Clothing', pct: 44, color: '#800020' },
+                    { name: 'Footwear & Shoes', pct: 22, color: '#b8860b' },
                     { name: 'Books & Stationery', pct: 18, color: '#1e7e34' },
-                    { name: 'School Bags & Luggage', pct: 10, color: '#0b5ed7' },
-                    { name: 'Lunchware & Tech Accessories', pct: 6, color: '#d37300' }
+                    { name: 'Bags & Luggage', pct: 10, color: '#0b5ed7' },
+                    { name: 'Dining, Wellness & Tech Gear', pct: 6, color: '#d37300' }
                   ].map((cat, idx) => (
                     <div key={idx}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: '700', marginBottom: '4px' }}>

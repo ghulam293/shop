@@ -2,8 +2,8 @@
 // Supports Admin Price Editing, Size Management, Category Controls, Product Addition & Deletion.
 
 export const OFFICIAL_CATEGORIES = [
-  { id: 'school-uniforms', number: 1, nameEn: 'School Uniforms & Attire', nameAr: 'الزي المدرسي والملابس', group: 'CLOTHING', icon: '👕', tagEn: 'Collection 01', tagAr: 'التشكيلة 01' },
-  { id: 'school-bags', number: 2, nameEn: 'School Bags & Packs', nameAr: 'الحقائب المدرسية والمستلزمات', group: 'ESSENTIALS', icon: '🎒', tagEn: 'Collection 02', tagAr: 'التشكيلة 02' },
+  { id: 'school-uniforms', number: 1, nameEn: 'Apparel & Clothing', nameAr: 'الملابس والأزياء', group: 'CLOTHING', icon: '👕', tagEn: 'Collection 01', tagAr: 'التشكيلة 01' },
+  { id: 'school-bags', number: 2, nameEn: 'Bags & Packs', nameAr: 'الحقائب والمستلزمات', group: 'ESSENTIALS', icon: '🎒', tagEn: 'Collection 02', tagAr: 'التشكيلة 02' },
   { id: 'stationery-books', number: 3, nameEn: 'Academic Books & Stationery', nameAr: 'الكتب والقرطاسية الأكاديمية', group: 'STUDY', icon: '📚', tagEn: 'Collection 03', tagAr: 'التشكيلة 03' },
   { id: 'lunch-boxes', number: 4, nameEn: 'Dining & Drinkware', nameAr: 'علب الطعام ومطارات المشروبات', group: 'ESSENTIALS', icon: '🍱', tagEn: 'Collection 04', tagAr: 'التشكيلة 04' },
   { id: 'healthcare', number: 5, nameEn: 'Wellness & Personal Care', nameAr: 'الرعاية الصحية والعناية', group: 'HEALTH', icon: '🩺', tagEn: 'Collection 05', tagAr: 'التشكيلة 05' },

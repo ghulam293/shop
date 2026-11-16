@@ -359,7 +359,7 @@ export default function CartPage() {
               gap: '0.4rem'
             }}
           >
-            ⚡ {isRTL ? 'دخول فوري كعميل تجريبي' : '1-Click Customer Demo Login'}
+            ⚡ {isRTL ? 'تسجيل دخول سريع للعملاء' : 'Quick Customer Sign-In'}
           </button>
         </div>
       </div>
@@ -657,22 +657,6 @@ export default function CartPage() {
                   <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#800020' }}>
                     {isRTL ? 'بيانات البطاقة' : 'Card Details'}
                   </span>
-                  <button
-                    type="button"
-                    onClick={fillDemoCard}
-                    style={{
-                      background: 'none',
-                      border: '1px solid #800020',
-                      color: '#800020',
-                      padding: '0.2rem 0.5rem',
-                      borderRadius: '4px',
-                      fontSize: '0.72rem',
-                      fontWeight: '700',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {isRTL ? 'تعبئة بطاقة تجريبية' : 'Fill Demo Card'}
-                  </button>
                 </div>
 
                 <div style={{ marginBottom: '0.75rem' }}>
@@ -770,22 +754,6 @@ export default function CartPage() {
                   <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#800020' }}>
                     {isRTL ? 'بيانات التسليم والدفع نقداً' : 'Delivery Details (Cash)'}
                   </span>
-                  <button
-                    type="button"
-                    onClick={fillDemoCOD}
-                    style={{
-                      background: 'none',
-                      border: '1px solid #800020',
-                      color: '#800020',
-                      padding: '0.2rem 0.5rem',
-                      borderRadius: '4px',
-                      fontSize: '0.72rem',
-                      fontWeight: '700',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {isRTL ? 'تعبئة بيانات تجريبية' : 'Fill Demo Info'}
-                  </button>
                 </div>
 
                 <div style={{ marginBottom: '0.75rem' }}>

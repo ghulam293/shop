@@ -17,15 +17,15 @@ import { useLanguage } from '../context/LanguageContext.js';
 import { useAuth } from '../context/AuthContext.js';
 import { getCatalogProducts } from '../services/productStore.js';
 
-// All official school uniform products with their genuine size matrices
+// All store catalog products with genuine size matrices
 export const officialProductsList = [
   {
     id: 1,
     sku: 'UNIF-POLO-MRN',
-    nameEn: 'School Polo Shirt (Maroon)',
-    nameAr: 'قميص بولو مدرسي (عنابي)',
-    subtitleEn: 'Official School Uniform — Maroon Polo Shirt',
-    subtitleAr: 'الزي المدرسي الرسمي — قميص بولو عنابي',
+    nameEn: 'Classic Polo Shirt (Maroon)',
+    nameAr: 'قميص بولو كلاسيكي (عنابي)',
+    subtitleEn: 'Premium Cotton — Maroon Polo Shirt',
+    subtitleAr: 'التشكيلة الراقية — قميص بولو عنابي',
     category: 'Uniforms',
     categorySlug: 'uniforms',
     price: 6.500,
@@ -40,16 +40,16 @@ export const officialProductsList = [
       '/products/polo-collar-detail.jpg',
       '/products/polo-fabric-detail.jpg'
     ],
-    descEn: 'Official premium uniform polo shirt. Breathable, durable cotton-blend pique featuring golden company crest and contrast gold-trimmed collar and cuffs.',
-    descAr: 'قميص البولو الرسمي لمدرسة الرواد الدولية بصلالة. مصنوع من أجود خامات القطن المريحة مع شعار المدرسة الرسمي وياقة أنيقة بأطراف ذهبية.'
+    descEn: 'Premium cotton-blend pique polo shirt with breathable fabric, contrast gold-trimmed collar, and reinforced cuffs for all-day comfort.',
+    descAr: 'قميص بولو قطني راقي ومريح، مصنوع من أجود خامات القطن مع تطريز أنيق وياقة بأطراف مذهبة فاخرة.'
   },
   {
     id: 2,
-    sku: 'IPS-UNIF-TRSR-GRY',
-    nameEn: "Boys' Gray Trousers",
+    sku: 'UNIF-TRSR-GRY',
+    nameEn: "Boys' Formal Trousers (Gray)",
     nameAr: 'بنطال أولاد رمادي رسمي',
-    subtitleEn: 'Official School Uniform — Regular Fit Trousers',
-    subtitleAr: 'الزي المدرسي الرسمي — بنطال رمادي مريح للأولاد',
+    subtitleEn: 'Regular Fit — Formal Gray Trousers',
+    subtitleAr: 'التشكيلة الراقية — بنطال رمادي مريح للأولاد',
     category: "Boys' Trousers",
     categorySlug: 'boys-trousers',
     price: 8.500,
@@ -61,16 +61,16 @@ export const officialProductsList = [
     images: [
       '/products/boys-gray-trousers.jpg'
     ],
-    descEn: 'Official tailored gray school trousers for boys. Wrinkle-resistant fabric with adjustable inner waistband for maximum comfort throughout the school day.',
-    descAr: 'بنطال مدرسي رمادي مريح للأولاد، مقاوم للتجاعيد مع حزام خصر داخلي قابل للتعديل لتوفير أقصى درجات الراحة اليومية.'
+    descEn: 'Tailored gray trousers for boys. Wrinkle-resistant fabric with adjustable inner waistband for maximum all-day comfort.',
+    descAr: 'بنطال رمادي أنيق ومريح للأولاد، مقاوم للتجاعيد مع حزام خصر داخلي قابل للتعديل لتوفير أقصى درجات الراحة.'
   },
   {
     id: 3,
-    sku: 'IPS-UNIF-SKRT-GRY',
-    nameEn: "Girls' Gray Pleated Skirt",
+    sku: 'UNIF-SKRT-GRY',
+    nameEn: "Girls' Pleated Skirt (Gray)",
     nameAr: 'تنورة بنات رمادية بكسرات',
-    subtitleEn: 'Official School Uniform — Pleated Skirt',
-    subtitleAr: 'الزي المدرسي الرسمي — تنورة بكسرات أنيقة للبنات',
+    subtitleEn: 'Classic Knife-Pleated Skirt',
+    subtitleAr: 'التشكيلة الراقية — تنورة بكسرات أنيقة للبنات',
     category: "Girls' Skirts",
     categorySlug: 'girls-skirts',
     price: 8.000,
@@ -82,17 +82,17 @@ export const officialProductsList = [
     images: [
       '/products/girls-gray-skirt.jpg'
     ],
-    descEn: 'Official gray knife-pleated school skirt for girls featuring elegant pleats, elasticated comfort waist, and durable school-grade twill.',
-    descAr: 'تنورة مدرسية رمادية أنيقة بكسرات وتصميم مريح مع خصر مرن وقماش عالي الجودة يدوم طويلاً.'
+    descEn: 'Classic gray knife-pleated skirt for girls featuring elegant pleats, elasticated comfort waist, and durable premium twill.',
+    descAr: 'تنورة رمادية أنيقة بكسرات وتصميم مريح مع خصر مرن وقماش عالي الجودة يدوم طويلاً.'
   },
   {
     id: 4,
-    sku: 'IPS-SHOE-BOY-BLK',
-    nameEn: "Boys' Black School Shoes",
-    nameAr: 'حذاء مدرسي أسود للأولاد',
-    subtitleEn: 'Official School Uniform — Leather Lace-up Shoes',
-    subtitleAr: 'الزي المدرسي الرسمي — حذاء جلدي برباط للأولاد',
-    category: 'School Shoes',
+    sku: 'SHOE-BOY-BLK',
+    nameEn: "Boys' Black Leather Shoes",
+    nameAr: 'حذاء جلدي رسمي أسود للأولاد',
+    subtitleEn: 'Genuine Leather Lace-up Shoes',
+    subtitleAr: 'حذاء جلدي برباط للأولاد بنعل طبي',
+    category: 'Shoes',
     categorySlug: 'shoes',
     price: 12.500,
     rating: 4.8,
@@ -103,17 +103,17 @@ export const officialProductsList = [
     images: [
       '/products/boys-black-shoes.jpg'
     ],
-    descEn: 'Genuine leather lace-up school shoes for boys. Cushioned insole, non-marking rubber outsole, and scuff-resistant toe cap designed for active school routines.',
-    descAr: 'حذاء مدرسي رسمي للأولاد مصنوع من الجلد الطبيعي برباط، مزود بنعل داخلي مبطن ومقاوم للانزلاق لضمان الراحة طوال اليوم.'
+    descEn: 'Genuine leather lace-up shoes for boys. Cushioned insole, non-marking rubber outsole, and scuff-resistant toe cap designed for active daily routines.',
+    descAr: 'حذاء رسمي أنيق للأولاد مصنوع من الجلد الطبيعي برباط، مزود بنعل داخلي مبطن ومقاوم للانزلاق لضمان الراحة طوال اليوم.'
   },
   {
     id: 5,
-    sku: 'IPS-SHOE-GRL-BLK',
+    sku: 'SHOE-GRL-BLK',
     nameEn: "Girls' Mary Jane Shoes (Black)",
     nameAr: 'حذاء ماري جين أسود للبنات',
-    subtitleEn: 'Official School Uniform — Mary Jane Buckle Shoes',
-    subtitleAr: 'الزي المدرسي الرسمي — حذاء ماري جين كلاسيكي للبنات',
-    category: 'School Shoes',
+    subtitleEn: 'Classic Mary Jane Leather Shoes',
+    subtitleAr: 'حذاء ماري جين كلاسيكي للبنات بحزام مريح',
+    category: 'Shoes',
     categorySlug: 'shoes',
     price: 12.500,
     rating: 4.9,
@@ -124,16 +124,16 @@ export const officialProductsList = [
     images: [
       '/products/girls-black-shoes.jpg'
     ],
-    descEn: 'Classic school Mary Jane shoes for girls with secure hook-and-loop strap, supportive arch support, and sleek glossy finish.',
-    descAr: 'حذاء ماري جين الكلاسيكي للبنات بحزام إغلاق عملي وقوس داعم للقدم مع مظهر أنيق ومريح للمدرسة.'
+    descEn: 'Classic Mary Jane shoes for girls with secure hook-and-loop strap, supportive arch support, and sleek glossy finish.',
+    descAr: 'حذاء ماري جين الكلاسيكي للبنات بحزام إغلاق عملي وقوس داعم للقدم مع مظهر أنيق ومريح طوال اليوم.'
   },
   {
     id: 6,
-    sku: 'IPS-ACCS-BELT-BLK',
-    nameEn: 'School Belt (Black)',
-    nameAr: 'حزام مدرسي جلدي (أسود)',
-    subtitleEn: 'Official School Uniform — Adjustable Leather Belt',
-    subtitleAr: 'الزي المدرسي الرسمي — حزام جلدي أسود بإبزيم فضي',
+    sku: 'ACCS-BELT-BLK',
+    nameEn: 'Classic Leather Belt (Black)',
+    nameAr: 'حزام جلدي أسود كلاسيكي',
+    subtitleEn: 'Adjustable Leather Belt with Silver Buckle',
+    subtitleAr: 'حزام جلدي أسود بإبزيم فضي كلاسيكي',
     category: 'Accessories',
     categorySlug: 'accessories',
     price: 2.500,
@@ -145,16 +145,16 @@ export const officialProductsList = [
     images: [
       '/products/school-accessories-set.jpg'
     ],
-    descEn: 'Sturdy black synthetic leather school belt with classic silver-finish buckle and multiple adjustment holes.',
-    descAr: 'حزام مدرسي رسمي أنيق باللون الأسود مزود بإبزيم فضي كلاسيكي متين ومناسب لجميع المقاسات.'
+    descEn: 'Sturdy black synthetic leather belt with classic silver-finish buckle and multiple adjustment holes.',
+    descAr: 'حزام جلدي أسود أنيق مزود بإبزيم فضي كلاسيكي متين ومناسب لجميع المقاسات.'
   },
   {
     id: 7,
-    sku: 'IPS-ACCS-SOCK-WHT',
-    nameEn: 'School Socks (White)',
-    nameAr: 'جوارب مدرسية بيضاء (زوج)',
-    subtitleEn: 'Official School Uniform — Cotton Crew Socks',
-    subtitleAr: 'الزي المدرسي الرسمي — جوارب قطنية بيضاء متينة',
+    sku: 'ACCS-SOCK-WHT',
+    nameEn: 'Cotton Crew Socks (White)',
+    nameAr: 'جوارب قطنية بيضاء (زوج)',
+    subtitleEn: 'Breathable Cotton Crew Socks',
+    subtitleAr: 'جوارب قطنية بيضاء ناعمة ومتينة',
     category: 'Accessories',
     categorySlug: 'accessories',
     price: 1.000,
@@ -167,7 +167,7 @@ export const officialProductsList = [
       '/products/school-socks-white.jpg'
     ],
     descEn: 'Pack of soft, high-cotton white crew socks with reinforced heel and toe for durability and breathability.',
-    descAr: 'جوارب قطنية بيضاء ناعمة ومريحة للمدرسة مع كعب ومشط معزز لمتانة تدوم مع كثرة الغسيل.'
+    descAr: 'جوارب قطنية بيضاء ناعمة ومريحة مع كعب ومشط معزز لمتانة تدوم مع كثرة الغسيل.'
   },
   {
     id: 8,
@@ -602,7 +602,7 @@ export default function ProductDetailPage() {
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', backgroundColor: '#dcfce7', color: '#16a34a', padding: '0.35rem 0.85rem', borderRadius: '9999px', fontSize: '0.8rem', fontWeight: '700' }}>
               <CheckCircle size={15} />
-              <span>In Stock (Salalah Campus)</span>
+              <span>{isRTL ? 'متوفر بالمخزون (صلالة)' : 'In Stock (Salalah)'}</span>
             </span>
           </div>
 

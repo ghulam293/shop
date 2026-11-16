@@ -73,14 +73,14 @@ export default function Header() {
     return location.pathname === path || (path.includes('?') && `${location.pathname}${location.search}` === path);
   };
 
-  // The 11 official departments from Shop_Proposal.pdf
+  // The 11 curated collections
   const allCategoryPoints = [
-    { id: 'uniforms', nameEn: '1. School Uniforms & Clothing', nameAr: '1. الزي المدرسي والملابس', link: '/uniforms?category=school-uniforms', icon: '👕', badge: 'Official' },
+    { id: 'uniforms', nameEn: '1. Apparel & Clothing', nameAr: '1. الملابس والأزياء', link: '/uniforms?category=school-uniforms', icon: '👕', badge: 'Apparel' },
     { id: 'trousers', nameEn: "• Boys' Trousers", nameAr: '• بناطيل الأولاد', link: '/uniforms?category=boys-trousers', icon: '👖', badge: 'Fit' },
     { id: 'skirts', nameEn: "• Girls' Skirts", nameAr: '• تنانير البنات', link: '/uniforms?category=girls-skirts', icon: '👗', badge: 'Pleated' },
-    { id: 'shoes', nameEn: '• Shoes & Footwear', nameAr: '• الأحذية المدرسية', link: '/uniforms?category=shoes', icon: '👞', badge: 'Leather' },
+    { id: 'shoes', nameEn: '• Shoes & Footwear', nameAr: '• الأحذية الرسمية والجلدية', link: '/uniforms?category=shoes', icon: '👞', badge: 'Leather' },
     { id: 'accessories', nameEn: '• Belts & Socks', nameAr: '• أحزمة وجوارب', link: '/uniforms?category=accessories', icon: '🎗️', badge: 'Accessories' },
-    { id: 'bags', nameEn: '2. School Bags & Accessories', nameAr: '2. الحقائب المدرسية والمستلزمات', link: '/uniforms?category=school-bags', icon: '🎒', badge: 'Ergonomic' },
+    { id: 'bags', nameEn: '2. Bags & Backpacks', nameAr: '2. الحقائب وحقائب الظهر', link: '/uniforms?category=school-bags', icon: '🎒', badge: 'Ergonomic' },
     { id: 'books', nameEn: '3. Stationery & Books', nameAr: '3. الكتب والقرطاسية', link: '/uniforms?category=stationery-books', icon: '📚', badge: 'Cambridge' },
     { id: 'lunchware', nameEn: '4. Lunch Boxes & Drinkware', nameAr: '4. علب الطعام ومطارات المشروبات', link: '/uniforms?category=lunch-boxes', icon: '🍱', badge: 'BPA-Free' },
     { id: 'healthcare', nameEn: '5. Healthcare & Personal Care', nameAr: '5. الرعاية الصحية والعناية', link: '/uniforms?category=healthcare', icon: '🩺', badge: 'First-Aid' },
