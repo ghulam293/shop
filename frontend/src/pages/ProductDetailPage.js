@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   RefreshCw,
   Lock,
+  User,
   ArrowRight,
   ChevronRight
 } from 'lucide-react';
@@ -680,28 +681,24 @@ export default function ProductDetailPage() {
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <button
-                  type="button"
-                  onClick={() => login('demo@shop.com', 'customer123')}
-                  style={{
-                    backgroundColor: '#800020',
-                    color: '#ffffff',
-                    border: 'none',
-                    padding: '0.35rem 0.75rem',
-                    borderRadius: '6px',
-                    fontSize: '0.78rem',
-                    fontWeight: '700',
-                    cursor: 'pointer'
-                  }}
-                >
-                  ⚡ {isRTL ? 'دخول فوري كعميل' : 'Instant Demo Login'}
-                </button>
                 <Link
                   to="/login"
                   state={{ from: { pathname: `/product/${product.id}` }, message: isRTL ? 'يرجى تسجيل الدخول أولاً لإتمام الشراء والطلب.' : 'Please log in to purchase and place an order.' }}
-                  style={{ color: '#800020', fontWeight: '700', textDecoration: 'underline', fontSize: '0.8rem' }}
+                  style={{
+                    backgroundColor: '#800020',
+                    color: '#ffffff',
+                    padding: '0.4rem 0.85rem',
+                    borderRadius: '6px',
+                    fontSize: '0.8rem',
+                    fontWeight: '700',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}
                 >
-                  {isRTL ? 'صفحة الدخول' : 'Login Page'}
+                  <User size={14} />
+                  <span>{isRTL ? 'تسجيل الدخول للمتابعة' : 'Sign In to Proceed'}</span>
                 </Link>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import {
   ShoppingCart,
   Trash2,
@@ -58,18 +58,6 @@ export default function CartPage() {
     } else {
       setCardExpiry(raw);
     }
-  };
-
-  const fillDemoCard = () => {
-    setCardNumber('4111 2222 3333 4444');
-    setCardHolder('Ahmed Al-Balushi');
-    setCardExpiry('12/28');
-    setCardCvv('123');
-  };
-
-  const fillDemoCOD = () => {
-    setDeliveryPhone('+968 9123 4567');
-    setDeliveryAddress('Salalah, Sultan Qaboos Street');
   };
 
   const handleCheckout = (e) => {
@@ -271,98 +259,14 @@ export default function CartPage() {
   // 1. Authentication Gate: Cart cannot open without login
   if (!isAuthenticated) {
     return (
-      <div style={{ maxWidth: '520px', margin: '4.5rem auto', padding: '2.5rem 1.5rem', textAlign: 'center' }}>
-        <div style={{
-          width: '80px',
-          height: '80px',
-          backgroundColor: '#fdf2f4',
-          color: '#9E2A2B',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 1.5rem',
-          boxShadow: '0 4px 16px rgba(158, 42, 43, 0.12)'
-        }}>
-          <Lock size={40} />
-        </div>
-        <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#111827', marginBottom: '0.65rem' }}>
-          {isRTL ? 'تسجيل الدخول مطلوب لفتح السلة' : 'Login Required to Access Cart'}
-        </h2>
-        <p style={{ fontSize: '0.92rem', color: '#6b7280', lineHeight: '1.6', marginBottom: '2rem' }}>
-          {isRTL
-            ? 'لا يمكن فتح سلة التسوق بدون تسجيل الدخول. يرجى تسجيل الدخول إلى حسابك أو إنشاء حساب جديد للوصول إلى السلة وإتمام طلبك.'
-            : 'You cannot open or access the shopping cart without logging in. Please sign in to your account or create a new account to view your cart items and proceed.'}
-        </p>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', maxWidth: '360px', margin: '0 auto' }}>
-          <Link
-            to="/login"
-            state={{ from: { pathname: '/cart' }, message: isRTL ? 'يرجى تسجيل الدخول للوصول إلى سلة التسوق.' : 'Please log in to open your shopping cart.' }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              padding: '0.85rem 1.75rem',
-              backgroundColor: '#9E2A2B',
-              color: '#ffffff',
-              borderRadius: '8px',
-              fontWeight: '800',
-              textDecoration: 'none',
-              boxShadow: '0 4px 12px rgba(158, 42, 43, 0.25)',
-              fontSize: '0.95rem'
-            }}
-          >
-            <User size={18} />
-            <span>{isRTL ? 'تسجيل الدخول إلى حسابك' : 'Sign In to Access Cart'}</span>
-          </Link>
-
-          <Link
-            to="/register"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              padding: '0.8rem 1.75rem',
-              backgroundColor: '#ffffff',
-              border: '1.5px solid #d1d5db',
-              color: '#374151',
-              borderRadius: '8px',
-              fontWeight: '700',
-              textDecoration: 'none',
-              fontSize: '0.92rem'
-            }}
-          >
-            <span>{isRTL ? 'إنشاء حساب جديد' : 'Create New Account'}</span>
-          </Link>
-
-          <button
-            type="button"
-            onClick={async () => {
-              await login('customer@shop.com', 'password123');
-            }}
-            style={{
-              marginTop: '0.5rem',
-              padding: '0.75rem 1rem',
-              backgroundColor: '#fef3c7',
-              border: '1px dashed #d97706',
-              color: '#92400e',
-              borderRadius: '8px',
-              fontWeight: '700',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.4rem'
-            }}
-          >
-            ⚡ {isRTL ? 'تسجيل دخول سريع للعملاء' : 'Quick Customer Sign-In'}
-          </button>
-        </div>
-      </div>
+      <Navigate
+        to="/login"
+        state={{
+          from: { pathname: '/cart' },
+          message: isRTL ? 'يرجى تسجيل الدخول أولاً للوصول إلى سلة التسوق.' : 'Please log in to open your shopping cart.'
+        }}
+        replace
+      />
     );
   }
 
