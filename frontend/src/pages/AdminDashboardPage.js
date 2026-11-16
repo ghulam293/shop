@@ -29,9 +29,140 @@ import { useAuth } from '../context/AuthContext.js';
 import { useLanguage } from '../context/LanguageContext.js';
 
 export default function AdminDashboardPage() {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, login, logout } = useAuth();
   const { isRTL } = useLanguage();
   const navigate = useNavigate();
+
+  // ACCESS CONTROL GUARD: Block non-admin accounts (Customer / Unauthenticated)
+  if (!isAdmin) {
+    return (
+      <div style={{ minHeight: '82vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2.5rem 1rem', backgroundColor: '#faf9f6' }}>
+        <div style={{
+          maxWidth: '540px',
+          width: '100%',
+          backgroundColor: '#ffffff',
+          borderRadius: '20px',
+          border: '1.5px solid #ebdada',
+          padding: '2.75rem 2.25rem',
+          textAlign: 'center',
+          boxShadow: '0 10px 30px rgba(158, 42, 43, 0.08)'
+        }}>
+          {/* Lock / Shield Icon */}
+          <div style={{
+            width: '68px',
+            height: '68px',
+            borderRadius: '50%',
+            backgroundColor: '#fdf2f4',
+            border: '2px solid #f0d5db',
+            color: '#9E2A2B',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.25rem'
+          }}>
+            <ShieldAlert size={34} color="#9E2A2B" />
+          </div>
+
+          <span style={{
+            display: 'inline-block',
+            fontSize: '0.74rem',
+            fontWeight: '800',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            color: '#9E2A2B',
+            backgroundColor: '#fdf2f4',
+            border: '1px solid #ebdada',
+            padding: '0.35rem 0.85rem',
+            borderRadius: '9999px',
+            marginBottom: '0.9rem'
+          }}>
+            {isRTL ? 'منطقة محظورة — تسجيل دخول المسؤول مطلوب' : 'Admin Login Required'}
+          </span>
+
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#111827', margin: '0 0 0.65rem' }}>
+            {isRTL ? 'لوحة تحكم المسؤول محمية' : 'Admin Dashboard Protected'}
+          </h2>
+
+          <p style={{ fontSize: '0.9rem', color: '#64748b', lineHeight: '1.6', margin: '0 0 1.75rem' }}>
+            {user ? (
+              isRTL
+                ? `أنت مسجل حالياً كحساب زبون (${user.fullName || user.email}). لوحة إدارة المتجر مخصصة فقط للمسؤولين المعتمدين.`
+                : `You are currently signed in with a Customer account (${user.fullName || user.email}). Customer logins cannot view or access the store administration dashboard.`
+            ) : (
+              isRTL
+                ? 'لوحة إدارة المتجر مخصصة للمسؤولين المعتمدين فقط. يرجى تسجيل الدخول بحساب مسؤول للمتابعة.'
+                : 'This management dashboard is restricted to authorized store administrators. Please sign in with an Administrator account.'
+            )}
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {/* Quick 1-Click Login as Admin */}
+            <button
+              onClick={async () => {
+                await login('admin@shop.com', 'admin123');
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                backgroundColor: '#9E2A2B',
+                color: '#ffffff',
+                border: 'none',
+                padding: '0.85rem 1.25rem',
+                borderRadius: '10px',
+                fontWeight: '800',
+                fontSize: '0.92rem',
+                cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(158, 42, 43, 0.25)',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <ShieldAlert size={18} />
+              <span>{isRTL ? '⚡ دخول فوري كمسؤول (حساب تجريبي)' : '⚡ 1-Click Login as Administrator'}</span>
+            </button>
+
+            {/* Go to Login Page */}
+            <button
+              onClick={() => navigate('/login', { state: { activeTab: 'admin' } })}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#f8fafc',
+                color: '#334155',
+                border: '1px solid #cbd5e1',
+                padding: '0.75rem 1.25rem',
+                borderRadius: '10px',
+                fontWeight: '700',
+                fontSize: '0.86rem',
+                cursor: 'pointer'
+              }}
+            >
+              {isRTL ? 'الذهاب إلى بوابة تسجيل الدخول' : 'Go to Login Portal'}
+            </button>
+
+            {/* Back to Home / Catalog */}
+            <Link
+              to="/"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#9E2A2B',
+                padding: '0.5rem',
+                fontWeight: '700',
+                fontSize: '0.85rem',
+                textDecoration: 'none'
+              }}
+            >
+              {isRTL ? '← العودة إلى المتجر' : '← Return to Store Home'}
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const [activeTab, setActiveTab] = useState('overview');
   const [orderFilter, setOrderFilter] = useState('ALL');

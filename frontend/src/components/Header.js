@@ -228,15 +228,17 @@ export default function Header() {
             {t('myOrders')}
           </Link>
 
-          {/* Point 6: Admin Dashboard */}
-          <Link
-            to="/admin"
-            className={`nav-link ${isActive('/admin') ? 'active-pill' : ''}`}
-            style={{ color: '#9E2A2B', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-          >
-            <ShieldAlert size={15} />
-            <span>{isRTL ? 'لوحة التحكم' : 'Admin'}</span>
-          </Link>
+          {/* Point 6: Admin Dashboard - EXCLUSIVELY SHOWN TO ADMINISTRATORS */}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={`nav-link ${isActive('/admin') ? 'active-pill' : ''}`}
+              style={{ color: '#9E2A2B', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            >
+              <ShieldAlert size={15} />
+              <span>{isRTL ? 'لوحة التحكم' : 'Admin'}</span>
+            </Link>
+          )}
         </nav>
 
         {/* Right Controls: Search, Notifications, Cart, User Login, Language */}
@@ -405,10 +407,12 @@ export default function Header() {
                   </p>
                 </div>
                 <div className="dropdown-body" style={{ padding: '0.4rem 0' }}>
-                  <Link to="/admin" className="dropdown-link" style={{ color: '#9E2A2B', fontWeight: '700' }}>
-                    <ShieldAlert size={16} />
-                    <span>Admin Dashboard</span>
-                  </Link>
+                  {isAdmin && (
+                    <Link to="/admin" className="dropdown-link" style={{ color: '#9E2A2B', fontWeight: '700' }}>
+                      <ShieldAlert size={16} />
+                      <span>{isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}</span>
+                    </Link>
+                  )}
                   <Link to="/track-order" className="dropdown-link">
                     <Truck size={16} />
                     <span>{isRTL ? 'تتبع الطلب' : 'Track Order'}</span>
@@ -514,9 +518,11 @@ export default function Header() {
               <Link to="/my-orders" className={`mobile-nav-link ${isActive('/my-orders') ? 'active' : ''}`}>
                 📦 {t('myOrders')}
               </Link>
-              <Link to="/admin" className="mobile-nav-link" style={{ color: '#9E2A2B', fontWeight: '700' }}>
-                🛡️ {isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}
-              </Link>
+              {isAdmin && (
+                <Link to="/admin" className="mobile-nav-link" style={{ color: '#9E2A2B', fontWeight: '700' }}>
+                  🛡️ {isRTL ? 'لوحة التحكم للمسؤول' : 'Admin Dashboard'}
+                </Link>
+              )}
 
               <div style={{ padding: '0.65rem 1rem 0.35rem', fontSize: '0.75rem', fontWeight: '800', color: '#9E2A2B', textTransform: 'uppercase' }}>
                 {isRTL ? 'التشكيلات الـ 11:' : 'The 11 Collections:'}
