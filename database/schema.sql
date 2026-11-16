@@ -10,14 +10,34 @@ CREATE DATABASE IF NOT EXISTS `ips_school_shop`
 
 USE `ips_school_shop`;
 
--- Disable foreign key checks during initialization
+-- Disable foreign key checks for clean drop and create
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ------------------------------------------------------------------------------
+-- CLEAN DROP ALL TABLES IN REVERSE DEPENDENCY ORDER
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `audit_logs`;
+DROP TABLE IF EXISTS `notifications`;
+DROP TABLE IF EXISTS `order_items`;
+DROP TABLE IF EXISTS `orders`;
+DROP TABLE IF EXISTS `cart_items`;
+DROP TABLE IF EXISTS `carts`;
+DROP TABLE IF EXISTS `wishlists`;
+DROP TABLE IF EXISTS `addresses`;
+DROP TABLE IF EXISTS `inventory`;
+DROP TABLE IF EXISTS `product_variants`;
+DROP TABLE IF EXISTS `product_images`;
+DROP TABLE IF EXISTS `products`;
+DROP TABLE IF EXISTS `categories`;
+DROP TABLE IF EXISTS `parent_students`;
+DROP TABLE IF EXISTS `students`;
+DROP TABLE IF EXISTS `user_roles`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `roles`;
 
 -- ------------------------------------------------------------------------------
 -- 1. ROLES TABLE
 -- ------------------------------------------------------------------------------
-DROP TABLE IF EXISTS `user_roles`;
-DROP TABLE IF EXISTS `roles`;
 CREATE TABLE `roles` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(50) NOT NULL UNIQUE,
@@ -29,17 +49,6 @@ CREATE TABLE `roles` (
 -- ------------------------------------------------------------------------------
 -- 2. USERS TABLE
 -- ------------------------------------------------------------------------------
-DROP TABLE IF EXISTS `parent_students`;
-DROP TABLE IF EXISTS `cart_items`;
-DROP TABLE IF EXISTS `carts`;
-DROP TABLE IF EXISTS `wishlists`;
-DROP TABLE IF EXISTS `order_items`;
-DROP TABLE IF EXISTS `payments`;
-DROP TABLE IF EXISTS `orders`;
-DROP TABLE IF EXISTS `addresses`;
-DROP TABLE IF EXISTS `notifications`;
-DROP TABLE IF EXISTS `audit_logs`;
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `full_name` VARCHAR(150) NOT NULL,
@@ -72,11 +81,6 @@ CREATE TABLE `user_roles` (
 -- ------------------------------------------------------------------------------
 -- 4. CATEGORIES TABLE (The 11 Curated Collections)
 -- ------------------------------------------------------------------------------
-DROP TABLE IF EXISTS `product_variants`;
-DROP TABLE IF EXISTS `product_images`;
-DROP TABLE IF EXISTS `inventory`;
-DROP TABLE IF EXISTS `products`;
-DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `number` INT NOT NULL DEFAULT 1,
