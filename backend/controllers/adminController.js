@@ -295,13 +295,9 @@ export async function getAllCustomers(req, res, next) {
     try {
       dbCustomers = await query(`
         SELECT u.id, u.full_name AS name, u.email, u.phone_number AS phone,
-               u.is_active, u.created_at,
-               COUNT(o.id) AS ordersCount,
-               COALESCE(SUM(o.total_amount), 0) AS totalSpend
+               u.is_active, u.created_at
         FROM users u
-        LEFT JOIN orders o ON u.id = o.user_id
         WHERE u.email NOT LIKE 'admin%'
-        GROUP BY u.id
         ORDER BY u.created_at DESC
       `);
     } catch (dbErr) {
@@ -314,16 +310,22 @@ export async function getAllCustomers(req, res, next) {
         name: c.name || 'Customer',
         email: c.email,
         phone: c.phone || '+968 90 000000',
-        ordersCount: parseInt(c.ordersCount || 0, 10),
-        totalSpend: parseFloat(c.totalSpend || 0).toFixed(3),
         status: c.is_active === 0 ? 'Blocked' : 'Active'
       }));
       return res.json({ success: true, customers: formatted });
     }
 
+    const fallback = (memoryStore.customers || []).map(c => ({
+      id: c.id,
+      name: c.name || 'Customer',
+      email: c.email,
+      phone: c.phone || '+968 90 000000',
+      status: 'Active'
+    }));
+
     res.json({
       success: true,
-      customers: memoryStore.customers
+      customers: fallback
     });
   } catch (error) {
     next(error);

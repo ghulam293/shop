@@ -1911,10 +1911,10 @@ export default function AdminDashboardPage() {
             }}>
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#800020', margin: 0 }}>
-                  Customer Accounts & Purchasing History
+                  Customer Accounts Directory
                 </h2>
                 <p style={{ fontSize: '0.82rem', color: '#6b7280', margin: '4px 0 0' }}>
-                  Live synchronized directory of all registered customers across web and mobile.
+                  Live synchronized directory of registered customers with active status.
                 </p>
               </div>
 
@@ -1969,8 +1969,6 @@ export default function AdminDashboardPage() {
                     <th style={{ padding: '0.75rem 1rem' }}>Customer Name</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Email Address</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Phone</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Orders Completed</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Lifetime Spend</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Status</th>
                     <th style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>Actions</th>
                   </tr>
@@ -1978,7 +1976,7 @@ export default function AdminDashboardPage() {
                 <tbody>
                   {filteredCustomers.length === 0 ? (
                     <tr>
-                      <td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>
+                      <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>
                         No customers found matching "{customerSearch}".
                       </td>
                     </tr>
@@ -2016,22 +2014,25 @@ export default function AdminDashboardPage() {
                         <td style={{ padding: '0.85rem 1rem', color: '#4b5563' }}>
                           {cust.phone}
                         </td>
-                        <td style={{ padding: '0.85rem 1rem', fontWeight: '700', color: '#800020' }}>
-                          {cust.ordersCount || 0} Orders
-                        </td>
-                        <td style={{ padding: '0.85rem 1rem', fontWeight: '800', color: '#15803d' }}>
-                          OMR {cust.totalSpend || '0.000'}
-                        </td>
                         <td style={{ padding: '0.85rem 1rem' }}>
                           <span style={{
-                            fontSize: '0.74rem',
+                            fontSize: '0.76rem',
                             fontWeight: '800',
-                            backgroundColor: cust.status === 'VIP' ? '#fef3c7' : cust.status === 'Blocked' ? '#fee2e2' : '#dcfce7',
-                            color: cust.status === 'VIP' ? '#b45309' : cust.status === 'Blocked' ? '#dc2626' : '#15803d',
-                            padding: '0.2rem 0.55rem',
-                            borderRadius: '9999px'
+                            backgroundColor: cust.status === 'Blocked' ? '#fee2e2' : '#dcfce7',
+                            color: cust.status === 'Blocked' ? '#dc2626' : '#15803d',
+                            padding: '0.25rem 0.65rem',
+                            borderRadius: '9999px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.3rem'
                           }}>
-                            {cust.status}
+                            <span style={{
+                              width: '6px',
+                              height: '6px',
+                              borderRadius: '50%',
+                              backgroundColor: cust.status === 'Blocked' ? '#dc2626' : '#16a34a'
+                            }}></span>
+                            {cust.status === 'Blocked' ? 'Blocked' : 'Active'}
                           </span>
                         </td>
                         <td style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>
@@ -2039,7 +2040,7 @@ export default function AdminDashboardPage() {
                             <button
                               type="button"
                               onClick={() => handleToggleCustomerStatus(cust)}
-                              title={cust.status === 'Blocked' ? 'Unblock customer' : 'Block customer'}
+                              title={cust.status === 'Blocked' ? 'Activate customer' : 'Deactivate customer'}
                               style={{
                                 padding: '0.3rem 0.6rem',
                                 fontSize: '0.75rem',
@@ -2051,7 +2052,7 @@ export default function AdminDashboardPage() {
                                 cursor: 'pointer'
                               }}
                             >
-                              {cust.status === 'Blocked' ? 'Unblock' : 'Toggle Status'}
+                              {cust.status === 'Blocked' ? 'Activate' : 'Toggle Status'}
                             </button>
                             <button
                               type="button"
@@ -2165,8 +2166,7 @@ export default function AdminDashboardPage() {
                         onChange={(e) => setNewCustomer({ ...newCustomer, status: e.target.value })}
                         style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', backgroundColor: '#fff' }}
                       >
-                        <option value="Active">Active Customer</option>
-                        <option value="VIP">VIP Customer</option>
+                        <option value="Active">Active</option>
                         <option value="Blocked">Blocked</option>
                       </select>
                     </div>

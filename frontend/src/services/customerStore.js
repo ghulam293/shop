@@ -8,8 +8,6 @@ export const INITIAL_CUSTOMERS = [
     name: 'Salim Al-Shanfari',
     email: 'salim.shanfari@gmail.com',
     phone: '+968 9123 4567',
-    ordersCount: 4,
-    totalSpend: '58.500',
     status: 'Active',
     joinedDate: '10 Nov 2026'
   },
@@ -18,8 +16,6 @@ export const INITIAL_CUSTOMERS = [
     name: 'Fatima Al-Kathiri',
     email: 'fatima.kathiri@hotmail.com',
     phone: '+968 9234 5678',
-    ordersCount: 3,
-    totalSpend: '42.000',
     status: 'Active',
     joinedDate: '11 Nov 2026'
   },
@@ -28,9 +24,7 @@ export const INITIAL_CUSTOMERS = [
     name: 'Mohammed Al-Rawas',
     email: 'm.rawas@omantel.net.om',
     phone: '+968 9345 6789',
-    ordersCount: 5,
-    totalSpend: '89.500',
-    status: 'VIP',
+    status: 'Active',
     joinedDate: '08 Nov 2026'
   },
   {
@@ -38,8 +32,6 @@ export const INITIAL_CUSTOMERS = [
     name: 'Aisha Al-Balushi',
     email: 'aisha.balushi@outlook.com',
     phone: '+968 9456 7890',
-    ordersCount: 2,
-    totalSpend: '24.000',
     status: 'Active',
     joinedDate: '12 Nov 2026'
   },
@@ -48,8 +40,6 @@ export const INITIAL_CUSTOMERS = [
     name: 'Khalid Al-Marhoon',
     email: 'khalid.marhoon@yahoo.com',
     phone: '+968 9567 8901',
-    ordersCount: 3,
-    totalSpend: '41.500',
     status: 'Active',
     joinedDate: '13 Nov 2026'
   },
@@ -58,8 +48,6 @@ export const INITIAL_CUSTOMERS = [
     name: 'Hussain',
     email: 'itshussain302@gmail.com',
     phone: '+968 91 000000',
-    ordersCount: 0,
-    totalSpend: '0.000',
     status: 'Active',
     joinedDate: 'Today'
   }
@@ -107,7 +95,8 @@ export function addRegisteredCustomer(newCustomer) {
         ...list[existingIndex],
         ...newCustomer,
         name: newCustomer.name || list[existingIndex].name,
-        phone: newCustomer.phone || list[existingIndex].phone
+        phone: newCustomer.phone || list[existingIndex].phone,
+        status: list[existingIndex].status || 'Active'
       };
     } else {
       const created = {
@@ -115,8 +104,6 @@ export function addRegisteredCustomer(newCustomer) {
         name: newCustomer.name || newCustomer.fullName || 'New Customer',
         email: cleanEmail,
         phone: newCustomer.phone || newCustomer.phoneNumber || '+968 90 000000',
-        ordersCount: newCustomer.ordersCount !== undefined ? newCustomer.ordersCount : 0,
-        totalSpend: newCustomer.totalSpend !== undefined ? newCustomer.totalSpend : '0.000',
         status: newCustomer.status || 'Active',
         joinedDate: newCustomer.joinedDate || 'Today'
       };
