@@ -73,23 +73,23 @@ export default function Header() {
     return location.pathname === path || (path.includes('?') && `${location.pathname}${location.search}` === path);
   };
 
-  // The 11 curated collections
+  // The categories list
   const allCategoryPoints = [
-    { id: 'uniforms', nameEn: '1. Apparel & Clothing', nameAr: '1. الملابس والأزياء', link: '/uniforms?category=school-uniforms', icon: '👕', badge: 'Apparel' },
-    { id: 'trousers', nameEn: "• Boys' Trousers", nameAr: '• بناطيل الأولاد', link: '/uniforms?category=boys-trousers', icon: '👖', badge: 'Fit' },
-    { id: 'skirts', nameEn: "• Girls' Skirts", nameAr: '• تنانير البنات', link: '/uniforms?category=girls-skirts', icon: '👗', badge: 'Pleated' },
-    { id: 'shoes', nameEn: '• Shoes & Footwear', nameAr: '• الأحذية الرسمية والجلدية', link: '/uniforms?category=shoes', icon: '👞', badge: 'Leather' },
-    { id: 'accessories', nameEn: '• Belts & Socks', nameAr: '• أحزمة وجوارب', link: '/uniforms?category=accessories', icon: '🎗️', badge: 'Accessories' },
-    { id: 'bags', nameEn: '2. Bags & Backpacks', nameAr: '2. الحقائب وحقائب الظهر', link: '/uniforms?category=school-bags', icon: '🎒', badge: 'Ergonomic' },
-    { id: 'books', nameEn: '3. Stationery & Books', nameAr: '3. الكتب والقرطاسية', link: '/uniforms?category=stationery-books', icon: '📚', badge: 'Cambridge' },
-    { id: 'lunchware', nameEn: '4. Lunch Boxes & Drinkware', nameAr: '4. علب الطعام ومطارات المشروبات', link: '/uniforms?category=lunch-boxes', icon: '🍱', badge: 'BPA-Free' },
-    { id: 'healthcare', nameEn: '5. Healthcare & Personal Care', nameAr: '5. الرعاية الصحية والعناية', link: '/uniforms?category=healthcare', icon: '🩺', badge: 'First-Aid' },
-    { id: 'sports', nameEn: '6. Fitness & Sports Equipment', nameAr: '6. اللياقة والرياضة', link: '/uniforms?category=fitness-sports', icon: '🏃', badge: 'Athletic' },
-    { id: 'electronics', nameEn: '7. Electronics & Mobile', nameAr: '7. الإلكترونيات وملحقات الهاتف', link: '/uniforms?category=electronics', icon: '⚡', badge: 'Exam Tech' },
-    { id: 'toys', nameEn: '8. Toys & Educational', nameAr: '8. ألعاب الذكاء والتعليم', link: '/uniforms?category=toys-educational', icon: '🧩', badge: 'STEM' },
-    { id: 'craft', nameEn: '9. Gifts, Art & Craft', nameAr: '9. الهدايا والأعمال الفنية', link: '/uniforms?category=gifts-craft', icon: '🎨', badge: 'Creative' },
-    { id: 'household', nameEn: '10. Household & Daily', nameAr: '10. المستلزمات المنزلية', link: '/uniforms?category=household', icon: '🏠', badge: 'Storage' },
-    { id: 'travel', nameEn: '11. Travel & Outdoor', nameAr: '11. السفر والرحلات', link: '/uniforms?category=travel-outdoor', icon: '🧳', badge: 'Luggage' }
+    { id: 'uniforms', nameEn: 'Apparel & Clothing', nameAr: 'الملابس والأزياء', link: '/uniforms?category=school-uniforms', icon: '👕', badge: 'Apparel' },
+    { id: 'trousers', nameEn: "Boys' Trousers", nameAr: 'بناطيل الأولاد', link: '/uniforms?category=boys-trousers', icon: '👖', badge: 'Fit' },
+    { id: 'skirts', nameEn: "Girls' Skirts", nameAr: 'تنانير البنات', link: '/uniforms?category=girls-skirts', icon: '👗', badge: 'Pleated' },
+    { id: 'shoes', nameEn: 'Shoes & Footwear', nameAr: 'الأحذية الرسمية والجلدية', link: '/uniforms?category=shoes', icon: '👞', badge: 'Leather' },
+    { id: 'accessories', nameEn: 'Belts & Socks', nameAr: 'أحزمة وجوارب', link: '/uniforms?category=accessories', icon: '🎗️', badge: 'Accessories' },
+    { id: 'bags', nameEn: 'Bags & Backpacks', nameAr: 'الحقائب وحقائب الظهر', link: '/uniforms?category=school-bags', icon: '🎒', badge: 'Ergonomic' },
+    { id: 'books', nameEn: 'Stationery & Books', nameAr: 'الكتب والقرطاسية', link: '/uniforms?category=stationery-books', icon: '📚', badge: 'Cambridge' },
+    { id: 'lunchware', nameEn: 'Lunch Boxes & Drinkware', nameAr: 'علب الطعام ومطارات المشروبات', link: '/uniforms?category=lunch-boxes', icon: '🍱', badge: 'BPA-Free' },
+    { id: 'healthcare', nameEn: 'Healthcare & Personal Care', nameAr: 'الرعاية الصحية والعناية', link: '/uniforms?category=healthcare', icon: '🩺', badge: 'First-Aid' },
+    { id: 'sports', nameEn: 'Fitness & Sports Equipment', nameAr: 'اللياقة والرياضة', link: '/uniforms?category=fitness-sports', icon: '🏃', badge: 'Athletic' },
+    { id: 'electronics', nameEn: 'Electronics & Mobile', nameAr: 'الإلكترونيات وملحقات الهاتف', link: '/uniforms?category=electronics', icon: '⚡', badge: 'Exam Tech' },
+    { id: 'toys', nameEn: 'Toys & Educational', nameAr: 'ألعاب الذكاء والتعليم', link: '/uniforms?category=toys-educational', icon: '🧩', badge: 'STEM' },
+    { id: 'craft', nameEn: 'Gifts, Art & Craft', nameAr: 'الهدايا والأعمال الفنية', link: '/uniforms?category=gifts-craft', icon: '🎨', badge: 'Creative' },
+    { id: 'household', nameEn: 'Household & Daily', nameAr: 'المستلزمات المنزلية', link: '/uniforms?category=household', icon: '🏠', badge: 'Storage' },
+    { id: 'travel', nameEn: 'Travel & Outdoor', nameAr: 'السفر والرحلات', link: '/uniforms?category=travel-outdoor', icon: '🧳', badge: 'Luggage' }
   ];
 
   return (

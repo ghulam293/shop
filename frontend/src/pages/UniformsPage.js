@@ -89,25 +89,25 @@ export default function UniformsPage() {
     setTimeout(() => setAddedItem(null), 1800);
   };
 
-  // Complete curated collections list dynamically counted from store
+  // Categories list without numbers or clutter
   const categoriesList = useMemo(() => [
-    { id: 'all', label: isRTL ? `جميع المنتجات (${allProducts.length})` : `All Products (${allProducts.length})`, count: allProducts.length, image: '/products/polo-shirt-front.jpg' },
-    { id: 'school-uniforms', label: isRTL ? '1. الملابس والأزياء' : '1. Apparel & Clothing', count: allProducts.filter(p => p.category === 'school-uniforms').length, image: '/products/polo-shirt-front.jpg' },
-    { id: 'boys-trousers', label: isRTL ? '• بناطيل الأولاد' : "• Boys' Trousers", count: allProducts.filter(p => p.subCategory === 'boys-trousers').length, image: '/products/boys-gray-trousers.jpg' },
-    { id: 'girls-skirts', label: isRTL ? '• تنانير البنات' : "• Girls' Skirts", count: allProducts.filter(p => p.subCategory === 'girls-skirts').length, image: '/products/girls-gray-skirt.jpg' },
-    { id: 'shoes', label: isRTL ? '• الأحذية الرسمية والجلدية' : '• Footwear', count: allProducts.filter(p => p.subCategory === 'shoes' || p.category === 'shoes').length, image: '/products/boys-black-shoes.jpg' },
-    { id: 'accessories', label: isRTL ? '• الإكسسوارات (أحزمة وجوارب)' : '• Belts & Accessories', count: allProducts.filter(p => p.subCategory === 'accessories' || p.category === 'accessories').length, image: '/products/school-accessories-set.jpg' },
-    { id: 'school-bags', label: isRTL ? '2. الحقائب وحقائب الظهر' : '2. Bags & Backpacks', count: allProducts.filter(p => p.category === 'school-bags').length, image: '/products/school-bags-accessories.jpg' },
-    { id: 'stationery-books', label: isRTL ? '3. الكتب والقرطاسية الأكاديمية' : '3. Academic Books & Stationery', count: allProducts.filter(p => p.category === 'stationery-books').length, image: '/products/cambridge-english-book.jpg' },
-    { id: 'lunch-boxes', label: isRTL ? '4. علب الطعام ومطارات المشروبات' : '4. Dining & Drinkware', count: allProducts.filter(p => p.category === 'lunch-boxes').length, image: '/products/lunch-boxes-drinkware.jpg' },
-    { id: 'healthcare', label: isRTL ? '5. الرعاية الصحية والعناية' : '5. Wellness & Personal Care', count: allProducts.filter(p => p.category === 'healthcare').length, image: '/products/healthcare-personal-care.jpg' },
-    { id: 'fitness-sports', label: isRTL ? '6. اللياقة والرياضة البدنية' : '6. Athletics & Sports Gear', count: allProducts.filter(p => p.category === 'fitness-sports').length, image: '/products/fitness-sports-equipment.jpg' },
-    { id: 'electronics', label: isRTL ? '7. الإلكترونيات وملحقات التقنية' : '7. Electronics & Tech Gear', count: allProducts.filter(p => p.category === 'electronics').length, image: '/products/electronics-mobile-accessories.jpg' },
-    { id: 'toys-educational', label: isRTL ? '8. ألعاب الذكاء والتعليم' : '8. Educational & STEM Play', count: allProducts.filter(p => p.category === 'toys-educational').length, image: '/products/toys-educational-products.jpg' },
-    { id: 'gifts-craft', label: isRTL ? '9. الهدايا والأعمال الفنية' : '9. Fine Arts, Crafts & Gifts', count: allProducts.filter(p => p.category === 'gifts-craft').length, image: '/products/gifts-art-craft.jpg' },
-    { id: 'household', label: isRTL ? '10. المستلزمات والمنظمات المنزلية' : '10. Household Essentials', count: allProducts.filter(p => p.category === 'household').length, image: '/products/household-daily-essentials.jpg' },
-    { id: 'travel-outdoor', label: isRTL ? '11. السفر والرحلات الخارجية' : '11. Travel & Outdoor Luggage', count: allProducts.filter(p => p.category === 'travel-outdoor').length, image: '/products/travel-outdoor-accessories.jpg' }
-  ], [allProducts, isRTL]);
+    { id: 'all', label: isRTL ? 'جميع المنتجات' : 'All Products', image: '/products/polo-shirt-front.jpg' },
+    { id: 'school-uniforms', label: isRTL ? 'الملابس والأزياء' : 'Apparel & Clothing', image: '/products/polo-shirt-front.jpg' },
+    { id: 'boys-trousers', label: isRTL ? 'بناطيل الأولاد' : "Boys' Trousers", image: '/products/boys-gray-trousers.jpg' },
+    { id: 'girls-skirts', label: isRTL ? 'تنانير البنات' : "Girls' Skirts", image: '/products/girls-gray-skirt.jpg' },
+    { id: 'shoes', label: isRTL ? 'الأحذية الرسمية والجلدية' : 'Footwear', image: '/products/boys-black-shoes.jpg' },
+    { id: 'accessories', label: isRTL ? 'الإكسسوارات (أحزمة وجوارب)' : 'Belts & Accessories', image: '/products/school-accessories-set.jpg' },
+    { id: 'school-bags', label: isRTL ? 'الحقائب وحقائب الظهر' : 'Bags & Backpacks', image: '/products/school-bags-accessories.jpg' },
+    { id: 'stationery-books', label: isRTL ? 'الكتب والقرطاسية الأكاديمية' : 'Academic Books & Stationery', image: '/products/cambridge-english-book.jpg' },
+    { id: 'lunch-boxes', label: isRTL ? 'علب الطعام ومطارات المشروبات' : 'Dining & Drinkware', image: '/products/lunch-boxes-drinkware.jpg' },
+    { id: 'healthcare', label: isRTL ? 'الرعاية الصحية والعناية' : 'Wellness & Personal Care', image: '/products/healthcare-personal-care.jpg' },
+    { id: 'fitness-sports', label: isRTL ? 'اللياقة والرياضة البدنية' : 'Athletics & Sports Gear', image: '/products/fitness-sports-equipment.jpg' },
+    { id: 'electronics', label: isRTL ? 'الإلكترونيات وملحقات التقنية' : 'Electronics & Tech Gear', image: '/products/electronics-mobile-accessories.jpg' },
+    { id: 'toys-educational', label: isRTL ? 'ألعاب الذكاء والتعليم' : 'Educational & STEM Play', image: '/products/toys-educational-products.jpg' },
+    { id: 'gifts-craft', label: isRTL ? 'الهدايا والأعمال الفنية' : 'Fine Arts, Crafts & Gifts', image: '/products/gifts-art-craft.jpg' },
+    { id: 'household', label: isRTL ? 'المستلزمات والمنظمات المنزلية' : 'Household Essentials', image: '/products/household-daily-essentials.jpg' },
+    { id: 'travel-outdoor', label: isRTL ? 'السفر والرحلات الخارجية' : 'Travel & Outdoor Luggage', image: '/products/travel-outdoor-accessories.jpg' }
+  ], [isRTL]);
 
   return (
     <div className="uniforms-page-container">
@@ -221,9 +221,6 @@ export default function UniformsPage() {
                   />
                   <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {cat.label}
-                  </span>
-                  <span style={{ fontSize: '0.7rem', color: '#9ca3af', fontWeight: '700' }}>
-                    {cat.count}
                   </span>
                 </button>
               );
