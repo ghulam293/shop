@@ -30,7 +30,16 @@ import {
   Layers,
   Sparkles,
   Check,
-  ShoppingBag
+  ShoppingBag,
+  Landmark,
+  Lock,
+  Unlock,
+  Wallet,
+  FileText,
+  CheckCircle2,
+  PauseCircle,
+  PlayCircle,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { useLanguage } from '../context/LanguageContext.js';
@@ -56,6 +65,13 @@ import {
   updateOrderStatusInStore,
   deleteOrderFromStore
 } from '../services/orderStore.js';
+import {
+  getTreasuryState,
+  setMasterAccountHold,
+  setOrderFundsHold,
+  executeStorePayout,
+  calculateTreasuryMetrics
+} from '../services/treasuryStore.js';
 
 export default function AdminDashboardPage() {
   const { user, isAdmin, login, logout } = useAuth();
@@ -464,6 +480,119 @@ export default function AdminDashboardPage() {
 
   const [exportNotice, setExportNotice] = useState(false);
 
+  // Treasury & Store Money Hold State
+  const [treasuryState, setTreasuryState] = useState(() => getTreasuryState());
+  const [showHoldModal, setShowHoldModal] = useState(false);
+  const [holdTargetOrder, setHoldTargetOrder] = useState(null); // null = master store account
+  const [holdReasonInput, setHoldReasonInput] = useState('');
+  const [showPayoutModal, setShowPayoutModal] = useState(false);
+  const [payoutAmountInput, setPayoutAmountInput] = useState('');
+  const [payoutNoteInput, setPayoutNoteInput] = useState('');
+  const [financeSearch, setFinanceSearch] = useState('');
+  const [financeFilter, setFinanceFilter] = useState('ALL'); // 'ALL' | 'ON_HOLD' | 'CLEARED' | 'PENDING_COLLECTION'
+
+  // Reactive listener for real-time treasury changes
+  useEffect(() => {
+    const handleTreasuryUpdate = (e) => {
+      setTreasuryState(e.detail || getTreasuryState());
+    };
+    window.addEventListener('shop-treasury-updated', handleTreasuryUpdate);
+    return () => window.removeEventListener('shop-treasury-updated', handleTreasuryUpdate);
+  }, []);
+
+  const treasuryMetrics = useMemo(() => {
+    return calculateTreasuryMetrics(orders, treasuryState);
+  }, [orders, treasuryState]);
+
+  const handleToggleMasterHold = () => {
+    if (treasuryMetrics.masterHold) {
+      if (window.confirm('Release Store Account Hold? This will unfreeze store sales money and resume normal payout settlements.')) {
+        const updated = setMasterAccountHold(false);
+        setTreasuryState(updated);
+        showFeedback('Store account hold released. Payout settlements are now active.');
+      }
+    } else {
+      setHoldTargetOrder(null);
+      setHoldReasonInput('Manual Admin security hold on store sales revenue');
+      setShowHoldModal(true);
+    }
+  };
+
+  const handleOpenOrderHoldModal = (order) => {
+    setHoldTargetOrder(order);
+    setHoldReasonInput(order.holdReason || 'Pending customer delivery inspection / return window');
+    setShowHoldModal(true);
+  };
+
+  const handleConfirmHoldModal = (e) => {
+    e.preventDefault();
+    if (holdTargetOrder) {
+      // Hold individual order
+      const updated = setOrderFundsHold(
+        holdTargetOrder.orderNumber,
+        true,
+        holdReasonInput.trim(),
+        holdTargetOrder.totalAmount
+      );
+      setTreasuryState(updated);
+      showFeedback(`Funds for ${holdTargetOrder.orderNumber} (OMR ${holdTargetOrder.totalAmount}) placed on hold.`);
+    } else {
+      // Master store account hold
+      const updated = setMasterAccountHold(true, holdReasonInput.trim());
+      setTreasuryState(updated);
+      showFeedback('Store Account placed ON HOLD! All store sales money is now frozen.');
+    }
+    setShowHoldModal(false);
+    setHoldTargetOrder(null);
+    setHoldReasonInput('');
+  };
+
+  const handleReleaseOrderFunds = (order) => {
+    if (window.confirm(`Release hold on ${order.orderNumber} (OMR ${order.totalAmount})? Money will be transferred to Cleared Balance.`)) {
+      const updated = setOrderFundsHold(order.orderNumber, false, 'Hold released by Admin', order.totalAmount);
+      setTreasuryState(updated);
+      showFeedback(`Hold released on ${order.orderNumber}. OMR ${order.totalAmount} added to Cleared Balance.`);
+    }
+  };
+
+  const handleExecutePayout = (e) => {
+    e.preventDefault();
+    const amt = parseFloat(payoutAmountInput);
+    if (isNaN(amt) || amt <= 0) {
+      alert('Please enter a valid payout amount.');
+      return;
+    }
+    if (amt > parseFloat(treasuryMetrics.availableForWithdrawal)) {
+      alert(`Withdrawal exceeds available cleared funds (OMR ${treasuryMetrics.availableForWithdrawal}).`);
+      return;
+    }
+    try {
+      const updated = executeStorePayout(amt, payoutNoteInput);
+      setTreasuryState(updated);
+      showFeedback(`Successfully transferred OMR ${amt.toFixed(3)} to Bank Muscat merchant account!`);
+      setShowPayoutModal(false);
+      setPayoutAmountInput('');
+      setPayoutNoteInput('');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const filteredFinanceOrders = useMemo(() => {
+    return (treasuryMetrics.ordersWithMoneyStatus || []).filter((o) => {
+      if (financeFilter !== 'ALL' && o.moneyStatus !== financeFilter) return false;
+      if (financeSearch.trim()) {
+        const q = financeSearch.toLowerCase().trim();
+        return (
+          o.orderNumber.toLowerCase().includes(q) ||
+          (o.customerName && o.customerName.toLowerCase().includes(q)) ||
+          (o.itemsSummary && o.itemsSummary.toLowerCase().includes(q))
+        );
+      }
+      return true;
+    });
+  }, [treasuryMetrics.ordersWithMoneyStatus, financeFilter, financeSearch]);
+
   const handleUpdateStatus = (orderId, newStatus) => {
     const updated = updateOrderStatusInStore(orderId, newStatus);
     setOrders(updated);
@@ -651,6 +780,12 @@ export default function AdminDashboardPage() {
           {[
             { id: 'overview', label: 'Dashboard Overview', icon: TrendingUp },
             { id: 'orders', label: `Manage Orders (${orders.length})`, icon: ShoppingCart },
+            {
+              id: 'finance',
+              label: treasuryMetrics.masterHold ? 'Store Money & Hold (FROZEN)' : 'Store Money & Hold',
+              icon: Landmark,
+              badge: treasuryMetrics.masterHold ? 'HOLD' : `OMR ${treasuryMetrics.availableForWithdrawal}`
+            },
             { id: 'inventory', label: `Products & Catalog (${catalogProducts.length})`, icon: Package },
             { id: 'categories', label: `Category Controls (${OFFICIAL_CATEGORIES.length})`, icon: Grid },
             { id: 'customer_carts', label: `Active Customer Carts (${customerCarts.length})`, icon: ShoppingBag },
@@ -681,6 +816,22 @@ export default function AdminDashboardPage() {
               >
                 <Icon size={17} />
                 <span>{tab.label}</span>
+                {tab.badge && (
+                  <span style={{
+                    fontSize: '0.7rem',
+                    fontWeight: '800',
+                    padding: '0.15rem 0.45rem',
+                    borderRadius: '6px',
+                    backgroundColor: active
+                      ? 'rgba(255,255,255,0.25)'
+                      : (tab.badge === 'HOLD' ? '#fee2e2' : '#f0fdf4'),
+                    color: active
+                      ? '#ffffff'
+                      : (tab.badge === 'HOLD' ? '#dc2626' : '#15803d')
+                  }}>
+                    {tab.badge}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -691,6 +842,57 @@ export default function AdminDashboardPage() {
         {/* ============================================================== */}
         {activeTab === 'overview' && (
           <div>
+            {/* Master Account Hold Banner Alert if active */}
+            {treasuryMetrics.masterHold && (
+              <div style={{
+                backgroundColor: '#fef2f2',
+                border: '2px solid #ef4444',
+                borderRadius: '14px',
+                padding: '1rem 1.35rem',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1rem',
+                boxShadow: '0 4px 15px rgba(239,68,68,0.1)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Lock size={22} />
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: '900', color: '#991b1b', fontSize: '0.98rem' }}>
+                      Store Sales Revenue is Currently ON HOLD (Funds Frozen)
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#b91c1c', marginTop: '2px' }}>
+                      {treasuryMetrics.masterHoldReason || 'All store payout disbursements are frozen by Admin.'}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('finance')}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    padding: '0.55rem 1.15rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#dc2626',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontWeight: '800',
+                    fontSize: '0.82rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Landmark size={15} />
+                  <span>Manage Store Funds & Hold →</span>
+                </button>
+              </div>
+            )}
+
             {/* 4 Core Metric KPI Cards */}
             <div style={{
               display: 'grid',
@@ -2159,6 +2361,809 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB 7: STORE TREASURY & MONEY HOLD CONTROLS                    */}
+        {/* ============================================================== */}
+        {activeTab === 'finance' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+            
+            {/* 1. Master Account Hold Status Banner */}
+            <div style={{
+              backgroundColor: treasuryMetrics.masterHold ? '#fff5f5' : '#f0fdf4',
+              borderRadius: '16px',
+              border: treasuryMetrics.masterHold ? '2px solid #ef4444' : '1.5px solid #86efac',
+              padding: '1.5rem',
+              boxShadow: treasuryMetrics.masterHold ? '0 4px 20px rgba(239,68,68,0.1)' : '0 2px 10px rgba(22,101,52,0.05)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1.25rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', maxWidth: '780px' }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  backgroundColor: treasuryMetrics.masterHold ? '#fee2e2' : '#dcfce7',
+                  color: treasuryMetrics.masterHold ? '#dc2626' : '#16a34a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  {treasuryMetrics.masterHold ? <Lock size={26} /> : <ShieldCheck size={26} />}
+                </div>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.35rem' }}>
+                    <span style={{
+                      backgroundColor: treasuryMetrics.masterHold ? '#dc2626' : '#16a34a',
+                      color: '#ffffff',
+                      fontSize: '0.72rem',
+                      fontWeight: '800',
+                      padding: '0.2rem 0.65rem',
+                      borderRadius: '9999px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em'
+                    }}>
+                      {treasuryMetrics.masterHold ? 'HOLD ACTIVE' : 'STORE ACTIVE'}
+                    </span>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: '900', color: treasuryMetrics.masterHold ? '#991b1b' : '#14532d', margin: 0 }}>
+                      {treasuryMetrics.masterHold ? 'Store Sales Account is ON HOLD (Funds Frozen)' : 'Store Sales Account is Active & Settling Normally'}
+                    </h2>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: treasuryMetrics.masterHold ? '#b91c1c' : '#166534', margin: 0, lineHeight: 1.5 }}>
+                    {treasuryMetrics.masterHold
+                      ? `All store revenue and payout distributions are locked by Admin. Customer purchases continue, but shop money cannot be withdrawn to the bank until the hold is released. Reason: "${treasuryMetrics.masterHoldReason || 'Admin security lock'}"`
+                      : 'Store earnings generated from selling products clear into the available balance according to standard settlement. Admin has full authority to freeze money or hold individual sales.'}
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={handleToggleMasterHold}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem 1.4rem',
+                    borderRadius: '10px',
+                    fontWeight: '800',
+                    fontSize: '0.88rem',
+                    border: 'none',
+                    cursor: 'pointer',
+                    backgroundColor: treasuryMetrics.masterHold ? '#16a34a' : '#800020',
+                    color: '#ffffff',
+                    boxShadow: treasuryMetrics.masterHold ? '0 4px 12px rgba(22,163,74,0.25)' : '0 4px 12px rgba(128,0,32,0.25)',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  {treasuryMetrics.masterHold ? (
+                    <>
+                      <Unlock size={17} />
+                      <span>Release Account Hold</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock size={17} />
+                      <span>Put Store Account On Hold</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Four Treasury Financial Metric Cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '1.25rem'
+            }}>
+              {/* Card 1: Gross Sales */}
+              <div style={{
+                backgroundColor: '#ffffff',
+                padding: '1.4rem',
+                borderRadius: '14px',
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.76rem', color: '#6b7280', fontWeight: '800', textTransform: 'uppercase' }}>Gross Sales Revenue</span>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#fdf2f4', color: '#800020', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <DollarSign size={20} />
+                  </div>
+                </div>
+                <div style={{ fontSize: '1.9rem', fontWeight: '900', color: '#800020', margin: '0.4rem 0 0.2rem' }}>
+                  OMR {treasuryMetrics.grossSales}
+                </div>
+                <span style={{ fontSize: '0.78rem', color: '#6b7280' }}>
+                  Total sales from shop selling items ({orders.length} orders)
+                </span>
+              </div>
+
+              {/* Card 2: On-Hold Funds */}
+              <div style={{
+                backgroundColor: '#ffffff',
+                padding: '1.4rem',
+                borderRadius: '14px',
+                border: parseFloat(treasuryMetrics.heldFunds) > 0 ? '1.5px solid #fca5a5' : '1px solid #e5e7eb',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.76rem', color: '#dc2626', fontWeight: '800', textTransform: 'uppercase' }}>On-Hold Store Money</span>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Lock size={19} />
+                  </div>
+                </div>
+                <div style={{ fontSize: '1.9rem', fontWeight: '900', color: '#dc2626', margin: '0.4rem 0 0.2rem' }}>
+                  OMR {treasuryMetrics.heldFunds}
+                </div>
+                <span style={{ fontSize: '0.78rem', color: '#b91c1c' }}>
+                  {treasuryMetrics.masterHold ? 'Entire store revenue frozen' : 'Held under Admin review policy'}
+                </span>
+              </div>
+
+              {/* Card 3: Cleared / Available For Payout */}
+              <div style={{
+                backgroundColor: '#ffffff',
+                padding: '1.4rem',
+                borderRadius: '14px',
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.76rem', color: '#16a34a', fontWeight: '800', textTransform: 'uppercase' }}>Available Balance</span>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Wallet size={19} />
+                  </div>
+                </div>
+                <div style={{ fontSize: '1.9rem', fontWeight: '900', color: '#16a34a', margin: '0.4rem 0 0.2rem' }}>
+                  OMR {treasuryMetrics.availableForWithdrawal}
+                </div>
+                <span style={{ fontSize: '0.78rem', color: '#15803d' }}>
+                  Cleared and ready for bank withdrawal
+                </span>
+              </div>
+
+              {/* Card 4: Total Settled */}
+              <div style={{
+                backgroundColor: '#ffffff',
+                padding: '1.4rem',
+                borderRadius: '14px',
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.76rem', color: '#4b5563', fontWeight: '800', textTransform: 'uppercase' }}>Settled to Bank</span>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#f1f5f9', color: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Landmark size={19} />
+                  </div>
+                </div>
+                <div style={{ fontSize: '1.9rem', fontWeight: '900', color: '#1e293b', margin: '0.4rem 0 0.2rem' }}>
+                  OMR {treasuryMetrics.totalWithdrawn}
+                </div>
+                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                  {treasuryMetrics.payouts.length} successful payouts transferred
+                </span>
+              </div>
+            </div>
+
+            {/* 3. Connected Bank Account & Payout Action Box */}
+            <div style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid #e5e7eb',
+              padding: '1.5rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1.25rem'
+            }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                  <Landmark size={20} color="#800020" />
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', margin: 0 }}>
+                    Connected Merchant Bank Account (Oman)
+                  </h3>
+                </div>
+                <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '0.84rem', color: '#4b5563', marginTop: '0.5rem' }}>
+                  <div><strong>Bank:</strong> {treasuryMetrics.bankAccount.bankName}</div>
+                  <div><strong>Account Number:</strong> {treasuryMetrics.bankAccount.accountNumber}</div>
+                  <div><strong>IBAN:</strong> {treasuryMetrics.bankAccount.iban}</div>
+                  <div><strong>Branch:</strong> {treasuryMetrics.bankAccount.branch}</div>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  disabled={treasuryMetrics.masterHold || parseFloat(treasuryMetrics.availableForWithdrawal) <= 0}
+                  onClick={() => {
+                    setPayoutAmountInput(treasuryMetrics.availableForWithdrawal);
+                    setShowPayoutModal(true);
+                  }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem 1.4rem',
+                    borderRadius: '10px',
+                    fontWeight: '800',
+                    fontSize: '0.88rem',
+                    border: 'none',
+                    cursor: (treasuryMetrics.masterHold || parseFloat(treasuryMetrics.availableForWithdrawal) <= 0) ? 'not-allowed' : 'pointer',
+                    backgroundColor: (treasuryMetrics.masterHold || parseFloat(treasuryMetrics.availableForWithdrawal) <= 0) ? '#9ca3af' : '#800020',
+                    color: '#ffffff',
+                    boxShadow: '0 2px 8px rgba(128,0,32,0.2)'
+                  }}
+                >
+                  <Wallet size={17} />
+                  <span>Withdraw Available Funds to Bank</span>
+                </button>
+                {treasuryMetrics.masterHold && (
+                  <div style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: '700', marginTop: '0.35rem', textAlign: 'center' }}>
+                    Withdrawals locked: Store Account is On Hold
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 4. Per-Sale Money Settlement & Hold Control Table */}
+            <div style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid #e5e7eb',
+              padding: '1.5rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '1rem',
+                marginBottom: '1.25rem'
+              }}>
+                <div>
+                  <h3 style={{ fontSize: '1.18rem', fontWeight: '900', color: '#800020', margin: 0 }}>
+                    Store Sales Money Settlement & Hold Ledger
+                  </h3>
+                  <p style={{ fontSize: '0.82rem', color: '#6b7280', margin: '4px 0 0' }}>
+                    Control funds from selling store items. Place temporary security holds on specific sales or release money to available balance.
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  {/* Filter Pills */}
+                  <div style={{ display: 'flex', gap: '0.35rem', backgroundColor: '#f3f4f6', padding: '0.25rem', borderRadius: '8px' }}>
+                    {[
+                      { id: 'ALL', label: 'All Sales' },
+                      { id: 'ON_HOLD', label: 'On Hold' },
+                      { id: 'CLEARED', label: 'Cleared' },
+                      { id: 'PENDING_COLLECTION', label: 'Pending COD' }
+                    ].map((f) => (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => setFinanceFilter(f.id)}
+                        style={{
+                          padding: '0.35rem 0.75rem',
+                          borderRadius: '6px',
+                          border: 'none',
+                          fontSize: '0.78rem',
+                          fontWeight: financeFilter === f.id ? '800' : '600',
+                          backgroundColor: financeFilter === f.id ? '#ffffff' : 'transparent',
+                          color: financeFilter === f.id ? '#800020' : '#4b5563',
+                          boxShadow: financeFilter === f.id ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Search Bar */}
+                  <div style={{ position: 'relative' }}>
+                    <Search size={15} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                    <input
+                      type="text"
+                      placeholder="Search order #, customer, item..."
+                      value={financeSearch}
+                      onChange={(e) => setFinanceSearch(e.target.value)}
+                      style={{
+                        padding: '0.45rem 0.75rem 0.45rem 2rem',
+                        borderRadius: '8px',
+                        border: '1px solid #d1d5db',
+                        fontSize: '0.82rem',
+                        width: '230px'
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Table */}
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f9fafb', borderBottom: '2px solid #e5e7eb', color: '#4b5563' }}>
+                      <th style={{ padding: '0.75rem 1rem' }}>Order # & Date</th>
+                      <th style={{ padding: '0.75rem 1rem' }}>Customer</th>
+                      <th style={{ padding: '0.75rem 1rem' }}>Items Sold</th>
+                      <th style={{ padding: '0.75rem 1rem' }}>Sale Amount</th>
+                      <th style={{ padding: '0.75rem 1rem' }}>Payment</th>
+                      <th style={{ padding: '0.75rem 1rem' }}>Funds Status</th>
+                      <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>Admin Money Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredFinanceOrders.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" style={{ padding: '2.5rem', textAlign: 'center', color: '#9ca3af' }}>
+                          No sales transactions match the current filter.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredFinanceOrders.map((ord) => (
+                        <tr key={ord.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            <div style={{ fontWeight: '800', color: '#111827' }}>{ord.orderNumber}</div>
+                            <div style={{ fontSize: '0.74rem', color: '#6b7280' }}>{ord.createdAt}</div>
+                          </td>
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            <div style={{ fontWeight: '700', color: '#111827' }}>{ord.customerName}</div>
+                            <div style={{ fontSize: '0.74rem', color: '#6b7280' }}>{ord.customerPhone}</div>
+                          </td>
+                          <td style={{ padding: '0.85rem 1rem', maxWidth: '240px' }}>
+                            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#374151' }}>
+                              {ord.itemsSummary}
+                            </div>
+                            <div style={{ fontSize: '0.74rem', color: '#9ca3af' }}>{ord.itemsCount} item(s)</div>
+                          </td>
+                          <td style={{ padding: '0.85rem 1rem', fontWeight: '900', color: '#800020' }}>
+                            OMR {ord.totalAmount}
+                          </td>
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            <span style={{
+                              fontSize: '0.74rem',
+                              fontWeight: '700',
+                              padding: '0.2rem 0.55rem',
+                              borderRadius: '6px',
+                              backgroundColor: ord.paymentMethod === 'Debit Card' ? '#eff6ff' : '#fef3c7',
+                              color: ord.paymentMethod === 'Debit Card' ? '#1d4ed8' : '#b45309'
+                            }}>
+                              {ord.paymentMethod}
+                            </span>
+                          </td>
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            {ord.moneyStatus === 'ON_HOLD' ? (
+                              <div>
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.3rem',
+                                  backgroundColor: '#fee2e2',
+                                  color: '#dc2626',
+                                  fontSize: '0.74rem',
+                                  fontWeight: '800',
+                                  padding: '0.22rem 0.6rem',
+                                  borderRadius: '9999px'
+                                }}>
+                                  <Lock size={12} />
+                                  <span>ON HOLD</span>
+                                </span>
+                                {ord.holdReason && (
+                                  <div style={{ fontSize: '0.7rem', color: '#b91c1c', marginTop: '2px', maxWidth: '180px' }}>
+                                    {ord.holdReason}
+                                  </div>
+                                )}
+                              </div>
+                            ) : ord.moneyStatus === 'CLEARED' ? (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.3rem',
+                                backgroundColor: '#dcfce7',
+                                color: '#16a34a',
+                                fontSize: '0.74rem',
+                                fontWeight: '800',
+                                padding: '0.22rem 0.6rem',
+                                borderRadius: '9999px'
+                              }}>
+                                <CheckCircle2 size={12} />
+                                <span>CLEARED</span>
+                              </span>
+                            ) : (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.3rem',
+                                backgroundColor: '#f1f5f9',
+                                color: '#475569',
+                                fontSize: '0.74rem',
+                                fontWeight: '700',
+                                padding: '0.22rem 0.6rem',
+                                borderRadius: '9999px'
+                              }}>
+                                <Clock size={12} />
+                                <span>PENDING COD</span>
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
+                            {ord.moneyStatus === 'ON_HOLD' ? (
+                              <button
+                                type="button"
+                                onClick={() => handleReleaseOrderFunds(ord)}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  padding: '0.35rem 0.75rem',
+                                  borderRadius: '6px',
+                                  border: '1px solid #86efac',
+                                  backgroundColor: '#f0fdf4',
+                                  color: '#16a34a',
+                                  fontWeight: '800',
+                                  fontSize: '0.76rem',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                <Unlock size={13} />
+                                <span>Release Funds</span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenOrderHoldModal(ord)}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  padding: '0.35rem 0.75rem',
+                                  borderRadius: '6px',
+                                  border: '1px solid #fca5a5',
+                                  backgroundColor: '#fef2f2',
+                                  color: '#dc2626',
+                                  fontWeight: '800',
+                                  fontSize: '0.76rem',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                <Lock size={13} />
+                                <span>Hold Money</span>
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 5. Past Payout Settlements & Security Audit Trail */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+              gap: '1.5rem'
+            }}>
+              {/* Payout Settlements History */}
+              <div style={{
+                backgroundColor: '#ffffff',
+                borderRadius: '16px',
+                border: '1px solid #e5e7eb',
+                padding: '1.25rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '1rem' }}>
+                  <Landmark size={18} color="#800020" />
+                  <h4 style={{ fontSize: '0.98rem', fontWeight: '800', color: '#111827', margin: 0 }}>
+                    Payout Settlements to Bank ({treasuryMetrics.payouts.length})
+                  </h4>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                  {treasuryMetrics.payouts.map((p) => (
+                    <div key={p.id} style={{
+                      padding: '0.75rem',
+                      borderRadius: '8px',
+                      backgroundColor: '#f9fafb',
+                      border: '1px solid #f3f4f6',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <div>
+                        <div style={{ fontWeight: '800', color: '#111827', fontSize: '0.84rem' }}>
+                          OMR {p.amount} <span style={{ fontSize: '0.74rem', color: '#16a34a', fontWeight: '700' }}>• COMPLETED</span>
+                        </div>
+                        <div style={{ fontSize: '0.74rem', color: '#6b7280' }}>
+                          Ref: {p.reference} • {p.date}
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: '#4b5563', fontWeight: '600' }}>
+                        {p.destination}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Security Audit Trail */}
+              <div style={{
+                backgroundColor: '#ffffff',
+                borderRadius: '16px',
+                border: '1px solid #e5e7eb',
+                padding: '1.25rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '1rem' }}>
+                  <FileText size={18} color="#800020" />
+                  <h4 style={{ fontSize: '0.98rem', fontWeight: '800', color: '#111827', margin: 0 }}>
+                    Financial & Hold Security Audit Trail
+                  </h4>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxHeight: '240px', overflowY: 'auto' }}>
+                  {treasuryMetrics.auditLogs.map((log) => (
+                    <div key={log.id} style={{
+                      padding: '0.65rem',
+                      borderRadius: '8px',
+                      backgroundColor: '#fdf2f4',
+                      border: '1px solid #ebdada',
+                      fontSize: '0.76rem'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '700', color: '#800020', marginBottom: '2px' }}>
+                        <span>{log.action}</span>
+                        <span style={{ color: '#6b7280' }}>{log.timestamp}</span>
+                      </div>
+                      <div style={{ color: '#374151' }}>{log.note}</div>
+                      <div style={{ color: '#9ca3af', fontSize: '0.7rem', marginTop: '2px' }}>
+                        Admin: {log.admin} {log.amount ? `• OMR ${log.amount}` : ''}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* MODAL: HOLD STORE MONEY / ORDER FUNDS                          */}
+        {/* ============================================================== */}
+        {showHoldModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 99999,
+            padding: '1rem'
+          }}>
+            <div style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              padding: '1.75rem',
+              maxWidth: '480px',
+              width: '100%',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', color: '#dc2626', marginBottom: '0.75rem' }}>
+                <Lock size={24} />
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '900', margin: 0, color: '#111827' }}>
+                  {holdTargetOrder ? `Place Funds On Hold: ${holdTargetOrder.orderNumber}` : 'Freeze Store Account Funds'}
+                </h3>
+              </div>
+              <p style={{ fontSize: '0.85rem', color: '#4b5563', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+                {holdTargetOrder
+                  ? `Holding OMR ${holdTargetOrder.totalAmount} from order ${holdTargetOrder.orderNumber}. The customer has already paid, but these funds will be held in reserve and prevented from withdrawal.`
+                  : 'Holding the entire Store Account will freeze all sales revenue and disable automated and manual bank withdrawals until released.'}
+              </p>
+
+              <form onSubmit={handleConfirmHoldModal}>
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
+                    Reason for Hold *
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    placeholder="Enter security or inspection reason..."
+                    value={holdReasonInput}
+                    onChange={(e) => setHoldReasonInput(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '8px',
+                      border: '1px solid #d1d5db',
+                      fontSize: '0.85rem',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    onClick={() => { setShowHoldModal(false); setHoldTargetOrder(null); }}
+                    style={{
+                      padding: '0.6rem 1.15rem',
+                      borderRadius: '8px',
+                      border: '1px solid #d1d5db',
+                      backgroundColor: '#ffffff',
+                      fontWeight: '700',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: '0.6rem 1.35rem',
+                      borderRadius: '8px',
+                      border: 'none',
+                      backgroundColor: '#dc2626',
+                      color: '#ffffff',
+                      fontWeight: '800',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)'
+                    }}
+                  >
+                    Confirm & Place Hold
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* MODAL: WITHDRAW CLEARED STORE MONEY                            */}
+        {/* ============================================================== */}
+        {showPayoutModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 99999,
+            padding: '1rem'
+          }}>
+            <div style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              padding: '1.75rem',
+              maxWidth: '480px',
+              width: '100%',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', color: '#800020', marginBottom: '0.75rem' }}>
+                <Landmark size={24} />
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '900', margin: 0, color: '#111827' }}>
+                  Withdraw Cleared Store Funds
+                </h3>
+              </div>
+              <p style={{ fontSize: '0.84rem', color: '#4b5563', lineHeight: 1.5, marginBottom: '1rem' }}>
+                Transfer cleared earnings from selling shop products directly to your connected Bank Muscat merchant account.
+              </p>
+
+              <div style={{
+                backgroundColor: '#f9fafb',
+                padding: '0.85rem',
+                borderRadius: '8px',
+                border: '1px solid #e5e7eb',
+                fontSize: '0.82rem',
+                marginBottom: '1.25rem'
+              }}>
+                <div><strong>Destination:</strong> {treasuryMetrics.bankAccount.bankName}</div>
+                <div><strong>Account:</strong> {treasuryMetrics.bankAccount.accountNumber}</div>
+                <div><strong>Max Available:</strong> OMR {treasuryMetrics.availableForWithdrawal}</div>
+              </div>
+
+              <form onSubmit={handleExecutePayout}>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
+                    Withdrawal Amount (OMR) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.001"
+                    min="0.100"
+                    max={treasuryMetrics.availableForWithdrawal}
+                    required
+                    value={payoutAmountInput}
+                    onChange={(e) => setPayoutAmountInput(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '8px',
+                      border: '1px solid #d1d5db',
+                      fontSize: '0.95rem',
+                      fontWeight: '800',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
+                    Transfer Note / Reference
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Weekly store sales settlement"
+                    value={payoutNoteInput}
+                    onChange={(e) => setPayoutNoteInput(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '8px',
+                      border: '1px solid #d1d5db',
+                      fontSize: '0.85rem',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowPayoutModal(false)}
+                    style={{
+                      padding: '0.6rem 1.15rem',
+                      borderRadius: '8px',
+                      border: '1px solid #d1d5db',
+                      backgroundColor: '#ffffff',
+                      fontWeight: '700',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: '0.6rem 1.35rem',
+                      borderRadius: '8px',
+                      border: 'none',
+                      backgroundColor: '#800020',
+                      color: '#ffffff',
+                      fontWeight: '800',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px rgba(128, 0, 32, 0.25)'
+                    }}
+                  >
+                    Confirm Transfer
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
 

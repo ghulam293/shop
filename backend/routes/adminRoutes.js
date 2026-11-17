@@ -10,7 +10,11 @@ import {
   deleteProduct,
   getAllCustomers,
   createCustomer,
-  getCategoriesSummary
+  getCategoriesSummary,
+  getTreasury,
+  setMasterHold,
+  setOrderHold,
+  createPayout
 } from '../controllers/adminController.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 
@@ -46,5 +50,11 @@ router.delete('/products/:id', deleteProduct);
 router.get('/customers', getAllCustomers);
 router.post('/customers', createCustomer);
 router.get('/categories', getCategoriesSummary);
+
+// Store Treasury & Money Hold Management
+router.get('/treasury', getTreasury);
+router.post('/treasury/master-hold', setMasterHold);
+router.post('/treasury/order-hold', setOrderHold);
+router.post('/treasury/payout', createPayout);
 
 export default router;

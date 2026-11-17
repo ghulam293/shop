@@ -403,3 +403,149 @@ export async function getCategoriesSummary(req, res, next) {
     next(error);
   }
 }
+
+/**
+ * 11. Treasury & Store Money Hold Management
+ */
+let serverTreasury = {
+  masterHold: false,
+  masterHoldReason: '',
+  orderHolds: {
+    'ORD-2026-84192': { status: 'ON_HOLD', reason: 'Awaiting customer delivery confirmation & size inspection' }
+  },
+  bankAccount: {
+    bankName: 'Bank Muscat (S.A.O.G)',
+    accountName: 'Shop Executive Merchant Account',
+    accountNumber: '0423-8891-4412-001',
+    iban: 'OM92BMSO000000000042388914412001'
+  },
+  payouts: [
+    {
+      id: 'PAY-2026-001',
+      date: '10 Nov 2026',
+      amount: '35.000',
+      status: 'COMPLETED',
+      destination: 'Bank Muscat (...001)',
+      reference: 'TXN-BM-918231'
+    }
+  ]
+};
+
+export async function getTreasury(req, res, next) {
+  try {
+    const orders = memoryStore.orders || [];
+    let grossSales = 0;
+    let heldFunds = 0;
+    let clearedFunds = 0;
+
+    const breakdowns = orders.map(o => {
+      const amt = parseFloat(o.total_amount || 0);
+      grossSales += amt;
+      const isHeld = serverTreasury.masterHold || (serverTreasury.orderHolds[o.order_number]?.status === 'ON_HOLD');
+      if (isHeld) {
+        heldFunds += amt;
+      } else if (o.payment_status === 'PAID') {
+        clearedFunds += amt;
+      }
+      return {
+        ...o,
+        moneyStatus: isHeld ? 'ON_HOLD' : (o.payment_status === 'PAID' ? 'CLEARED' : 'PENDING_COD')
+      };
+    });
+
+    const totalWithdrawn = serverTreasury.payouts.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+    const available = Math.max(0, clearedFunds - totalWithdrawn);
+
+    res.json({
+      success: true,
+      treasury: {
+        masterHold: serverTreasury.masterHold,
+        masterHoldReason: serverTreasury.masterHoldReason,
+        grossSales: grossSales.toFixed(3),
+        heldFunds: heldFunds.toFixed(3),
+        clearedFunds: clearedFunds.toFixed(3),
+        availableForWithdrawal: available.toFixed(3),
+        totalWithdrawn: totalWithdrawn.toFixed(3),
+        bankAccount: serverTreasury.bankAccount,
+        payouts: serverTreasury.payouts,
+        orders: breakdowns
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function setMasterHold(req, res, next) {
+  try {
+    const { isHeld, reason } = req.body;
+    serverTreasury.masterHold = Boolean(isHeld);
+    serverTreasury.masterHoldReason = isHeld ? (reason || 'Manual Admin account hold') : '';
+
+    res.json({
+      success: true,
+      message: isHeld ? 'Store account put on hold. Sales earnings frozen.' : 'Store account hold released. Payouts active.',
+      masterHold: serverTreasury.masterHold,
+      masterHoldReason: serverTreasury.masterHoldReason
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function setOrderHold(req, res, next) {
+  try {
+    const { orderNumber, isHeld, reason } = req.body;
+    if (!orderNumber) {
+      return res.status(400).json({ success: false, message: 'Order number is required.' });
+    }
+
+    serverTreasury.orderHolds[orderNumber] = {
+      status: isHeld ? 'ON_HOLD' : 'CLEARED',
+      reason: reason || (isHeld ? 'Admin review hold' : 'Cleared by Admin')
+    };
+
+    res.json({
+      success: true,
+      message: isHeld ? `Funds for order ${orderNumber} placed on hold.` : `Funds for order ${orderNumber} released.`,
+      orderNumber,
+      status: serverTreasury.orderHolds[orderNumber].status
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function createPayout(req, res, next) {
+  try {
+    const { amount, note } = req.body;
+    const num = parseFloat(amount);
+    if (isNaN(num) || num <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid payout amount.' });
+    }
+
+    if (serverTreasury.masterHold) {
+      return res.status(403).json({ success: false, message: 'Cannot process payout: Store Account is currently ON HOLD.' });
+    }
+
+    const payout = {
+      id: `PAY-2026-${Math.floor(100 + Math.random() * 900)}`,
+      date: 'Today, ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      amount: num.toFixed(3),
+      status: 'COMPLETED',
+      destination: `${serverTreasury.bankAccount.bankName} (...001)`,
+      reference: `TXN-BM-${Math.floor(100000 + Math.random() * 900000)}`,
+      note: note || 'Store sales withdrawal'
+    };
+
+    serverTreasury.payouts.unshift(payout);
+
+    res.json({
+      success: true,
+      message: `Payout of OMR ${payout.amount} initiated successfully to ${serverTreasury.bankAccount.bankName}.`,
+      payout
+    });
+  } catch (error) {
+    next(error);
+  }
+}
