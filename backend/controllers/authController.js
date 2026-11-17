@@ -150,6 +150,7 @@ export async function login(req, res, next) {
           fullName: dbUser ? dbUser.full_name : 'Store Administrator',
           email: 'admin@shop.com',
           phoneNumber: dbUser ? dbUser.phone_number : '+968 23 234567',
+          role: 'ADMIN',
           roles: ['ADMIN']
         };
       }
@@ -166,6 +167,7 @@ export async function login(req, res, next) {
           fullName: dbUser ? dbUser.full_name : 'Customer',
           email: cleanEmail,
           phoneNumber: dbUser ? dbUser.phone_number : '+968 91 234567',
+          role: 'CUSTOMER',
           roles: ['CUSTOMER']
         };
       }
@@ -182,6 +184,7 @@ export async function login(req, res, next) {
           fullName: dbUser.full_name,
           email: dbUser.email,
           phoneNumber: dbUser.phone_number,
+          role: 'CUSTOMER',
           roles: ['CUSTOMER']
         };
       }
@@ -193,6 +196,7 @@ export async function login(req, res, next) {
           fullName: cleanEmail.includes('@') ? cleanEmail.split('@')[0].toUpperCase() : 'Customer',
           email: cleanEmail,
           phoneNumber: '+968 91 234567',
+          role: 'CUSTOMER',
           roles: ['CUSTOMER']
         };
       }
