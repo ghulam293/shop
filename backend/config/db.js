@@ -113,6 +113,26 @@ export async function query(sql, params = []) {
     }));
   }
 
+  // 6. Payment Transactions
+  if (cleanSql.includes('FROM PAYMENT_TRANSACTIONS')) {
+    return memoryStore.payment_transactions || [];
+  }
+
+  // 7. Payment Accounts
+  if (cleanSql.includes('FROM PAYMENT_ACCOUNTS')) {
+    return memoryStore.payment_accounts || [];
+  }
+
+  // 8. Refunds
+  if (cleanSql.includes('FROM REFUNDS')) {
+    return memoryStore.refunds || [];
+  }
+
+  // 9. Payment Audit Logs
+  if (cleanSql.includes('FROM PAYMENT_AUDIT_LOGS')) {
+    return memoryStore.payment_audit_logs || [];
+  }
+
   // Default empty result
   return [];
 }

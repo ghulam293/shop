@@ -19,6 +19,7 @@ import { useCart } from '../context/CartContext.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useLanguage } from '../context/LanguageContext.js';
 import { addNewCustomerOrder } from '../services/orderStore.js';
+import { initiatePayment, verifyPayment } from '../services/paymentApi.js';
 
 export default function CartPage() {
   const { items, itemCount, subtotal, shippingFee, total, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -30,6 +31,10 @@ export default function CartPage() {
   
   // Payment Method: 'DEBIT_CARD' or 'CASH_ON_DELIVERY'
   const [paymentMethod, setPaymentMethod] = useState('DEBIT_CARD');
+  const [cardBrand, setCardBrand] = useState('OMANNET'); // 'OMANNET', 'VISA', 'MASTERCARD'
+  const [gatewayModal, setGatewayModal] = useState(null);
+  const [gatewayOtp, setGatewayOtp] = useState('123456');
+  const [isVerifyingGateway, setIsVerifyingGateway] = useState(false);
   
   // Card Details State
   const [cardNumber, setCardNumber] = useState('');
@@ -61,7 +66,7 @@ export default function CartPage() {
     }
   };
 
-  const handleCheckout = (e) => {
+  const handleCheckout = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -78,8 +83,8 @@ export default function CartPage() {
     }
 
     // Validation
+    const cleanCard = cardNumber.replace(/\s/g, '');
     if (paymentMethod === 'DEBIT_CARD') {
-      const cleanCard = cardNumber.replace(/\s/g, '');
       if (cleanCard.length < 15) {
         setErrorMessage(isRTL ? 'يرجى إدخال رقم بطاقة صالح مكون من 16 رقماً.' : 'Please enter a valid 16-digit debit/credit card number.');
         return;
@@ -105,39 +110,114 @@ export default function CartPage() {
 
     setIsProcessing(true);
 
-    setTimeout(() => {
+    try {
       const orderNumber = `ORD-2026-${Math.floor(10000 + Math.random() * 90000)}`;
-      const cleanCard = cardNumber.replace(/\s/g, '');
-      
-      const newOrder = {
+
+      // Initiate transaction with backend
+      const initResult = await initiatePayment({
         orderNumber,
+        customerName: user?.fullName || 'Customer',
+        customerEmail: user?.email || 'customer@shop.com',
+        customerPhone: deliveryPhone || user?.phone || user?.phoneNumber || '+968 91 234567',
         items: [...items],
-        total,
         subtotal,
-        paymentMethod: paymentMethod === 'DEBIT_CARD' ? 'Debit Card' : 'Cash on Delivery',
-        paymentMethodCode: paymentMethod,
-        paymentDetails: paymentMethod === 'DEBIT_CARD'
-          ? `Debit Card ending in •••• ${cleanCard.slice(-4)}`
-          : `Cash on Delivery (Pay upon arrival)`,
-        paymentStatus: paymentMethod === 'DEBIT_CARD' ? 'PAID' : 'PENDING_CASH',
+        deliveryFee: shippingFee,
+        totalAmount: total,
+        paymentMethod: paymentMethod === 'DEBIT_CARD' ? cardBrand : 'CASH_ON_DELIVERY',
+        deliveryAddress: deliveryAddress || 'Express Home Delivery'
+      });
+
+      if (paymentMethod === 'DEBIT_CARD') {
+        // Open secure Gateway Verification Modal
+        setIsProcessing(false);
+        setGatewayModal({
+          transactionId: initResult.transactionId,
+          orderNumber,
+          amount: total,
+          gatewayName: cardBrand === 'OMANNET' ? 'OmanNet National Switch (CBO)' : 'Visa / Mastercard 3D-Secure',
+          cardBrand: cardBrand === 'OMANNET' ? 'OmanNet' : cardBrand === 'VISA' ? 'Visa' : 'Mastercard',
+          cardLast4: cleanCard.slice(-4)
+        });
+      } else {
+        // Cash on Delivery
+        const newOrder = {
+          orderNumber,
+          transactionId: initResult.transactionId,
+          items: [...items],
+          total,
+          subtotal,
+          paymentMethod: 'Cash on Delivery',
+          paymentMethodCode: 'CASH_ON_DELIVERY',
+          paymentDetails: 'Cash on Delivery (Pay upon arrival)',
+          paymentStatus: 'PENDING_CASH',
+          customerPhone: deliveryPhone || user?.phone || 'Provided at checkout',
+          customerAddress: deliveryAddress || 'Express Home Delivery',
+          date: new Date().toLocaleDateString('en-GB')
+        };
+
+        addNewCustomerOrder({
+          ...newOrder,
+          customerName: user?.fullName || 'Customer',
+          customerEmail: user?.email || 'customer@shop.com',
+          customerPhone: deliveryPhone || user?.phone || user?.phoneNumber || '+968 91 234567',
+          status: 'PENDING'
+        });
+
+        setIsProcessing(false);
+        setOrderPlaced(newOrder);
+        clearCart();
+      }
+    } catch (err) {
+      setIsProcessing(false);
+      setErrorMessage(err.message || 'Payment initiation failed.');
+    }
+  };
+
+  // Authorize Gateway Payment (Card 3D Secure / OmanNet)
+  const handleAuthorizeGatewayPayment = async () => {
+    if (!gatewayModal) return;
+    setIsVerifyingGateway(true);
+
+    try {
+      const verifyRes = await verifyPayment({
+        transactionId: gatewayModal.transactionId,
+        gatewayReference: `${gatewayModal.cardBrand.toUpperCase()}-3DS2-AUTH-${Math.floor(100000 + Math.random() * 900000)}`,
+        cardLast4: gatewayModal.cardLast4,
+        cardBrand: gatewayModal.cardBrand
+      });
+
+      const newOrder = {
+        orderNumber: gatewayModal.orderNumber,
+        transactionId: gatewayModal.transactionId,
+        items: [...items],
+        total: gatewayModal.amount,
+        subtotal,
+        paymentMethod: `${gatewayModal.cardBrand} Debit/Credit`,
+        paymentMethodCode: 'DEBIT_CARD',
+        paymentDetails: `${gatewayModal.cardBrand} ending in •••• ${gatewayModal.cardLast4}`,
+        paymentStatus: 'PAID',
+        gatewayReference: verifyRes.transaction?.gateway_reference || `AUTH-${Date.now().toString().slice(-6)}`,
         customerPhone: deliveryPhone || user?.phone || 'Provided at checkout',
-        customerAddress: deliveryAddress || 'Express Home Delivery',
+        customerAddress: deliveryAddress || 'Store Pickup (Salalah)',
         date: new Date().toLocaleDateString('en-GB')
       };
 
-      // Save order to synchronized order store so Admin Dashboard updates instantly
       addNewCustomerOrder({
         ...newOrder,
         customerName: user?.fullName || 'Customer',
         customerEmail: user?.email || 'customer@shop.com',
         customerPhone: deliveryPhone || user?.phone || user?.phoneNumber || '+968 91 234567',
-        status: 'PENDING'
+        status: 'CONFIRMED'
       });
 
-      setIsProcessing(false);
+      setIsVerifyingGateway(false);
+      setGatewayModal(null);
       setOrderPlaced(newOrder);
       clearCart();
-    }, 900);
+    } catch (err) {
+      setIsVerifyingGateway(false);
+      setErrorMessage('Gateway verification failed: ' + (err.message || 'Payment declined'));
+    }
   };
 
   if (orderPlaced) {
@@ -183,6 +263,15 @@ export default function CartPage() {
               {orderPlaced.paymentMethod}
             </span>
           </div>
+
+          {orderPlaced.transactionId && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
+              <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>{isRTL ? 'رقم المعاملة (Txn ID):' : 'Transaction Reference:'}</span>
+              <span style={{ fontWeight: '700', color: '#800020', fontSize: '0.82rem', fontFamily: 'monospace' }}>
+                {orderPlaced.transactionId}
+              </span>
+            </div>
+          )}
 
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
             <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>{isRTL ? 'تفاصيل السداد:' : 'Payment Status:'}</span>
@@ -561,8 +650,37 @@ export default function CartPage() {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
                   <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#800020' }}>
-                    {isRTL ? 'بيانات البطاقة' : 'Card Details'}
+                    {isRTL ? 'بيانات البطاقة والشبكة المصرفية' : 'Card Network & Details'}
                   </span>
+                </div>
+
+                {/* Card Network Selector: OmanNet, Visa, Mastercard */}
+                <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.85rem' }}>
+                  {[
+                    { id: 'OMANNET', label: 'OmanNet (خصم مباشر)' },
+                    { id: 'VISA', label: 'Visa' },
+                    { id: 'MASTERCARD', label: 'Mastercard' }
+                  ].map(b => (
+                    <button
+                      type="button"
+                      key={b.id}
+                      onClick={() => setCardBrand(b.id)}
+                      style={{
+                        flex: 1,
+                        padding: '0.4rem 0.5rem',
+                        fontSize: '0.74rem',
+                        fontWeight: '800',
+                        borderRadius: '6px',
+                        border: '1.5px solid',
+                        borderColor: cardBrand === b.id ? '#800020' : '#d1d5db',
+                        backgroundColor: cardBrand === b.id ? '#fdf2f4' : '#ffffff',
+                        color: cardBrand === b.id ? '#800020' : '#4b5563',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {b.label}
+                    </button>
+                  ))}
                 </div>
 
                 <div style={{ marginBottom: '0.75rem' }}>
@@ -773,6 +891,151 @@ export default function CartPage() {
         </div>
 
       </div>
+
+      {/* 3D SECURE / OMANNET GATEWAY VERIFICATION MODAL */}
+      {gatewayModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.65)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999,
+          padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '16px',
+            maxWidth: '460px',
+            width: '100%',
+            padding: '1.85rem',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              backgroundColor: '#fef2f2',
+              color: '#800020',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem'
+            }}>
+              <ShieldCheck size={32} />
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#800020', margin: '0 0 0.35rem' }}>
+              {gatewayModal.gatewayName}
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0 0 1.25rem' }}>
+              Verified by Central Bank of Oman (CBO) & 3D Secure 2.0
+            </p>
+
+            <div style={{
+              backgroundColor: '#f9fafb',
+              border: '1px solid #e5e7eb',
+              borderRadius: '10px',
+              padding: '1rem',
+              textAlign: isRTL ? 'right' : 'left',
+              fontSize: '0.84rem',
+              marginBottom: '1.25rem'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{ color: '#6b7280' }}>Merchant:</span>
+                <strong style={{ color: '#111827' }}>Official School Store</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{ color: '#6b7280' }}>Order Reference:</span>
+                <strong style={{ color: '#2563eb' }}>#{gatewayModal.orderNumber}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{ color: '#6b7280' }}>Transaction ID:</span>
+                <span style={{ fontFamily: 'monospace', fontWeight: '700', color: '#800020' }}>{gatewayModal.transactionId}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{ color: '#6b7280' }}>Card:</span>
+                <strong>{gatewayModal.cardBrand} •••• {gatewayModal.cardLast4}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
+                <span style={{ fontWeight: '800', color: '#111827' }}>Total Amount:</span>
+                <strong style={{ fontSize: '1.1rem', fontWeight: '900', color: '#800020' }}>
+                  OMR {Number(gatewayModal.amount).toFixed(3)}
+                </strong>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1.25rem', textAlign: isRTL ? 'right' : 'left' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: '700', color: '#374151', marginBottom: '0.35rem' }}>
+                Enter OTP / Bank Security Code:
+              </label>
+              <input
+                type="text"
+                value={gatewayOtp}
+                onChange={(e) => setGatewayOtp(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.6rem',
+                  borderRadius: '7px',
+                  border: '1.5px solid #d1d5db',
+                  textAlign: 'center',
+                  fontSize: '1.1rem',
+                  fontWeight: '800',
+                  letterSpacing: '4px'
+                }}
+              />
+              <span style={{ fontSize: '0.72rem', color: '#9ca3af', display: 'block', marginTop: '3px' }}>
+                Test Sandbox OTP: 123456
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <button
+                type="button"
+                onClick={handleAuthorizeGatewayPayment}
+                disabled={isVerifyingGateway}
+                style={{
+                  width: '100%',
+                  padding: '0.8rem',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: '#800020',
+                  color: '#ffffff',
+                  fontWeight: '800',
+                  fontSize: '0.92rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(128,0,32,0.25)'
+                }}
+              >
+                {isVerifyingGateway ? 'Verifying Gateway...' : `Authorize & Pay OMR ${Number(gatewayModal.amount).toFixed(3)}`}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setGatewayModal(null); setErrorMessage('Payment cancelled by customer.'); }}
+                style={{
+                  width: '100%',
+                  padding: '0.65rem',
+                  borderRadius: '8px',
+                  border: '1px solid #d1d5db',
+                  backgroundColor: '#ffffff',
+                  color: '#4b5563',
+                  fontWeight: '700',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel Transaction
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

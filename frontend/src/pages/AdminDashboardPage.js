@@ -72,6 +72,8 @@ import {
   executeStorePayout,
   calculateTreasuryMetrics
 } from '../services/treasuryStore.js';
+import PaymentManagementSection from '../components/admin/PaymentManagementSection.js';
+import { confirmCodCollection } from '../services/paymentApi.js';
 
 export default function AdminDashboardPage() {
   const { user, isAdmin, login, logout } = useAuth();
@@ -780,6 +782,7 @@ export default function AdminDashboardPage() {
           {[
             { id: 'overview', label: 'Dashboard Overview', icon: TrendingUp },
             { id: 'orders', label: `Manage Orders (${orders.length})`, icon: ShoppingCart },
+            { id: 'payments', label: 'Payments & Gateways', icon: CreditCard, badge: 'OMR' },
             {
               id: 'finance',
               label: treasuryMetrics.masterHold ? 'Store Money & Hold (FROZEN)' : 'Store Money & Hold',
@@ -1290,85 +1293,131 @@ export default function AdminDashboardPage() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ backgroundColor: '#f9fafb', borderBottom: '2px solid #e5e7eb', color: '#4b5563' }}>
-                    <th style={{ padding: '0.75rem 1rem' }}>Order Ref</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Customer</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Fulfillment</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Payment Method</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Total</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Status</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Update Status</th>
+                    <th style={{ padding: '0.75rem 0.85rem' }}>Order Ref</th>
+                    <th style={{ padding: '0.75rem 0.85rem' }}>Customer</th>
+                    <th style={{ padding: '0.75rem 0.85rem' }}>Fulfillment</th>
+                    <th style={{ padding: '0.75rem 0.85rem' }}>Payment Method</th>
+                    <th style={{ padding: '0.75rem 0.85rem' }}>Payment Status</th>
+                    <th style={{ padding: '0.75rem 0.85rem' }}>Delivery Status</th>
+                    <th style={{ padding: '0.75rem 0.85rem' }}>Total</th>
+                    <th style={{ padding: '0.75rem 0.85rem', textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredOrders.map((o) => (
-                    <tr key={o.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: '800', color: '#800020' }}>
-                        #{o.orderNumber}
-                        <div style={{ fontSize: '0.7rem', color: '#9ca3af', fontWeight: '500' }}>{o.createdAt}</div>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <div style={{ fontWeight: '700', color: '#111827' }}>{o.customerName}</div>
-                        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{o.customerPhone}</div>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem', color: '#374151' }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.78rem' }}>
-                          <Truck size={14} color="#800020" />
-                          {o.fulfillment}
-                        </span>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <span style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.35rem',
-                          fontSize: '0.76rem',
-                          fontWeight: '700',
-                          color: o.paymentMethod === 'Debit Card' ? '#15803d' : '#854d0e',
-                          backgroundColor: o.paymentMethod === 'Debit Card' ? '#dcfce7' : '#fef9c3',
-                          padding: '0.2rem 0.55rem',
-                          borderRadius: '6px'
-                        }}>
-                          {o.paymentMethod === 'Debit Card' ? <CreditCard size={13} /> : <Banknote size={13} />}
-                          {o.paymentMethod}
-                        </span>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: '900', color: '#800020' }}>
-                        OMR {o.totalAmount}
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <span style={{
-                          padding: '0.25rem 0.65rem',
-                          borderRadius: '9999px',
-                          fontSize: '0.72rem',
-                          fontWeight: '800',
-                          backgroundColor: o.status === 'COMPLETED' ? '#dcfce7' : o.status === 'READY_FOR_PICKUP' ? '#dbeafe' : '#fef3c7',
-                          color: o.status === 'COMPLETED' ? '#15803d' : o.status === 'READY_FOR_PICKUP' ? '#1d4ed8' : '#b45309'
-                        }}>
-                          {o.status}
-                        </span>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <select
-                          value={o.status}
-                          onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
-                          style={{
-                            padding: '0.4rem 0.65rem',
+                  {filteredOrders.map((o) => {
+                    const isPaid = o.paymentStatus === 'PAID' || o.paymentStatus === 'Paid';
+                    return (
+                      <tr key={o.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '0.85rem', fontWeight: '800', color: '#800020' }}>
+                          #{o.orderNumber}
+                          <div style={{ fontSize: '0.7rem', color: '#9ca3af', fontWeight: '500' }}>{o.createdAt}</div>
+                        </td>
+                        <td style={{ padding: '0.85rem' }}>
+                          <div style={{ fontWeight: '700', color: '#111827' }}>{o.customerName}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{o.customerPhone}</div>
+                        </td>
+                        <td style={{ padding: '0.85rem', color: '#374151' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.78rem' }}>
+                            <Truck size={14} color="#800020" />
+                            {o.fulfillment}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.85rem' }}>
+                          <span style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            fontSize: '0.76rem',
+                            fontWeight: '700',
+                            color: o.paymentMethod?.includes('Debit') || o.paymentMethod?.includes('Card') ? '#15803d' : '#854d0e',
+                            backgroundColor: o.paymentMethod?.includes('Debit') || o.paymentMethod?.includes('Card') ? '#dcfce7' : '#fef9c3',
+                            padding: '0.2rem 0.55rem',
+                            borderRadius: '6px'
+                          }}>
+                            {o.paymentMethod?.includes('Debit') || o.paymentMethod?.includes('Card') ? <CreditCard size={13} /> : <Banknote size={13} />}
+                            {o.paymentMethod}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.85rem' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '0.2rem 0.6rem',
                             borderRadius: '6px',
-                            border: '1px solid #d1d5db',
-                            fontSize: '0.78rem',
-                            fontWeight: '600',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <option value="PENDING">PENDING</option>
-                          <option value="PROCESSING">PROCESSING</option>
-                          <option value="READY_FOR_PICKUP">READY FOR PICKUP</option>
-                          <option value="COMPLETED">COMPLETED</option>
-                          <option value="CANCELLED">CANCELLED</option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))}
+                            fontSize: '0.74rem',
+                            fontWeight: '800',
+                            backgroundColor: isPaid ? '#dcfce7' : '#fef3c7',
+                            color: isPaid ? '#15803d' : '#b45309',
+                            border: `1px solid ${isPaid ? '#bbf7d0' : '#fde68a'}`
+                          }}>
+                            {isPaid ? 'Paid' : 'Pending'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.85rem' }}>
+                          <span style={{
+                            padding: '0.25rem 0.65rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.72rem',
+                            fontWeight: '800',
+                            backgroundColor: o.status === 'COMPLETED' ? '#dcfce7' : o.status === 'READY_FOR_PICKUP' ? '#dbeafe' : '#fef3c7',
+                            color: o.status === 'COMPLETED' ? '#15803d' : o.status === 'READY_FOR_PICKUP' ? '#1d4ed8' : '#b45309'
+                          }}>
+                            {o.status}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.85rem', fontWeight: '900', color: '#800020' }}>
+                          OMR {o.totalAmount}
+                        </td>
+                        <td style={{ padding: '0.85rem', textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <select
+                              value={o.status}
+                              onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
+                              style={{
+                                padding: '0.35rem 0.55rem',
+                                borderRadius: '6px',
+                                border: '1px solid #d1d5db',
+                                fontSize: '0.76rem',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <option value="PENDING">PENDING</option>
+                              <option value="PROCESSING">PROCESSING</option>
+                              <option value="READY_FOR_PICKUP">READY FOR PICKUP</option>
+                              <option value="COMPLETED">COMPLETED</option>
+                              <option value="CANCELLED">CANCELLED</option>
+                            </select>
+
+                            {/* Confirm COD Cash Collection button if not paid */}
+                            {!isPaid && (
+                              <button
+                                onClick={async () => {
+                                  if (window.confirm(`Confirm cash collected for Order #${o.orderNumber}?`)) {
+                                    await confirmCodCollection(o.orderNumber);
+                                    handleUpdateStatus(o.id, 'COMPLETED');
+                                  }
+                                }}
+                                title="Confirm Cash Collection"
+                                style={{
+                                  padding: '0.35rem 0.6rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: '#16a34a',
+                                  color: '#ffffff',
+                                  fontSize: '0.74rem',
+                                  fontWeight: '800',
+                                  cursor: 'pointer',
+                                  whiteSpace: 'nowrap'
+                                }}
+                              >
+                                Collect Cash
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -1376,7 +1425,16 @@ export default function AdminDashboardPage() {
         )}
 
         {/* ============================================================== */}
-        {/* TAB 3: PRODUCTS, PRICE, SIZE & CATALOG MANAGER                 */}
+        {/* TAB: PAYMENT MANAGEMENT SYSTEM (DASHBOARD, TXNS, ACCOUNTS)     */}
+        {/* ============================================================== */}
+        {activeTab === 'payments' && (
+          <PaymentManagementSection
+            onNavigateToOrder={(orderNum) => {
+              setActiveTab('orders');
+              setOrderSearch(orderNum);
+            }}
+          />
+        )}
         {/* ============================================================== */}
         {activeTab === 'inventory' && (
           <div style={{
